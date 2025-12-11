@@ -834,18 +834,49 @@
         finalPath = './' + path;
       }
       
-      // Load module
+      // CRITICAL iOS FIX: Clear any previous iframe state
+      frame.onload = null;
+      frame.onerror = null;
+      
+      // Load module with safety timeout
       setTimeout(() => {
-        frame.src = finalPath;
+        let loadingComplete = false;
+        
+        // Safety timeout: Force hide loading after 5 seconds
+        const safetyTimeout = setTimeout(() => {
+          if (!loadingComplete) {
+            console.warn('⚠️ Loading timeout - forcing display');
+            loadingOverlay.style.display = 'none';
+            frame.style.display = 'block';
+            loadingComplete = true;
+          }
+        }, 5000);
+        
+        // iOS-friendly load handler
         frame.onload = () => {
+          if (!loadingComplete) {
+            console.log('✅ Module loaded:', finalPath);
+            clearTimeout(safetyTimeout);
+            loadingOverlay.style.display = 'none';
+            frame.style.display = 'block';
+            loadingComplete = true;
+          }
+        };
+        
+        // Error handler
+        frame.onerror = () => {
+          console.error('❌ Failed to load module:', finalPath);
+          clearTimeout(safetyTimeout);
           loadingOverlay.style.display = 'none';
           frame.style.display = 'block';
-        };
-        frame.onerror = () => {
-          console.error('Failed to load module:', finalPath);
-          loadingOverlay.style.display = 'none';
+          loadingComplete = true;
           alert('Failed to load module. Please check console for details.');
         };
+        
+        // Set iframe src (triggers load)
+        console.log('📂 Loading module:', finalPath);
+        frame.src = finalPath;
+        
         currentModule = { path, title, subtitle };
       }, 200);
     }
