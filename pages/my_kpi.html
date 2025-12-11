@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPD-A KPI Tracker 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .header p {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+        
+        .schedule-info {
+            text-align: right;
+            font-size: 0.85rem;
+        }
+        
+        .schedule-status {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .on-duty {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .off-duty {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .tab.active {
+            color: #2c3e50;
+            border-bottom-color: #007bff;
+        }
+        
+        .tab:hover {
+            background: #f8f9fa;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            text-align: center;
+        }
+        
+        .metric-card h3 {
+            font-size: 0.85rem;
+            color: #6c757d;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .metric-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .category-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            overflow: hidden;
+        }
+        
+        .category-header {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .category-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .kpi-list {
+            padding: 20px;
+        }
+        
+        .kpi-item {
+            padding: 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .kpi-item:hover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+        
+        .kpi-item.completed {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+        
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .kpi-title {
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .kpi-status {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-pending { background: #e2e3e5; color: #495057; }
+        .status-base { background: #fff3cd; color: #856404; }
+        .status-good { background: #cce5ff; color: #004085; }
+        .status-stretch { background: #d4edda; color: #155724; }
+        
+        .kpi-value {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .modal-targets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .target-badge {
+            padding: 8px 12px;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .target-base { background: #fff3cd; color: #856404; }
+        .target-good { background: #cce5ff; color: #004085; }
+        .target-stretch { background: #d4edda; color: #155724; }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s ease;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .data-actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .data-btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+        }
+        
+        .data-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-save { background: #28a745; color: white; }
+        .btn-load { background: #ffc107; color: #212529; }
+        .btn-export { background: #17a2b8; color: white; }
+        
+        .schedule-tracker {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            margin-bottom: 30px;
+        }
+        
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .schedule-item {
+            padding: 12px;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .schedule-on { background: #d4edda; color: #155724; }
+        .schedule-off { background: #f8d7da; color: #721c24; }
+        .schedule-current { 
+            background: #007bff; 
+            color: white; 
+            box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+        }
+        
+        .update-history {
+            margin-top: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .history-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-date {
+            font-weight: 500;
+            color: #007bff;
+        }
+        
+        .history-comment {
+            color: #6c757d;
+            margin-top: 2px;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .overview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #overview > div:nth-child(2) {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .schedule-info {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>PPD-A KPI Tracker 2025</h1>
+                    <p>Irong Barat Operations (IbA, IbB, IbC)</p>
+                </div>
+                <div class="schedule-info">
+                    <div class="schedule-status" id="currentStatus">Loading...</div>
+                    <div id="nextRotation">Next rotation: ...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('overview')">Overview</button>
+            <button class="tab" onclick="switchTab('hsse')">HSSE</button>
+            <button class="tab" onclick="switchTab('process-safety')">Process Safety</button>
+            <button class="tab" onclick="switchTab('operational')">Operational</button>
+            <button class="tab" onclick="switchTab('financial')">Financial</button>
+            <button class="tab" onclick="switchTab('people')">People Dev</button>
+            <button class="tab" onclick="switchTab('schedule')">Schedule</button>
+        </div>
+
+        <div id="overview" class="tab-content active">
+            <div class="overview-grid">
+                <div class="metric-card">
+                    <h3>Total KPIs</h3>
+                    <div class="number">34</div>
+                </div>
+                <div class="metric-card">
+                    <h3>Base Achieved</h3>
+                    <div class="number" id="baseCount">0</div>
+                </div>
+                <div class="metric-card">
+                    <h3>Good Achieved</h3>
+                    <div class="number" id="goodCount">0</div>
+                </div>
+                <div class="metric-card">
+                    <h3>Stretch Achieved</h3>
+                    <div class="number" id="stretchCount">0</div>
+                </div>
+                <div class="metric-card">
+                    <h3>Completion Rate</h3>
+                    <div class="number" id="completionRate">0%</div>
+                </div>
+            </div>
+            
+            <!-- Report Preview Section -->
+            <div style="display: grid; grid-template-columns: 1fr 350px; gap: 20px; margin-bottom: 30px;">
+                <div class="categories-grid" id="overviewCategories">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3>Executive Summary</h3>
+                        <button class="btn btn-primary" onclick="generateExecutiveReport()" style="padding: 8px 16px; font-size: 0.8rem;">Generate Report</button>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div id="reportPreview" style="max-height: 400px; overflow-y: auto; font-size: 0.85rem; line-height: 1.5;">
+                            <p style="color: #6c757d; font-style: italic;">Click "Generate Report" to create executive summary</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="copyReport()" id="copyReportBtn" style="width: 100%; margin-top: 15px; font-size: 0.8rem; display: none;">📋 Copy Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="hsse" class="tab-content">
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>Health, Safety, Security & Environment</h3>
+                </div>
+                <div class="kpi-list" id="hsse-list">
+                    <!-- KPIs will be populated -->
+                </div>
+            </div>
+        </div>
+
+        <div id="process-safety" class="tab-content">
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>Process Safety Management</h3>
+                </div>
+                <div class="kpi-list" id="process-safety-list">
+                    <!-- KPIs will be populated -->
+                </div>
+            </div>
+        </div>
+
+        <div id="operational" class="tab-content">
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>Operational Excellence</h3>
+                </div>
+                <div class="kpi-list" id="operational-list">
+                    <!-- KPIs will be populated -->
+                </div>
+            </div>
+        </div>
+
+        <div id="financial" class="tab-content">
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>Financial Performance</h3>
+                </div>
+                <div class="kpi-list" id="financial-list">
+                    <!-- KPIs will be populated -->
+                </div>
+            </div>
+        </div>
+
+        <div id="people" class="tab-content">
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>People Development</h3>
+                </div>
+                <div class="kpi-list" id="people-list">
+                    <!-- KPIs will be populated -->
+                </div>
+            </div>
+        </div>
+
+        <div id="schedule" class="tab-content">
+            <div class="schedule-tracker">
+                <h3 style="margin-bottom: 16px; color: #2c3e50;">Rotation Schedule 2025</h3>
+                <div class="schedule-grid" id="scheduleGrid">
+                    <!-- Schedule will be populated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Update Modal -->
+    <div class="modal" id="kpiModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Update KPI</h3>
+                <p id="modalDescription" style="color: #6c757d; font-size: 0.9rem;"></p>
+            </div>
+            
+            <div class="modal-targets" id="modalTargets">
+                <!-- Targets will be populated -->
+            </div>
+            
+            <div class="form-group">
+                <label for="kpiValue">Current Value</label>
+                <input type="number" id="kpiValue" step="0.01" placeholder="Enter current value">
+            </div>
+            
+            <div class="form-group">
+                <label for="kpiComment">Remarks / Comments</label>
+                <textarea id="kpiComment" placeholder="Add any remarks or comments about this update..."></textarea>
+            </div>
+            
+            <div class="update-history" id="updateHistory">
+                <!-- Update history will be shown here -->
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveKPI()">Update KPI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Management Actions -->
+    <div class="data-actions">
+        <button class="data-btn btn-export" onclick="exportProgress()" title="Export Progress Report">📊</button>
+        <button class="data-btn btn-save" onclick="exportData()" title="Save Data">💾</button>
+        <button class="data-btn btn-load" onclick="loadData()" title="Load Data">📂</button>
+    </div>
+
+    <input type="file" id="fileInput" accept=".json" onchange="handleFileLoad(event)">
+
+    <script>
+        // KPI Data Structure
+        const kpiData = {
+            "HSSE": [
+                { title: "Security Awareness Program Sessions", base: 4, good: 6, stretch: 8, unit: "sessions/quarter", type: "higher" },
+                { title: "Security Program Effectiveness Rating", base: 90, good: 95, stretch: 98, unit: "% excellent rating", type: "higher" },
+                { title: "HSE Training Overdue Cases", base: 0, good: 0, stretch: 0, unit: "cases", type: "lower" },
+                { title: "TRCF Rate", base: 0.26, good: 0.20, stretch: 0.15, unit: "per million manhours", type: "lower" },
+                { title: "HSE Audit Completion Rate", base: 100, good: 100, stretch: 100, unit: "%", type: "equal" },
+                { title: "SWA Issuance per OIM", base: 24, good: 30, stretch: 36, unit: "cases (Jul-Dec)", type: "higher" }
+            ],
+            "Process Safety": [
+                { title: "Alarm Count per Hour per Operator", base: 6, good: 4, stretch: 3, unit: "alarms/hour", type: "lower" },
+                { title: "Overdue TEMOC Cases", base: 0, good: 0, stretch: 0, unit: "cases", type: "lower" },
+                { title: "Overdue Process Slight Release", base: 0, good: 0, stretch: 0, unit: "cases", type: "lower" },
+                { title: "Pending Critical Piping MAT", base: 0, good: 0, stretch: 0, unit: "cases", type: "lower" },
+                { title: "Overdue SCPD Bypass Cases", base: 0, good: 0, stretch: 0, unit: "cases", type: "lower" },
+                { title: "Wells Healthiness Index", base: 93, good: 95, stretch: 97, unit: "% healthy", type: "higher" },
+                { title: "Pending Critical Vessel MAT", base: 0, good: 0, stretch: 0, unit: "cases", type: "lower" },
+                { title: "Overdue MOC Action Items", base: 0, good: 0, stretch: 0, unit: "actions", type: "lower" },
+                { title: "NSR without MOC", base: 0, good: 0, stretch: 0, unit: "cases", type: "lower" },
+                { title: "OP Review Completion", base: 100, good: 100, stretch: 100, unit: "%", type: "equal" },
+                { title: "PHA Revalidation Status", base: 100, good: 100, stretch: 100, unit: "%", type: "equal" },
+                { title: "PASR Compliance Rate", base: 100, good: 100, stretch: 100, unit: "%", type: "equal" },
+                { title: "Operational Findings Closure", base: 100, good: 100, stretch: 100, unit: "% within 30 days", type: "equal" }
+            ],
+            "Operational": [
+                { title: "Condensate Production", base: 5.7, good: 5.9, stretch: 6.1, unit: "kbpd", type: "higher" },
+                { title: "Gas Injection Rate", base: 20.8, good: 20.8, stretch: 20.8, unit: "MMscfd", type: "equal" },
+                { title: "Gas Injection Uptime", base: 85, good: 90, stretch: 95, unit: "%", type: "higher" },
+                { title: "Planned Downtime", base: 9.7, good: 9.0, stretch: 8.0, unit: "% of AA", type: "lower" },
+                { title: "Unplanned Downtime", base: 9.6, good: 9.0, stretch: 8.0, unit: "% of AA", type: "lower" },
+                { title: "Flaring Rate", base: 1.0, good: 0.9, stretch: 0.8, unit: "MMscfd", type: "lower" },
+                { title: "Venting Rate", base: 0.1, good: 0.09, stretch: 0.08, unit: "MMscfd", type: "lower" },
+                { title: "IAP Compliance Rate", base: 90, good: 95, stretch: 100, unit: "%", type: "higher" }
+            ],
+            "Financial": [
+                { title: "OPEX Spending", base: 335, good: 300, stretch: 235, unit: "RM mil", type: "lower" },
+                { title: "CAPEX Investment", base: 20.89, good: 18.5, stretch: 14.6, unit: "RM mil", type: "lower" },
+                { title: "G&A Cost Optimization", base: 0, good: 20, stretch: 30, unit: "% reduction", type: "higher" },
+                { title: "Unit Production Cost", base: 20.9, good: 19.5, stretch: 17.0, unit: "USD/boe", type: "lower" },
+                { title: "War on Waste Initiatives", base: 2, good: 3, stretch: 5, unit: "initiatives/quarter", type: "higher" }
+            ],
+            "People Development": [
+                { title: "Engagement Sessions", base: 4, good: 5, stretch: 6, unit: "sessions/year", type: "higher" },
+                { title: "SMA Technical Competency Threshold", base: 75, good: 85, stretch: 90, unit: "% compliant", type: "higher" },
+                { title: "HSE E-Learning Completion", base: 4, good: 4, stretch: 4, unit: "modules/year", type: "equal" }
+            ]
+        };
+
+        // Global variables
+        let currentValues = {};
+        let updateHistory = {};
+        let currentKPI = null;
+
+        // Work schedule generator
+        function generateSchedule() {
+            const schedule = [];
+            
+            // Fixed schedule based on user input
+            const periods = [
+                { start: '2025-06-18', end: '2025-07-01', working: true },   // ON: 18 Jun - 1 Jul
+                { start: '2025-07-02', end: '2025-07-15', working: false },  // OFF: 2 Jul - 15 Jul
+                { start: '2025-07-16', end: '2025-07-29', working: true },   // ON: 16 Jul - 29 Jul
+                { start: '2025-07-30', end: '2025-08-12', working: false },  // OFF: 30 Jul - 12 Aug
+                { start: '2025-08-13', end: '2025-08-26', working: true },   // ON: 13 Aug - 26 Aug
+                { start: '2025-08-27', end: '2025-09-09', working: false },  // OFF: 27 Aug - 9 Sep
+                { start: '2025-09-10', end: '2025-09-23', working: true },   // ON: 10 Sep - 23 Sep
+                { start: '2025-09-24', end: '2025-10-07', working: false },  // OFF: 24 Sep - 7 Oct
+                { start: '2025-10-08', end: '2025-10-21', working: true },   // ON: 8 Oct - 21 Oct
+                { start: '2025-10-22', end: '2025-11-04', working: false },  // OFF: 22 Oct - 4 Nov
+                { start: '2025-11-05', end: '2025-11-18', working: true },   // ON: 5 Nov - 18 Nov
+                { start: '2025-11-19', end: '2025-12-02', working: false },  // OFF: 19 Nov - 2 Dec
+                { start: '2025-12-03', end: '2025-12-16', working: true },   // ON: 3 Dec - 16 Dec
+                { start: '2025-12-17', end: '2025-12-30', working: false }   // OFF: 17 Dec - 30 Dec
+            ];
+            
+            const today = new Date();
+            
+            periods.forEach(p => {
+                const period = {
+                    start: new Date(p.start),
+                    end: new Date(p.end),
+                    working: p.working,
+                    current: false
+                };
+                
+                if (today >= period.start && today <= period.end) {
+                    period.current = true;
+                }
+                
+                schedule.push(period);
+            });
+            
+            return schedule;
+        }
+
+        // Initialize the application
+        function init() {
+            updateScheduleStatus();
+            populateKPIs();
+            populateScheduleGrid();
+            updateSummary();
+        }
+
+        function updateScheduleStatus() {
+            const schedule = generateSchedule();
+            const currentPeriod = schedule.find(p => p.current);
+            const statusElement = document.getElementById('currentStatus');
+            const nextRotationElement = document.getElementById('nextRotation');
+            
+            if (currentPeriod) {
+                if (currentPeriod.working) {
+                    statusElement.textContent = 'ON DUTY';
+                    statusElement.className = 'schedule-status on-duty';
+                    nextRotationElement.textContent = `Off duty: ${currentPeriod.end.toLocaleDateString()}`;
+                } else {
+                    statusElement.textContent = 'OFF DUTY';
+                    statusElement.className = 'schedule-status off-duty';
+                    nextRotationElement.textContent = `Back to work: ${schedule[schedule.indexOf(currentPeriod) + 1]?.start.toLocaleDateString() || 'TBD'}`;
+                }
+            }
+        }
+
+        function populateScheduleGrid() {
+            const schedule = generateSchedule();
+            const grid = document.getElementById('scheduleGrid');
+            
+            schedule.forEach(period => {
+                const item = document.createElement('div');
+                item.className = `schedule-item ${period.working ? 'schedule-on' : 'schedule-off'} ${period.current ? 'schedule-current' : ''}`;
+                item.innerHTML = `
+                    <div>${period.working ? 'ON DUTY' : 'OFF DUTY'}</div>
+                    <div style="font-size: 0.7rem; margin-top: 4px;">
+                        ${period.start.toLocaleDateString()} - ${period.end.toLocaleDateString()}
+                    </div>
+                `;
+                grid.appendChild(item);
+            });
+        }
+
+        function populateKPIs() {
+            // Category ID mapping
+            const categoryMapping = {
+                "HSSE": "hsse-list",
+                "Process Safety": "process-safety-list", 
+                "Operational": "operational-list",
+                "Financial": "financial-list",
+                "People Development": "people-list"
+            };
+            
+            // Populate each category
+            Object.keys(kpiData).forEach(category => {
+                const containerId = categoryMapping[category];
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                
+                container.innerHTML = ''; // Clear existing content
+                
+                kpiData[category].forEach((kpi, index) => {
+                    const kpiId = `${category}_${index}`;
+                    const item = createKPIItem(kpi, kpiId);
+                    container.appendChild(item);
+                });
+            });
+            
+            // Populate overview
+            populateOverview();
+        }
+
+        function createKPIItem(kpi, kpiId) {
+            const item = document.createElement('div');
+            item.className = 'kpi-item';
+            item.onclick = () => openKPIModal(kpiId);
+            
+            const currentValue = currentValues[kpiId];
+            const status = getKPIStatus(kpi, currentValue);
+            
+            item.innerHTML = `
+                <div class="kpi-header">
+                    <div class="kpi-title">${kpi.title}</div>
+                    <div class="kpi-status status-${status}">${status}</div>
+                </div>
+                <div class="kpi-value">
+                    ${currentValue !== undefined ? `${currentValue} ${kpi.unit}` : 'Not tracked'}
+                </div>
+            `;
+            
+            if (status !== 'pending') {
+                item.classList.add('completed');
+            }
+            
+            return item;
+        }
+
+        function populateOverview() {
+            const container = document.getElementById('overviewCategories');
+            container.innerHTML = '';
+            
+            Object.keys(kpiData).forEach(category => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                
+                const completed = kpiData[category].filter((kpi, index) => {
+                    const kpiId = `${category}_${index}`;
+                    return currentValues[kpiId] !== undefined;
+                }).length;
+                
+                card.innerHTML = `
+                    <div class="category-header">
+                        <h3>${category}</h3>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Progress</span>
+                            <span>${completed}/${kpiData[category].length}</span>
+                        </div>
+                        <div style="width: 100%; height: 6px; background: #e9ecef; border-radius: 3px;">
+                            <div style="width: ${(completed / kpiData[category].length) * 100}%; height: 100%; background: #007bff; border-radius: 3px;"></div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function getKPIStatus(kpi, value) {
+            if (value === undefined || value === null) return 'pending';
+            
+            if (kpi.type === 'higher') {
+                if (value >= kpi.stretch) return 'stretch';
+                if (value >= kpi.good) return 'good';
+                if (value >= kpi.base) return 'base';
+            } else if (kpi.type === 'lower') {
+                if (value <= kpi.stretch) return 'stretch';
+                if (value <= kpi.good) return 'good';
+                if (value <= kpi.base) return 'base';
+            } else if (kpi.type === 'equal') {
+                if (value >= kpi.base) return 'stretch';
+            }
+            
+            return 'pending';
+        }
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function openKPIModal(kpiId) {
+            currentKPI = kpiId;
+            const [category, index] = kpiId.split('_');
+            const kpi = kpiData[category][parseInt(index)];
+            
+            document.getElementById('modalTitle').textContent = kpi.title;
+            document.getElementById('modalDescription').textContent = `Category: ${category}`;
+            
+            // Populate targets
+            const targetsContainer = document.getElementById('modalTargets');
+            targetsContainer.innerHTML = `
+                <div class="target-badge target-base">Base: ${kpi.base} ${kpi.unit}</div>
+                <div class="target-badge target-good">Good: ${kpi.good} ${kpi.unit}</div>
+                <div class="target-badge target-stretch">Stretch: ${kpi.stretch} ${kpi.unit}</div>
+            `;
+            
+            // Set current value
+            document.getElementById('kpiValue').value = currentValues[kpiId] || '';
+            document.getElementById('kpiComment').value = '';
+            
+            // Show update history
+            showUpdateHistory(kpiId);
+            
+            document.getElementById('kpiModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('kpiModal').classList.remove('active');
+            currentKPI = null;
+        }
+
+        function saveKPI() {
+            if (!currentKPI) return;
+            
+            const value = parseFloat(document.getElementById('kpiValue').value);
+            const comment = document.getElementById('kpiComment').value;
+            
+            if (isNaN(value)) {
+                alert('Please enter a valid number');
+                return;
+            }
+            
+            currentValues[currentKPI] = value;
+            
+            // Save update history
+            if (!updateHistory[currentKPI]) {
+                updateHistory[currentKPI] = [];
+            }
+            
+            updateHistory[currentKPI].push({
+                date: new Date().toISOString(),
+                value: value,
+                comment: comment
+            });
+            
+            // Refresh displays
+            populateKPIs();
+            updateSummary();
+            closeModal();
+        }
+
+        function showUpdateHistory(kpiId) {
+            const historyContainer = document.getElementById('updateHistory');
+            const history = updateHistory[kpiId] || [];
+            
+            if (history.length === 0) {
+                historyContainer.innerHTML = '<p style="color: #6c757d; font-style: italic;">No previous updates</p>';
+                return;
+            }
+            
+            historyContainer.innerHTML = '<h4 style="margin-bottom: 10px; color: #2c3e50;">Update History</h4>';
+            
+            history.slice(-5).reverse().forEach(update => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div class="history-date">${new Date(update.date).toLocaleDateString()} - Value: ${update.value}</div>
+                    ${update.comment ? `<div class="history-comment">${update.comment}</div>` : ''}
+                `;
+                historyContainer.appendChild(item);
+            });
+        }
+
+        function updateSummary() {
+            let baseCount = 0, goodCount = 0, stretchCount = 0, totalTracked = 0;
+            
+            Object.keys(kpiData).forEach(category => {
+                kpiData[category].forEach((kpi, index) => {
+                    const kpiId = `${category}_${index}`;
+                    if (currentValues[kpiId] !== undefined) {
+                        totalTracked++;
+                        const status = getKPIStatus(kpi, currentValues[kpiId]);
+                        if (status === 'stretch') stretchCount++;
+                        else if (status === 'good') goodCount++;
+                        else if (status === 'base') baseCount++;
+                    }
+                });
+            });
+            
+            document.getElementById('baseCount').textContent = baseCount;
+            document.getElementById('goodCount').textContent = goodCount;
+            document.getElementById('stretchCount').textContent = stretchCount;
+            document.getElementById('completionRate').textContent = Math.round((totalTracked / 34) * 100) + '%';
+            
+            populateOverview();
+        }
+
+        // Auto-generate comment based on performance
+        function generateAutoComment(kpi, value, status) {
+            const comments = {
+                stretch: [
+                    "Excellent performance achieved, exceeding stretch targets.",
+                    "Outstanding results demonstrating operational excellence.",
+                    "Targets surpassed with strong operational discipline.",
+                    "Exceptional performance maintained throughout the period."
+                ],
+                good: [
+                    "Good performance achieved, meeting enhanced targets.",
+                    "Solid results with room for further improvement to stretch.",
+                    "Performance on track with operational targets met.",
+                    "Consistent good performance demonstrated."
+                ],
+                base: [
+                    "Minimum targets achieved, focus needed for improvement.",
+                    "Base performance met, enhancement initiatives required.",
+                    "Foundation targets reached, scaling up efforts ongoing.",
+                    "Basic requirements satisfied, aiming for better results."
+                ],
+                pending: [
+                    "Performance below expectations, immediate action required.",
+                    "Targets not met, corrective measures being implemented.",
+                    "Underperformance identified, recovery plan in progress.",
+                    "Results require significant improvement to meet targets."
+                ]
+            };
+            
+            const categoryComments = comments[status] || comments.pending;
+            return categoryComments[Math.floor(Math.random() * categoryComments.length)];
+        }
+
+        // Generate executive report
+        function generateExecutiveReport() {
+            const reportDate = new Date().toLocaleDateString('en-GB');
+            const schedule = generateSchedule();
+            const currentPeriod = schedule.find(p => p.current);
+            
+            let report = `<div style="white-space: pre-wrap; font-family: monospace;">`;
+            report += `PPD-A KPI EXECUTIVE SUMMARY\n`;
+            report += `Report Date: ${reportDate}\n`;
+            report += `Rotation Status: ${currentPeriod ? (currentPeriod.working ? 'ON DUTY' : 'OFF DUTY') : 'Unknown'}\n`;
+            report += `${'='.repeat(50)}\n\n`;
+
+            // Overall Performance Summary
+            let totalKPIs = 0, trackedKPIs = 0;
+            let stretchCount = 0, goodCount = 0, baseCount = 0, pendingCount = 0;
+            
+            Object.keys(kpiData).forEach(category => {
+                kpiData[category].forEach((kpi, index) => {
+                    totalKPIs++;
+                    const kpiId = `${category}_${index}`;
+                    const value = currentValues[kpiId];
+                    
+                    if (value !== undefined) {
+                        trackedKPIs++;
+                        const status = getKPIStatus(kpi, value);
+                        if (status === 'stretch') stretchCount++;
+                        else if (status === 'good') goodCount++;
+                        else if (status === 'base') baseCount++;
+                        else pendingCount++;
+                    }
+                });
+            });
+
+            const completionRate = Math.round((trackedKPIs / totalKPIs) * 100);
+            
+            report += `PERFORMANCE OVERVIEW:\n`;
+            report += `- Total KPIs: ${totalKPIs}\n`;
+            report += `- Tracked: ${trackedKPIs} (${completionRate}%)\n`;
+            report += `- Stretch Achieved: ${stretchCount}\n`;
+            report += `- Good Achieved: ${goodCount}\n`;
+            report += `- Base Achieved: ${baseCount}\n`;
+            report += `- Below Target: ${pendingCount}\n\n`;
+
+            // Category Performance
+            Object.keys(kpiData).forEach(category => {
+                report += `${category.toUpperCase()}:\n`;
+                report += `${'-'.repeat(category.length + 1)}\n`;
+                
+                let categoryTracked = 0, categoryTotal = kpiData[category].length;
+                let categoryHighlights = [];
+                
+                kpiData[category].forEach((kpi, index) => {
+                    const kpiId = `${category}_${index}`;
+                    const value = currentValues[kpiId];
+                    
+                    if (value !== undefined) {
+                        categoryTracked++;
+                        const status = getKPIStatus(kpi, value);
+                        
+                        // Get user comment or generate auto comment
+                        let comment = '';
+                        const history = updateHistory[kpiId];
+                        if (history && history.length > 0) {
+                            const latestUpdate = history[history.length - 1];
+                            comment = latestUpdate.comment || generateAutoComment(kpi, value, status);
+                        } else {
+                            comment = generateAutoComment(kpi, value, status);
+                        }
+                        
+                        report += `• ${kpi.title}: ${value} ${kpi.unit} (${status.toUpperCase()})\n`;
+                        report += `  ${comment}\n`;
+                        
+                        if (status === 'stretch') {
+                            categoryHighlights.push(`${kpi.title} - Excellence achieved`);
+                        } else if (status === 'pending') {
+                            categoryHighlights.push(`${kpi.title} - Requires attention`);
+                        }
+                    }
+                });
+                
+                report += `Progress: ${categoryTracked}/${categoryTotal} KPIs tracked\n\n`;
+            });
+
+            // Key Recommendations
+            report += `KEY RECOMMENDATIONS:\n`;
+            report += `${'='.repeat(20)}\n`;
+            
+            if (stretchCount > goodCount + baseCount) {
+                report += `• Maintain excellence across ${stretchCount} stretch achievements\n`;
+            }
+            if (pendingCount > 0) {
+                report += `• Focus improvement efforts on ${pendingCount} underperforming KPIs\n`;
+            }
+            if (completionRate < 100) {
+                report += `• Complete tracking for remaining ${totalKPIs - trackedKPIs} KPIs\n`;
+            }
+            if (goodCount > 0) {
+                report += `• Scale up ${goodCount} good-performing KPIs to stretch targets\n`;
+            }
+            
+            report += `\nReport generated automatically by PPD-A KPI Tracker`;
+            report += `</div>`;
+            
+            document.getElementById('reportPreview').innerHTML = report;
+            document.getElementById('copyReportBtn').style.display = 'block';
+            
+            // Store report for copying
+            window.currentReport = report.replace(/<[^>]*>/g, ''); // Remove HTML tags for copying
+        }
+
+        // Copy report function
+        function copyReport() {
+            if (window.currentReport) {
+                navigator.clipboard.writeText(window.currentReport).then(() => {
+                    const btn = document.getElementById('copyReportBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = '✅ Copied!';
+                    btn.style.background = '#28a745';
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '#6c757d';
+                    }, 2000);
+                }).catch(() => {
+                    alert('Please select and copy the report manually');
+                });
+            }
+        }
+
+        // Data management functions
+        function exportData() {
+            const dataToSave = {
+                currentValues: currentValues,
+                updateHistory: updateHistory,
+                lastUpdated: new Date().toISOString(),
+                version: "2.0"
+            };
+            
+            const blob = new Blob([JSON.stringify(dataToSave, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `PPD-A_KPI_Data_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function loadData() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileLoad(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const loadedData = JSON.parse(e.target.result);
+                    
+                    if (loadedData.currentValues) {
+                        currentValues = loadedData.currentValues;
+                    }
+                    if (loadedData.updateHistory) {
+                        updateHistory = loadedData.updateHistory;
+                    }
+                    
+                    populateKPIs();
+                    updateSummary();
+                    alert(`✅ Data loaded successfully! Last updated: ${new Date(loadedData.lastUpdated).toLocaleDateString()}`);
+                } catch (error) {
+                    alert('❌ Error loading data. Please check the file format.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function exportProgress() {
+            let report = "PPD-A KPI Progress Report\n";
+            report += "Generated: " + new Date().toLocaleDateString() + "\n";
+            report += "=" + "=".repeat(50) + "\n\n";
+            
+            Object.keys(kpiData).forEach(category => {
+                report += category.toUpperCase() + "\n";
+                report += "-".repeat(category.length) + "\n";
+                
+                kpiData[category].forEach((kpi, index) => {
+                    const kpiId = `${category}_${index}`;
+                    const currentValue = currentValues[kpiId];
+                    const status = getKPIStatus(kpi, currentValue);
+                    
+                    report += `${kpi.title}: `;
+                    if (currentValue !== undefined) {
+                        report += `${currentValue} ${kpi.unit} (${status.toUpperCase()})\n`;
+                        
+                        // Add latest comment if available
+                        const history = updateHistory[kpiId];
+                        if (history && history.length > 0) {
+                            const latestUpdate = history[history.length - 1];
+                            if (latestUpdate.comment) {
+                                report += `  Comment: ${latestUpdate.comment}\n`;
+                            }
+                        }
+                    } else {
+                        report += `Not tracked\n`;
+                    }
+                });
+                report += "\n";
+            });
+            
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'PPD-A_KPI_Progress_Report.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('kpiModal').onclick = function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        };
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

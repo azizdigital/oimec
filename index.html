@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OIM Executive Suite</title>
+  
+  <!-- Responsive viewport for all devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  
+  <!-- PWA Configuration -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#1e293b" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+  <meta name="description" content="Complete Operations & Information Management System for Offshore Installation Manager - Works Offline">
+  
+  <!-- iOS PWA Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="OIM Suite">
+  <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-192x192.png">
+  
+  <!-- Android PWA Support -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="./icons/icon-192x192.png">
+  <link rel="icon" sizes="512x512" href="./icons/icon-512x512.png">
+  
+  <!-- Windows PWA Support -->
+  <meta name="msapplication-TileColor" content="#1e293b">
+  <meta name="msapplication-TileImage" content="./icons/icon-144x144.png">
+  
+  <!-- Google Fonts with fallback -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      height: 100vh;
+      overflow: hidden;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .dashboard-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      width: 340px;
+      background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+      color: white;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 12px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 100;
+    }
+
+    .sidebar-header {
+      padding: 22px 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .logo {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .app-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #f1f5f9;
+      letter-spacing: -0.02em;
+    }
+
+    .app-subtitle {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+
+    .modules-nav {
+      flex: 1;
+      padding: 16px 0;
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .modules-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0 30px 10px 30px;
+      position: relative;
+    }
+
+    .nav-title::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 30px;
+      right: 30px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(148, 163, 184, 0.3) 0%, transparent 100%);
+    }
+
+    .module-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 30px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      background: transparent;
+      width: 100%;
+      color: #e2e8f0;
+      text-align: left;
+      position: relative;
+      margin-bottom: 1px;
+    }
+
+    .module-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: #3b82f6;
+      transform: scaleY(0);
+      transition: transform 0.2s ease;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .module-item:hover {
+      background: rgba(255,255,255,0.08);
+      color: #f1f5f9;
+    }
+
+    .module-item.active {
+      background: rgba(59, 130, 246, 0.15);
+      color: #bfdbfe;
+    }
+
+    .module-item.active::before {
+      transform: scaleY(1);
+    }
+
+    .module-icon {
+      font-size: 1.25rem;
+      margin-right: 13px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .module-info {
+      flex: 1;
+    }
+
+    .module-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+      letter-spacing: -0.01em;
+    }
+
+    .module-desc {
+      font-size: 0.68rem;
+      opacity: 0.75;
+      line-height: 1.15;
+      color: #cbd5e1;
+      font-weight: 400;
+    }
+
+    .module-item.active .module-desc {
+      color: #bfdbfe;
+      opacity: 0.9;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+    }
+
+
+
+    .content-header {
+      padding: 25px 35px;
+      border-bottom: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+
+    .content-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .content-subtitle {
+      font-size: 0.9rem;
+      color: #64748b;
+      font-weight: 400;
+    }
+
+    .content-body {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 40px;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .welcome-content {
+      max-width: 500px;
+    }
+
+    .welcome-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+
+    .welcome-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .welcome-text {
+      font-size: 1rem;
+      color: #64748b;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+    }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .loading-content {
+      text-align: center;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 2px solid #e2e8f0;
+      border-top: 2px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    .loading-text {
+      color: #64748b;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Footer */
+    .sidebar-footer {
+      padding: 15px 30px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      background: rgba(0,0,0,0.1);
+    }
+
+    .copyright {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      font-weight: 400;
+      line-height: 1.25;
+    }
+
+    /* Status indicator */
+    .status-indicator {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      margin-left: auto;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .module-item.active .status-indicator {
+      opacity: 1;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        position: fixed;
+        left: -100%;
+        transition: left 0.3s ease;
+        z-index: 1000;
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      .main-content {
+        width: 100%;
+      }
+
+      .mobile-header {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .menu-button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        margin-right: 15px;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 4px;
+        transition: background 0.2s ease;
+      }
+
+      .menu-button:hover {
+        background: rgba(255,255,255,0.1);
+      }
+
+      .user-info-header {
+        display: none;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .mobile-header {
+        display: none;
+      }
+    }
+    
+    /* === ADDITIONAL RESPONSIVE ENHANCEMENTS === */
+    
+    /* Tablet landscape optimization */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .sidebar {
+        width: 280px;
+      }
+      
+      .content-header {
+        padding: 20px 25px;
+      }
+      
+      .module-item {
+        padding: 10px 20px;
+      }
+      
+      .module-name {
+        font-size: 0.85rem;
+      }
+      
+      .module-desc {
+        font-size: 0.65rem;
+      }
+    }
+    
+    /* Large desktop optimization */
+    @media (min-width: 1400px) {
+      .sidebar {
+        width: 380px;
+      }
+      
+      .content-header {
+        padding: 28px 40px;
+      }
+      
+      .content-title {
+        font-size: 1.6rem;
+      }
+    }
+    
+    /* iOS safe area support for notch/dynamic island */
+    @supports (padding: max(0px)) {
+      .sidebar {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+      }
+      
+      .mobile-header {
+        padding-top: max(12px, env(safe-area-inset-top));
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
+      }
+      
+      .content-body {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+      }
+    }
+    
+    /* Offline mode indicator */
+    body.offline-mode::before {
+      content: '📡 Offline Mode';
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f59e0b;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 0 0 8px 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      z-index: 10000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from {
+        transform: translateX(-50%) translateY(-100%);
+      }
+      to {
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    
+    /* Portrait orientation optimization (default for mobile) */
+    @media (orientation: portrait) {
+      .welcome-content {
+        max-width: 90%;
+        padding: 30px;
+      }
+      
+      .welcome-icon {
+        font-size: 3.5rem;
+      }
+    }
+    
+    /* Landscape optimization for short screens */
+    @media (orientation: landscape) and (max-height: 600px) {
+      .sidebar-header {
+        padding: 16px 24px;
+      }
+      
+      .logo {
+        font-size: 1.8rem;
+      }
+      
+      .app-title {
+        font-size: 1.2rem;
+      }
+      
+      .module-item {
+        padding: 8px 24px;
+      }
+      
+      .welcome-icon {
+        font-size: 3rem;
+      }
+      
+      .welcome-title {
+        font-size: 1.6rem;
+      }
+    }
+    
+    /* Touch-friendly enhancements for mobile */
+    @media (max-width: 768px) {
+      .module-item {
+        min-height: 44px;
+        padding: 14px 30px;
+      }
+      
+      button {
+        min-height: 44px;
+      }
+    }
+    
+    /* High DPI displays optimization (Retina) */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+    }
+    
+    /* Reduced motion preference (accessibility) */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    
+    /* Dark mode preference */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #0f172a;
+      }
+    }
+    
+    /* Print styles */
+    @media print {
+      .sidebar,
+      .mobile-header,
+      body.offline-mode::before,
+      .loading-overlay {
+        display: none !important;
+      }
+      
+      .main-content {
+        width: 100%;
+      }
+      
+      iframe {
+        border: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+      <button class="menu-button" onclick="toggleMobileMenu()">☰</button>
+      <div class="app-title">OIM Executive Suite</div>
+    </div>
+
+    <!-- Left Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">⚡</div>
+        <div class="app-title">OIM Executive Suite</div>
+        <div class="app-subtitle">Operations & Information Management</div>
+      </div>
+
+      <div class="modules-nav">
+        <!-- EXECUTIVE SUITE -->
+        <div class="nav-section">
+          <div class="nav-title">Executive Suite</div>
+          
+          <button class="module-item" onclick="loadModule('pages/OIM Assist.html', 'OIM Assistant', 'Strategic analytics, production intelligence, and comprehensive operational reporting for management-level visibility')">
+            <span class="module-icon">🤖</span>
+            <div class="module-info">
+              <div class="module-name">OIM Assistant</div>
+              <div class="module-desc">Strategic analytics and operational reporting</div>
+            </div>
+            <div class="status-indicator"></div>
+          </button>
+		  
+		  <button class="module-item" onclick="loadModule('pages/operation.html', 'Field Operation Suite', 'Real-time field operations control, well status management, pigging schedules, and tactical execution dashboard for daily operational oversight')">
+		  <span class="module-icon">🎛️</span>
+		  <div class="module-info">
+			<div class="module-name">Field Operation Suite</div>
+			<div class="module-desc">Field operations control and well status management</div>
+		  </div>
+		  <div class="status-indicator"></div>
+		</button>
+
+          <button class="module-item" onclick="loadModule('pages/key_equipment.html', 'Platform Key Equipment', 'Critical asset health monitoring, equipment condition tracking, and predictive maintenance dashboard for offshore reliability')">
+            <span class="module-icon">⚙️</span>
+            <div class="module-info">
+              <div class="module-name">Platform Key Equipment</div>
+              <div class="module-desc">Asset health and predictive maintenance</div>
+            </div>
+            <div class="status-indicator"></div>
+          </button>
+
+          <button class="module-item" onclick="loadModule('pages/my_kpi.html', 'My KPI', 'Personal and team-level KPI management for 2025 performance tracking, aligned with PETRONAS EDGE and EPM objectives')">
+            <span class="module-icon">🎯</span>
+            <div class="module-info">
+              <div class="module-name">My KPI</div>
+              <div class="module-desc">2025 KPI tracking with PETRONAS EDGE</div>
+            </div>
+            <div class="status-indicator"></div>
+          </button>
+
+          <button class="module-item" onclick="loadModule('pages/handover.html', 'Handover & Transition Management', 'Structured workflow for seamless shift transitions, operational continuity, and end-of-hitch documentation compliance')">
+            <span class="module-icon">🔄</span>
+            <div class="module-info">
+              <div class="module-name">Handover & Transition Management</div>
+              <div class="module-desc">Shift transitions and operational continuity</div>
+            </div>
+            <div class="status-indicator"></div>
+          </button>
+
+          <button class="module-item" onclick="loadModule('pages/meme.html', 'Performance Grid Dashboard', 'Smart meeting dashboard for daily group KPI, scores each team, announces winners, and predicts top-performing groups for the week or hitch cycle')">
+            <span class="module-icon">📊</span>
+            <div class="module-info">
+              <div class="module-name">Performance Grid Dashboard</div>
+              <div class="module-desc">Daily KPI scoring and team predictions</div>
+            </div>
+            <div class="status-indicator"></div>
+          </button>
+        </div>
+
+        <!-- SAFETY MODULE -->
+        <div class="nav-section">
+          <div class="nav-title">Safety Module</div>
+
+          <button class="module-item" onclick="loadModule('pages/share.html', 'Knowledge Sharing Center', 'Collaborative platform for technical resources, operational learnings, and knowledge base consolidation')">
+            <span class="module-icon">🤝</span>
+            <div class="module-info">
+              <div class="module-name">Knowledge Sharing Center</div>
+              <div class="module-desc">Platform for technical resources</div>
+            </div>
+            <div class="status-indicator"></div>
+          </button>
+
+          <button class="module-item" onclick="loadModule('pages/safety.html', 'Safety Management Center', 'Centralized hub for incident logging, risk assessment, and safety verification templates aligned with corporate HSE standards')">
+            <span class="module-icon">🛡️</span>
+            <div class="module-info">
+              <div class="module-name">Safety Management Center</div>
+              <div class="module-desc">Incident logging and HSE compliance</div>
+            </div>
+            <div class="status-indicator"></div>
+          </button>
+        </div>
+
+        <!-- SUPPORT TOOLS -->
+        <div class="nav-section">
+          <div class="nav-title">Support Tools</div>
+
+          <button class="module-item" onclick="loadModule('pages/calculator_failplay.html', 'Calculator & Smart Tools', 'Engineering computation suite with intelligent automation utilities for process safety, production, and mechanical diagnostics')">
+            <span class="module-icon">🧮</span>
+            <div class="module-info">
+              <div class="module-name">Calculator & Smart Tools</div>
+              <div class="module-desc">Engineering computation utilities</div>
+            </div>
+            <div class="status-indicator"></div>
+          </button>
+
+          <button class="module-item" onclick="loadModule('pages/turnaroundapp.html', 'Turnaround Management', 'Integrated turnaround planner with efficiency metrics, task progress dashboards, and milestone-based performance analytics')">
+            <span class="module-icon">⚡</span>
+            <div class="module-info">
+              <div class="module-name">Turnaround Management</div>
+              <div class="module-desc">Turnaround planner and task tracking</div>
+            </div>
+            <div class="status-indicator"></div>
+          </button>
+
+          <button class="module-item" onclick="loadModule('pages/analytics.html', 'Turnaround Pulse', 'Real-time predictive insights and advanced analytics engine for turnaround performance optimization and deviation monitoring')">
+            <span class="module-icon">📈</span>
+            <div class="module-info">
+              <div class="module-name">Turnaround Pulse</div>
+              <div class="module-desc">Predictive analytics for turnarounds</div>
+            </div>
+            <div class="status-indicator"></div>
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="copyright">© 2025 Aziz Mohamad<br>Enterprise Solutions Division</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="content-header">
+        <div class="content-title" id="contentTitle">Executive Dashboard</div>
+        <div class="content-subtitle" id="contentSubtitle">Select a module to access advanced OIM tools and analytics</div>
+      </div>
+
+      <div class="content-body">
+        <div class="welcome-screen" id="welcomeScreen">
+          <div class="welcome-content">
+            <div class="welcome-icon">🎯</div>
+            <div class="welcome-title">OIM Executive Center</div>
+            <div class="welcome-text">
+              Access powerful enterprise-grade tools for strategic decision making, safety management, performance analytics, and operational excellence.
+            </div>
+          </div>
+        </div>
+
+        <iframe id="moduleFrame" style="display: none;"></iframe>
+
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading module...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentModule = null;
+
+    function toggleMobileMenu() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('open');
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('sidebar');
+        const menuButton = document.querySelector('.menu-button');
+        
+        if (!sidebar.contains(e.target) && !menuButton.contains(e.target)) {
+          sidebar.classList.remove('open');
+        }
+      }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        document.getElementById('sidebar').classList.remove('open');
+      }
+    });
+
+    // Check session on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      checkSession();
+    });
+
+    // Refresh session every 5 minutes
+    setInterval(checkSession, 5 * 60 * 1000);
+
+    // ============================================
+    // PWA CONFIGURATION
+    // ============================================
+    
+    // BASE_PATH for subdirectory deployment (GitHub Pages, etc)
+    const BASE_PATH = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+    
+    // FIXED loadModule function - works on localhost AND GitHub Pages
+    function loadModule(path, title, subtitle) {
+      const frame = document.getElementById('moduleFrame');
+      const welcomeScreen = document.getElementById('welcomeScreen');
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      const contentTitle = document.getElementById('contentTitle');
+      const contentSubtitle = document.getElementById('contentSubtitle');
+      
+      // Update active state
+      document.querySelectorAll('.module-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // Safely get the clicked element
+      if (typeof event !== 'undefined' && event && event.target) {
+        const moduleItem = event.target.closest('.module-item');
+        if (moduleItem) {
+          moduleItem.classList.add('active');
+        }
+      }
+      
+      // Show loading
+      loadingOverlay.style.display = 'flex';
+      welcomeScreen.style.display = 'none';
+      frame.style.display = 'none';
+      
+      // Update header
+      contentTitle.textContent = title;
+      contentSubtitle.textContent = subtitle;
+      
+      // Close mobile menu if open
+      if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('open');
+      }
+      
+      // FIXED: Proper path handling for both localhost and GitHub Pages
+      let finalPath = path;
+      
+      // Ensure path starts with ./ for relative path
+      if (!path.startsWith('./') && !path.startsWith('/') && !path.startsWith('http')) {
+        finalPath = './' + path;
+      }
+      
+      // Load module
+      setTimeout(() => {
+        frame.src = finalPath;
+        frame.onload = () => {
+          loadingOverlay.style.display = 'none';
+          frame.style.display = 'block';
+        };
+        frame.onerror = () => {
+          console.error('Failed to load module:', finalPath);
+          loadingOverlay.style.display = 'none';
+          alert('Failed to load module. Please check console for details.');
+        };
+        currentModule = { path, title, subtitle };
+      }, 200);
+    }
+
+    // ============================================
+    // SERVICE WORKER REGISTRATION
+    // ============================================
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then((registration) => {
+            console.log('✅ Service Worker registered:', registration.scope);
+            
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              console.log('🔄 New Service Worker found');
+              
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // Show update notification
+                  if (confirm('New version available! Reload to update?')) {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                  }
+                }
+              });
+            });
+          })
+          .catch((error) => {
+            console.error('❌ Service Worker registration failed:', error);
+          });
+        
+        // Handle controller change
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          window.location.reload();
+        });
+      });
+    }
+
+    // ============================================
+    // PWA INSTALL PROMPT
+    // ============================================
+    let deferredPrompt;
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      // Show custom install button (optional)
+      console.log('💾 PWA Install available');
+    });
+    
+    // Function to trigger install (can be called from button)
+    function installPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('✅ PWA installed');
+          }
+          deferredPrompt = null;
+        });
+      }
+    }
+    
+    // Detect if running as PWA
+    window.addEventListener('DOMContentLoaded', () => {
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                    window.navigator.standalone === true;
+      
+      if (isPWA) {
+        console.log('📱 Running as installed PWA');
+        document.body.classList.add('pwa-mode');
+      }
+    });
+
+    // ============================================
+    // OFFLINE DETECTION
+    // ============================================
+    function updateOnlineStatus() {
+      const status = navigator.onLine ? 'online' : 'offline';
+      console.log('📡 Connection status:', status);
+      
+      if (!navigator.onLine) {
+        // Show offline indicator (optional)
+        document.body.classList.add('offline-mode');
+      } else {
+        document.body.classList.remove('offline-mode');
+      }
+    }
+    
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+
+    // ============================================
+    // IOS VIEWPORT FIX
+    // ============================================
+    function setIOSViewport() {
+      const viewport = document.querySelector('meta[name=viewport]');
+      if (viewport && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        viewport.setAttribute('content', 
+          'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover'
+        );
+      }
+    }
+    setIOSViewport();
+  </script>
+</body>
+</html>

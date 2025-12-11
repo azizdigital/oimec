@@ -1,0 +1,3444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Condition Dashboard - Personal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .control-panel {
+            background: #f1f5f9;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: #1e293b;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .control-btn:hover {
+            background: #334155;
+        }
+
+        .control-btn.csv {
+            background: #0284c7;
+        }
+
+        .control-btn.excel {
+            background: #059669;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .summary-bar {
+            background: #f8fafc;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 100px;
+            border-left: 3px solid;
+        }
+
+        .stat-card.running { border-left-color: #3b82f6; }
+        .stat-card.available { border-left-color: #22c55e; }
+        .stat-card.unavailable { border-left-color: #ef4444; }
+        .stat-card.deficient { border-left-color: #f59e0b; }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .progress-container {
+            flex: 1;
+            min-width: 200px;
+            margin-left: 20px;
+        }
+
+        .progress-label {
+            font-size: 11px;
+            color: #475569;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 4px;
+            height: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+            transition: width 0.5s ease;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            background: rgba(30, 41, 59, 0.1);
+            color: #1e293b;
+        }
+
+        .tab.active {
+            background: white;
+            color: #1e293b;
+            border-bottom: 2px solid #1e293b;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Card Grid Layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        .section-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .section-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-card.has-issues {
+            border-left: 4px solid #ef4444;
+        }
+
+        .section-card.has-warnings {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .section-card.all-good {
+            border-left: 4px solid #22c55e;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-summary {
+            font-size: 11px;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-body {
+            padding: 0;
+        }
+
+        .equipment-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .equipment-table th {
+            background: #f8fafc;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 11px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .equipment-table td {
+            padding: 6px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+
+        .equipment-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .equipment-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .equipment-name {
+            font-weight: 500;
+            color: #1e293b;
+            min-width: 120px;
+			font-size: 13px;
+        }
+
+        .status-cell {
+            width: 110px;
+            text-align: center;
+        }
+
+        .status-select {
+            padding: 3px 6px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background: white;
+            font-size: 11px;
+            cursor: pointer;
+            width: 100px;
+            text-align: center;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: #1e293b;
+            text-align: left;
+        }
+
+        .status-running {
+            background: #dbeafe;
+            border-color: #3b82f6;
+            color: #1e40af;
+        }
+
+        .status-available {
+            background: #f0fdf4;
+            border-color: #22c55e;
+            color: #15803d;
+        }
+
+        .status-unavailable {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #dc2626;
+        }
+
+        .status-deficient {
+            background: #fffbeb;
+            border-color: #f59e0b;
+            color: #d97706;
+        }
+
+        /* NEW: Comment Icon Pattern Styles */
+        .comment-cell {
+            min-width: 150px;
+            position: relative;
+        }
+
+        .comment-icon-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background: #f9fafb;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            padding: 0;
+        }
+
+        .comment-icon-btn:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .comment-icon-btn.has-content {
+            background: #dbeafe;
+            border-color: #3b82f6;
+        }
+
+        .comment-icon-btn.has-content:hover {
+            background: #bfdbfe;
+        }
+
+		.comment-textarea {
+			display: none;
+			width: 100%;
+			padding: 4px 6px;
+			border: 1px solid #d1d5db;
+			border-radius: 4px;
+			font-size: 11px;
+			resize: none;  /* Changed from vertical */
+			min-height: 24px;  /* Changed - 1 line only */
+			height: 24px;  /* Start with 1 line */
+			max-height: 120px;  /* Allow more lines */
+			font-family: inherit;
+			transition: all 0.3s ease;
+			overflow: hidden;  /* Hide scrollbar initially */
+			line-height: 1.5;  /* Better line spacing */
+        }
+
+        .comment-textarea.expanded {
+            display: block;
+            border-left: 3px solid #3b82f6;
+            background: #eff6ff;
+        }
+
+        .comment-textarea.required {
+            display: block;
+            border-left: 3px solid #ef4444;
+            background: #fef2f2;
+            min-height: 60px;
+        }
+
+        .comment-textarea.required::placeholder {
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: #1e293b;
+        }
+
+        .comment-cell.textarea-visible .comment-icon-btn {
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1001;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #ef4444;
+        }
+
+        .notification.warning {
+            background: #f59e0b;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+
+        /* Troubleshooting Styles */
+        .troubleshooting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
+        }
+
+        .troubleshooting-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .troubleshooting-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #1e293b;
+        }
+
+        .troubleshooting-icon {
+            text-align: center;
+            padding: 30px 20px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .troubleshooting-content {
+            padding: 25px;
+        }
+
+        .troubleshooting-content h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .troubleshooting-content p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .troubleshooting-features {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .troubleshooting-features span {
+            font-size: 13px;
+            color: #475569;
+            padding: 5px 0;
+            border-left: 3px solid #1e293b;
+            padding-left: 12px;
+        }
+
+        .troubleshooting-footer {
+            background: #f8fafc;
+            padding: 15px 25px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e293b;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .troubleshooting-card:hover .troubleshooting-footer {
+            background: #1e293b;
+            color: white;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .container {
+            background: #334155;
+        }
+
+        body.dark-mode .control-panel {
+            background: #475569;
+        }
+
+        body.dark-mode .summary-bar {
+            background: #475569;
+        }
+
+        body.dark-mode .stat-card {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .tabs {
+            background: #475569;
+        }
+
+        body.dark-mode .tab.active {
+            background: #334155;
+            color: #60a5fa;
+        }
+
+        body.dark-mode .section-card {
+            background: #1e293b;
+            border-color: #475569;
+        }
+
+        body.dark-mode .equipment-table {
+            background: #1e293b;
+        }
+
+        body.dark-mode .equipment-table th {
+            background: #475569;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .equipment-table tr:hover {
+            background: #475569;
+        }
+
+        body.dark-mode .card-header {
+            background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+        }
+
+        body.dark-mode .comment-icon-btn {
+            background: #475569;
+            border-color: #64748b;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .comment-icon-btn:hover {
+            background: #64748b;
+        }
+
+        body.dark-mode .comment-icon-btn.has-content {
+            background: #1e40af;
+            border-color: #3b82f6;
+        }
+
+        body.dark-mode .comment-textarea.expanded {
+            background: #1e3a5f;
+            border-color: #3b82f6;
+            color: #e2e8f0;
+        }
+
+        /* Dark mode for troubleshooting */
+        body.dark-mode .troubleshooting-card {
+            background: #1e293b;
+            border-color: #475569;
+        }
+
+        body.dark-mode .troubleshooting-icon {
+            background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+        }
+
+        body.dark-mode .troubleshooting-content h3 {
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .troubleshooting-content p {
+            color: #94a3b8;
+        }
+
+        body.dark-mode .troubleshooting-features span {
+            color: #cbd5e1;
+            border-left-color: #60a5fa;
+        }
+
+        body.dark-mode .troubleshooting-footer {
+            background: #475569;
+            color: #e2e8f0;
+            border-top-color: #64748b;
+        }
+
+        body.dark-mode .troubleshooting-card:hover .troubleshooting-footer {
+            background: #60a5fa;
+            color: #1e293b;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 5px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .tab {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+            
+            .tab-content {
+                padding: 15px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .control-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-btn {
+                margin: 2px 0;
+            }
+
+            .summary-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .progress-container {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .troubleshooting-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 15px 0;
+            }
+
+            .troubleshooting-content {
+                padding: 20px;
+            }
+
+            .troubleshooting-content h3 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .equipment-table {
+                font-size: 11px;
+            }
+            
+            .status-select {
+                font-size: 10px;
+                width: 90px;
+            }
+            
+            .comment-textarea {
+                font-size: 10px;
+            }
+            
+            .comment-icon-btn {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Equipment Condition Dashboard</h1>
+            <div class="subtitle">Personal Equipment Monitoring</div>
+        </div>
+
+        <div class="notification" id="notification"></div>
+        <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</button>
+
+        <div class="control-panel">
+            <input type="date" id="inspectionDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px;">
+            <span style="margin: 0 10px; color: #64748b;">|</span>
+            <button class="control-btn" onclick="saveData()">💾 Save</button>
+            <button class="control-btn" onclick="document.getElementById('fileInput').click()">📂 Load</button>
+            <button class="control-btn csv" onclick="exportCSV()">📊 CSV</button>
+            <button class="control-btn excel" onclick="exportExcel()">📈 Excel</button>
+            <button class="control-btn" onclick="generateFullReport()">📋 Report</button>
+            <button class="control-btn" onclick="generateProblemReport()">⚠️ Problems</button>
+            <button class="control-btn" onclick="clearAllData()">🗑️ Clear</button>
+            <input type="file" id="fileInput" class="file-input" accept=".json" onchange="loadData(event)">
+        </div>
+
+        <div class="summary-bar">
+            <div class="stat-card running">
+                <div class="stat-number" id="running-count">0</div>
+                <div class="stat-label">🔄 Running</div>
+            </div>
+            <div class="stat-card available">
+                <div class="stat-number" id="available-count">0</div>
+                <div class="stat-label">✅ Available</div>
+            </div>
+            <div class="stat-card unavailable">
+                <div class="stat-number" id="unavailable-count">0</div>
+                <div class="stat-label">❌ Unavailable</div>
+            </div>
+            <div class="stat-card deficient">
+                <div class="stat-number" id="deficient-count">0</div>
+                <div class="stat-label">⚠️ Deficient</div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-label">Overall Equipment Health</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="health-progress"></div>
+                </div>
+                <div style="font-size: 10px; color: #64748b; margin-top: 2px;" id="health-percentage">0%</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('irong-barat-a')">Irong Barat A</button>
+            <button class="tab" onclick="showTab('irong-barat-b')">Irong Barat B</button>
+            <button class="tab" onclick="showTab('irong-barat-c')">Irong Barat C</button>
+            <button class="tab" onclick="showTab('troubleshooting')">🔧 Troubleshooting</button>
+        </div>
+		<!-- Irong Barat A -->
+        <div id="irong-barat-a" class="tab-content active">
+            <div class="cards-grid">
+                <!-- Fire Water Pump -->
+                <div class="section-card all-good" id="card-fire-water-pump">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔥</span>
+                            <span>Fire Water Pump</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-fire-water-pump">3/3 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">⚙️ P-590A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-water-pump">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">⚙️ P-590B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-water-pump">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">⚙️ P-590C</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-water-pump">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Fire System -->
+                <div class="section-card all-good" id="card-fire-system">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔥</span>
+                            <span>Fire System</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-fire-system">4/4 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">🚨 Deluge System</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">💧 Qrts Sprinkler</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">🔥 Fire Monitor</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">🧯 Port. Fire Ext.</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- HVAC System -->
+                <div class="section-card all-good" id="card-hvac-system">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>❄️</span>
+                            <span>HVAC System</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-hvac-system">4/4 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">Production Ctrl Room</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="hvac-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">Workshop & Store</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="hvac-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">SK-175 Ctrl Room</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="hvac-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">Living Quaters</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="hvac-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Brucker -->
+                <div class="section-card all-good" id="card-brucker">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔧</span>
+                            <span>Brucker</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-brucker">2/2 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">🔵 ME-517A (BLUE)</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="brucker">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">🔴 ME-517B (RED)</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="brucker">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Crane -->
+                <div class="section-card all-good" id="card-crane">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🏗️</span>
+                            <span>Crane</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-crane">2/2 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">🏗️ ME-400</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="crane">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">🏗️ ME-450</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="crane">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Generator -->
+                <div class="section-card all-good" id="card-generator">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>⚡</span>
+                            <span>Generator</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-generator">4/4 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">G-410A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">G-410B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">G-410C</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">G-500</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Gas Compressor -->
+                <div class="section-card all-good" id="card-gas-compressor">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔄</span>
+                            <span>Gas Compressor</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-gas-compressor">1/1 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">SK-175</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="gas-compressor">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Air Compr./Dryer -->
+                <div class="section-card all-good" id="card-air-compressor">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>💨</span>
+                            <span>Air Compr./Dryer</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-air-compressor">5/5 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">C-510A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="air-compressor">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">C-510B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="air-compressor">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">C-520A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="air-compressor">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">C-520B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="air-compressor">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">ME-550</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="air-compressor">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- MOL Pump -->
+                <div class="section-card all-good" id="card-mol-pump">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🛢️</span>
+                            <span>MOL Pump</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-mol-pump">3/3 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">P-160A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="mol-pump">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">P-160B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="mol-pump">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">P-160C</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="mol-pump">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Caisson Pump -->
+                <div class="section-card all-good" id="card-caisson-pump">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔧</span>
+                            <span>Caisson Pump</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-caisson-pump">2/2 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">P-825</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="caisson-pump">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">P-830</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="caisson-pump">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Diesel Sys./Pump -->
+                <div class="section-card all-good" id="card-diesel-system">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>⛽</span>
+                            <span>Diesel System/Pump</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-diesel-system">4/4 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">CN-300A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="diesel-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">CN-300B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="diesel-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">P-810A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="diesel-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">P-810A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="diesel-system">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Drain Vessel Pump -->
+                <div class="section-card all-good" id="card-drain-vessel-pump">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔧</span>
+                            <span>Drain Vessel Pump</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-drain-vessel-pump">2/2 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">P-800A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="drain-vessel-pump">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">P-800B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="drain-vessel-pump">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Potable Water -->
+                <div class="section-card all-good" id="card-potable-water">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>💧</span>
+                            <span>Potable Water</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-potable-water">3/3 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">P-830A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="potable-water">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">P-830B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="potable-water">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">WM-440</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="potable-water">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SDV (Fvo/Lvo) -->
+                <div class="section-card all-good" id="card-sdv">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔧</span>
+                            <span>SDV (Fvo/Lvo)</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-sdv">7/7 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">SDV-840</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">SDV-845</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">SDV-860</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">SDV-865</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">SDV-870</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">SDV-880</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">SDV-886</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Flare Ignitor Panel -->
+                <div class="section-card all-good" id="card-flare-ignitor">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔥</span>
+                            <span>Flare Ignitor Panel</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-flare-ignitor">1/1 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">ME-180</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="flare-ignitor">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+		<!-- Irong Barat B -->
+        <div id="irong-barat-b" class="tab-content">
+            <div class="cards-grid">
+                <!-- Fire System B -->
+                <div class="section-card all-good" id="card-fire-system-b">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔥</span>
+                            <span>Fire System</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-fire-system-b">2/2 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">Fire Monitor</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-system-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">Port. Fire Ext.</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-system-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Crane B -->
+                <div class="section-card all-good" id="card-crane-b">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🏗️</span>
+                            <span>Crane</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-crane-b">1/1 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">ME-290</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="crane-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Generator B -->
+                <div class="section-card all-good" id="card-generator-b">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>⚡</span>
+                            <span>Generator</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-generator-b">8/8 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">TEG-301A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-301B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-301C</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-301D</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-301E</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-305A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-305B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">G-401</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SDV B -->
+                <div class="section-card all-good" id="card-sdv-b">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔧</span>
+                            <span>SDV (Fvo/Lvo)</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-sdv-b">2/2 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">SDV-170</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">SDV-174</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv-b">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Irong Barat C -->
+        <div id="irong-barat-c" class="tab-content">
+            <div class="cards-grid">
+                <!-- Fire System C -->
+                <div class="section-card all-good" id="card-fire-system-c">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔥</span>
+                            <span>Fire System</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-fire-system-c">2/2 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">Fire Monitor</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-system-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">Port. Fire Ext.</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="fire-system-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Crane C -->
+                <div class="section-card all-good" id="card-crane-c">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🏗️</span>
+                            <span>Crane</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-crane-c">1/1 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">ME-290</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="crane-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Generator C -->
+                <div class="section-card all-good" id="card-generator-c">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>⚡</span>
+                            <span>Generator</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-generator-c">8/8 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">TEG-301A</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-301B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-301C</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-301D</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-301E</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">TEG-305A/B</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">HPG</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">G-401</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="generator-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SDV C -->
+                <div class="section-card all-good" id="card-sdv-c">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🔧</span>
+                            <span>SDV (Fvo/Lvo)</span>
+                        </div>
+                        <div class="card-summary">
+                            <span id="summary-sdv-c">2/2 OK</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="equipment-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="equipment-name">SDV-170</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="equipment-name">SDV-174</td>
+                                    <td class="status-cell"><select class="status-select" onchange="toggleComment(this)" data-section="sdv-c">
+                                        <option value="running">🔄 Running</option>
+                                        <option value="available" selected>✅ Available</option>
+                                        <option value="deficient">⚠️ Deficient</option>
+                                        <option value="unavailable">❌ Unavailable</option>
+                                    </select></td>
+                                    <td class="comment-cell">
+                                        <button class="comment-icon-btn" onclick="expandComment(this)">✏️</button>
+                                        <textarea class="comment-textarea" placeholder="Add your note here..." onblur="handleCommentBlur(this)"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Troubleshooting Tab -->
+        <div id="troubleshooting" class="tab-content">
+            <div class="troubleshooting-header">
+                <h2 style="text-align: center; margin-bottom: 20px; color: #1e293b;">
+                    🔧 Equipment Troubleshooting Center
+                </h2>
+                <p style="text-align: center; color: #64748b; margin-bottom: 30px;">
+                    Select a category below to access troubleshooting guides and procedures
+                </p>
+            </div>
+            
+            <div class="troubleshooting-grid">
+                <!-- Turbine Troubleshooting -->
+                <div class="troubleshooting-card" onclick="window.open('troubleshooting/turbine.html', '_blank')">
+                    <div class="troubleshooting-icon">
+                        <span style="font-size: 48px;">🌪️</span>
+                    </div>
+                    <div class="troubleshooting-content">
+                        <h3>Turbine Systems</h3>
+                        <p>Comprehensive troubleshooting guides for gas turbines, steam turbines, and related components</p>
+                        <div class="troubleshooting-features">
+                            <span>• Diagnostic procedures</span>
+                            <span>• Common failure modes</span>
+                            <span>• Performance optimization</span>
+                            <span>• Maintenance schedules</span>
+                        </div>
+                    </div>
+                    <div class="troubleshooting-footer">
+                        <span>Click to access →</span>
+                    </div>
+                </div>
+
+                <!-- Pump Troubleshooting -->
+                <div class="troubleshooting-card" onclick="window.open('troubleshooting/pump.html', '_blank')">
+                    <div class="troubleshooting-icon">
+                        <span style="font-size: 48px;">⚙️</span>
+                    </div>
+                    <div class="troubleshooting-content">
+                        <h3>Pump Systems</h3>
+                        <p>Complete troubleshooting reference for all types of pumps and pumping systems</p>
+                        <div class="troubleshooting-features">
+                            <span>• Centrifugal pumps</span>
+                            <span>• Positive displacement</span>
+                            <span>• Cavitation analysis</span>
+                            <span>• Performance curves</span>
+                        </div>
+                    </div>
+                    <div class="troubleshooting-footer">
+                        <span>Click to access →</span>
+                    </div>
+                </div>
+
+                <!-- Process Troubleshooting -->
+                <div class="troubleshooting-card" onclick="window.open('troubleshooting/process.html', '_blank')">
+                    <div class="troubleshooting-icon">
+                        <span style="font-size: 48px;">🏭</span>
+                    </div>
+                    <div class="troubleshooting-content">
+                        <h3>Process Systems</h3>
+                        <p>Process optimization and troubleshooting for production equipment and systems</p>
+                        <div class="troubleshooting-features">
+                            <span>• Process optimization</span>
+                            <span>• Control systems</span>
+                            <span>• Safety procedures</span>
+                            <span>• Quality control</span>
+                        </div>
+                    </div>
+                    <div class="troubleshooting-footer">
+                        <span>Click to access →</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+	<script>
+        // ============================================
+        // NEW: ICON PATTERN FUNCTIONS
+        // ============================================
+        
+        function expandComment(iconBtn) {
+            const cell = iconBtn.closest('.comment-cell');
+            const textarea = cell.querySelector('.comment-textarea');
+            
+            // Hide icon, show and focus textarea
+            cell.classList.add('textarea-visible');
+            textarea.classList.add('expanded');
+			textarea.style.height = '24px';
+            textarea.focus();
+        }
+
+		function autoExpandTextarea(textarea) {
+			textarea.style.height = '24px'; // Reset height
+			const scrollHeight = textarea.scrollHeight;
+			if (scrollHeight > 24) {
+				textarea.style.height = Math.min(scrollHeight, 120) + 'px';
+			}
+		}
+
+        function handleCommentBlur(textarea) {
+            const cell = textarea.closest('.comment-cell');
+            const iconBtn = cell.querySelector('.comment-icon-btn');
+            const row = textarea.closest('tr');
+            const statusSelect = row.querySelector('.status-select');
+            const status = statusSelect.value;
+            
+            // Check if textarea has content
+            const hasContent = textarea.value.trim() !== '';
+            
+            // If unavailable or deficient, ALWAYS keep textarea visible (required)
+            if (status === 'unavailable' || status === 'deficient') {
+                textarea.classList.add('required');
+                textarea.classList.remove('expanded');
+                cell.classList.add('textarea-visible');
+                return;
+            }
+            
+            // For running or available status
+            if (hasContent) {
+                // Keep textarea expanded with blue styling
+                textarea.classList.add('expanded');
+                textarea.classList.remove('required');
+                cell.classList.add('textarea-visible');
+                iconBtn.classList.add('has-content');
+            } else {
+                // Collapse back to icon
+                textarea.classList.remove('expanded');
+                textarea.classList.remove('required');
+                cell.classList.remove('textarea-visible');
+                iconBtn.classList.remove('has-content');
+            }
+            
+            // Auto-save after blur
+            saveEquipmentToMaster();
+        }
+
+        function updateCommentIconState(row) {
+            const cell = row.querySelector('.comment-cell');
+            const iconBtn = cell.querySelector('.comment-icon-btn');
+            const textarea = cell.querySelector('.comment-textarea');
+            
+            if (textarea.value.trim() !== '') {
+                iconBtn.classList.add('has-content');
+            } else {
+                iconBtn.classList.remove('has-content');
+            }
+        }
+
+        // ============================================
+        // TAB NAVIGATION
+        // ============================================
+        
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // ============================================
+        // TOGGLE COMMENT - UPDATED FOR ICON PATTERN
+        // ============================================
+        
+        function toggleComment(selectElement) {
+            const row = selectElement.closest('tr');
+            const cell = row.querySelector('.comment-cell');
+            const iconBtn = cell.querySelector('.comment-icon-btn');
+            const textarea = cell.querySelector('.comment-textarea');
+            const selectedValue = selectElement.value;
+            const sectionName = selectElement.getAttribute('data-section');
+
+            // Update select styling based on status
+            selectElement.className = 'status-select';
+            if (selectedValue === 'running') {
+                selectElement.classList.add('status-running');
+                // Optional comment - collapse to icon if empty
+                if (!textarea.value.trim()) {
+                    textarea.classList.remove('required');
+                    textarea.classList.remove('expanded');
+                    cell.classList.remove('textarea-visible');
+                    iconBtn.classList.remove('has-content');
+                } else {
+                    // Keep expanded if has content
+                    textarea.classList.remove('required');
+                    textarea.classList.add('expanded');
+                    cell.classList.add('textarea-visible');
+                    iconBtn.classList.add('has-content');
+                }
+            } else if (selectedValue === 'available') {
+                selectElement.classList.add('status-available');
+                // Optional comment - collapse to icon if empty
+                if (!textarea.value.trim()) {
+                    textarea.classList.remove('required');
+                    textarea.classList.remove('expanded');
+                    cell.classList.remove('textarea-visible');
+                    iconBtn.classList.remove('has-content');
+                } else {
+                    // Keep expanded if has content
+                    textarea.classList.remove('required');
+                    textarea.classList.add('expanded');
+                    cell.classList.add('textarea-visible');
+                    iconBtn.classList.add('has-content');
+                }
+            } else if (selectedValue === 'unavailable') {
+                selectElement.classList.add('status-unavailable');
+                // Required comment - always show textarea with red styling
+                textarea.classList.add('required');
+                textarea.classList.remove('expanded');
+                cell.classList.add('textarea-visible');
+                textarea.placeholder = 'Required: Explain issue...';
+                textarea.focus();
+            } else if (selectedValue === 'deficient') {
+                selectElement.classList.add('status-deficient');
+                // Required comment - always show textarea with red styling
+                textarea.classList.add('required');
+                textarea.classList.remove('expanded');
+                cell.classList.add('textarea-visible');
+                textarea.placeholder = 'Required: Explain issue...';
+                textarea.focus();
+            }
+
+            // Update section summary and card status
+            updateSectionSummary(sectionName);
+            
+            // Update overall statistics
+            updateStatistics();
+            
+            // Auto-save
+            saveEquipmentToMaster();
+        }
+
+        // ============================================
+        // SECTION SUMMARY UPDATE
+        // ============================================
+        
+        function updateSectionSummary(sectionName) {
+            const card = document.getElementById(`card-${sectionName}`);
+            if (!card) return;
+
+            const selects = card.querySelectorAll('.status-select');
+            let running = 0, available = 0, unavailable = 0, deficient = 0;
+
+            selects.forEach(select => {
+                const value = select.value;
+                if (value === 'running') running++;
+                else if (value === 'available') available++;
+                else if (value === 'unavailable') unavailable++;
+                else if (value === 'deficient') deficient++;
+            });
+
+            const total = selects.length;
+            const okCount = running + available;
+            const summaryElement = document.getElementById(`summary-${sectionName}`);
+            
+            if (summaryElement) {
+                if (unavailable > 0) {
+                    summaryElement.textContent = `${unavailable} Unavailable`;
+                    card.className = 'section-card has-issues';
+                } else if (deficient > 0) {
+                    summaryElement.textContent = `${deficient} Deficient`;
+                    card.className = 'section-card has-warnings';
+                } else {
+                    summaryElement.textContent = `${okCount}/${total} OK`;
+                    card.className = 'section-card all-good';
+                }
+            }
+        }
+
+        // ============================================
+        // STATISTICS UPDATE
+        // ============================================
+        
+        function updateStatistics() {
+            const allSelects = document.querySelectorAll('.status-select');
+            let running = 0, available = 0, unavailable = 0, deficient = 0;
+
+            allSelects.forEach(select => {
+                const value = select.value;
+                if (value === 'running') running++;
+                else if (value === 'available') available++;
+                else if (value === 'unavailable') unavailable++;
+                else if (value === 'deficient') deficient++;
+            });
+
+            // Update counters
+            document.getElementById('running-count').textContent = running;
+            document.getElementById('available-count').textContent = available;
+            document.getElementById('unavailable-count').textContent = unavailable;
+            document.getElementById('deficient-count').textContent = deficient;
+
+            // Update progress bar (Running + Available = Healthy)
+            const total = allSelects.length;
+            const healthyCount = running + available;
+            const healthPercentage = Math.round((healthyCount / total) * 100);
+            document.getElementById('health-progress').style.width = healthPercentage + '%';
+            document.getElementById('health-percentage').textContent = healthPercentage + '% Healthy';
+        }
+
+        // ============================================
+        // SAVE DATA
+        // ============================================
+        
+        function saveData() {
+            const data = {
+                metadata: {
+                    reportDate: new Date().toISOString(),
+                    inspectionDate: document.getElementById('inspectionDate').value,
+                    version: "Personal v3.1 - Icon Pattern"
+                },
+                equipmentData: collectEquipmentData(),
+                statistics: {
+                    running: document.getElementById('running-count').textContent,
+                    available: document.getElementById('available-count').textContent,
+                    unavailable: document.getElementById('unavailable-count').textContent,
+                    deficient: document.getElementById('deficient-count').textContent,
+                    healthPercentage: document.getElementById('health-percentage').textContent
+                }
+            };
+
+            const jsonString = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            const dateStr = new Date().toISOString().split('T')[0];
+            const timeStr = new Date().toTimeString().split(' ')[0].replace(/:/g, '');
+            
+            a.href = url;
+            a.download = `Equipment_Report_${dateStr}_${timeStr}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Save to master storage for handover sync
+            saveEquipmentToMaster();
+
+            showNotification('Report saved! 💾 (Synced to handover)', 'success');
+        }
+
+        // ============================================
+        // COLLECT EQUIPMENT DATA
+        // ============================================
+        
+        function collectEquipmentData() {
+            const data = {};
+            const tabs = ['irong-barat-a', 'irong-barat-b', 'irong-barat-c'];
+            
+            tabs.forEach(tabId => {
+                data[tabId] = {};
+                const tabContent = document.getElementById(tabId);
+                const rows = tabContent.querySelectorAll('tbody tr');
+                
+                rows.forEach(row => {
+                    const equipmentName = row.querySelector('.equipment-name');
+                    if (equipmentName) {
+                        const name = equipmentName.textContent.trim();
+                        const status = row.querySelector('.status-select').value;
+                        const comment = row.querySelector('.comment-textarea').value;
+                        
+                        data[tabId][name] = {
+                            status: status,
+                            comment: comment
+                        };
+                    }
+                });
+            });
+            
+            return data;
+        }
+
+        // ============================================
+        // LOAD DATA
+        // ============================================
+        
+        function loadData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Load metadata
+                    if (data.metadata) {
+                        document.getElementById('inspectionDate').value = data.metadata.inspectionDate || '';
+                    }
+
+                    // Load equipment data
+                    if (data.equipmentData) {
+                        restoreEquipmentData(data.equipmentData);
+                    }
+
+                    showNotification('Report loaded! 📂', 'success');
+                    updateStatistics();
+                    
+                } catch (error) {
+                    showNotification('Error loading file! ❌', 'error');
+                    console.error('Load error:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ============================================
+        // RESTORE EQUIPMENT DATA - UPDATED FOR ICON PATTERN
+        // ============================================
+        
+        function restoreEquipmentData(equipmentData) {
+            Object.keys(equipmentData).forEach(tabId => {
+                const tabContent = document.getElementById(tabId);
+                if (!tabContent) return;
+                
+                const rows = tabContent.querySelectorAll('tbody tr');
+                
+                rows.forEach(row => {
+                    const equipmentNameElement = row.querySelector('.equipment-name');
+                    if (!equipmentNameElement) return;
+                    
+                    const equipmentName = equipmentNameElement.textContent.trim();
+                    
+                    if (equipmentData[tabId][equipmentName]) {
+                        const equipmentInfo = equipmentData[tabId][equipmentName];
+                        const statusSelect = row.querySelector('.status-select');
+                        const cell = row.querySelector('.comment-cell');
+                        const iconBtn = cell.querySelector('.comment-icon-btn');
+                        const textarea = cell.querySelector('.comment-textarea');
+                        
+                        // Set status
+                        statusSelect.value = equipmentInfo.status;
+                        
+                        // Set comment
+                        textarea.value = equipmentInfo.comment;
+                        
+                        // Update icon and textarea visibility based on status and content
+                        if (equipmentInfo.status === 'unavailable' || equipmentInfo.status === 'deficient') {
+                            // Required - show textarea with red styling
+                            textarea.classList.add('required');
+                            textarea.classList.remove('expanded');
+                            cell.classList.add('textarea-visible');
+                        } else if (equipmentInfo.comment.trim() !== '') {
+                            // Has content - show textarea with blue styling and blue icon
+                            textarea.classList.add('expanded');
+                            textarea.classList.remove('required');
+                            cell.classList.add('textarea-visible');
+                            iconBtn.classList.add('has-content');
+                        } else {
+                            // Empty - show icon only
+                            textarea.classList.remove('expanded');
+                            textarea.classList.remove('required');
+                            cell.classList.remove('textarea-visible');
+                            iconBtn.classList.remove('has-content');
+                        }
+                        
+                        // Trigger the toggle comment function to update styling
+                        toggleComment(statusSelect);
+                    }
+                });
+            });
+
+            // Update all section summaries after loading data
+            const allSections = document.querySelectorAll('[data-section]');
+            const uniqueSections = [...new Set(Array.from(allSections).map(el => el.getAttribute('data-section')))];
+            uniqueSections.forEach(sectionName => {
+                updateSectionSummary(sectionName);
+            });
+            
+            // Update master storage after loading file
+            saveEquipmentToMaster();
+        }
+
+        // ============================================
+        // EXPORT CSV
+        // ============================================
+        
+        function exportCSV() {
+            const data = collectEquipmentData();
+            const inspectionDate = document.getElementById('inspectionDate').value || 'Not specified';
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Add metadata header
+            csvContent += "Equipment Condition Report - CSV Export\n";
+            csvContent += `Date:,${inspectionDate}\n\n`;
+            
+            // Add column headers
+            csvContent += "Section,Equipment Name,Status,Comment\n";
+            
+            // Add data
+            Object.keys(data).forEach(section => {
+                Object.keys(data[section]).forEach(equipment => {
+                    const info = data[section][equipment];
+                    const sectionName = section.replace(/-/g, ' ').toUpperCase();
+                    csvContent += `"${sectionName}","${equipment}","${info.status}","${info.comment.replace(/"/g, '""')}"\n`;
+                });
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            
+            const dateStr = new Date().toISOString().split('T')[0];
+            link.setAttribute("download", `Equipment_Report_${dateStr}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('CSV exported! 📊', 'success');
+        }
+
+        // ============================================
+        // EXPORT EXCEL
+        // ============================================
+        
+        function exportExcel() {
+            const data = collectEquipmentData();
+            const inspectionDate = document.getElementById('inspectionDate').value || 'Not specified';
+
+            let tsvContent = "data:text/tab-separated-values;charset=utf-8,";
+            
+            // Add metadata
+            tsvContent += "Equipment Condition Report - Excel Export\n";
+            tsvContent += `Date:\t${inspectionDate}\n\n`;
+            
+            // Add headers
+            tsvContent += "Section\tEquipment Name\tStatus\tComment\n";
+            
+            // Add data
+            Object.keys(data).forEach(section => {
+                Object.keys(data[section]).forEach(equipment => {
+                    const info = data[section][equipment];
+                    const sectionName = section.replace(/-/g, ' ').toUpperCase();
+                    tsvContent += `${sectionName}\t${equipment}\t${info.status}\t${info.comment}\n`;
+                });
+            });
+
+            const encodedUri = encodeURI(tsvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            
+            const dateStr = new Date().toISOString().split('T')[0];
+            link.setAttribute("download", `Equipment_Report_${dateStr}.xls`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('Excel exported! 📈', 'success');
+        }
+
+        // ============================================
+        // CLEAR ALL DATA
+        // ============================================
+        
+        function clearAllData() {
+            if (confirm('Clear all data? This cannot be undone.')) {
+                // Reset all dropdowns
+                const allSelects = document.querySelectorAll('.status-select');
+                allSelects.forEach(select => {
+                    select.value = 'available';
+                    toggleComment(select);
+                });
+
+                // Clear all textareas and reset to icon view
+                const allTextareas = document.querySelectorAll('.comment-textarea');
+                allTextareas.forEach(textarea => {
+                    textarea.value = '';
+                    const cell = textarea.closest('.comment-cell');
+                    const iconBtn = cell.querySelector('.comment-icon-btn');
+                    
+                    textarea.classList.remove('expanded');
+                    textarea.classList.remove('required');
+                    cell.classList.remove('textarea-visible');
+                    iconBtn.classList.remove('has-content');
+                });
+
+                // Reset date
+                document.getElementById('inspectionDate').value = new Date().toISOString().split('T')[0];
+
+                updateStatistics();
+                showNotification('All data cleared! 🗑️', 'success');
+            }
+        }
+
+        // ============================================
+        // GENERATE FULL REPORT
+        // ============================================
+        
+        function generateFullReport() {
+            const inspectionDate = document.getElementById('inspectionDate').value || 'Not specified';
+            const equipmentData = collectEquipmentData();
+            const stats = {
+                running: document.getElementById('running-count').textContent,
+                available: document.getElementById('available-count').textContent,
+                unavailable: document.getElementById('unavailable-count').textContent,
+                deficient: document.getElementById('deficient-count').textContent,
+                healthPercentage: document.getElementById('health-percentage').textContent
+            };
+
+            let reportHtml = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Equipment Report - Full</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+                        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+                        .metadata { background: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+                        .stats { display: flex; justify-content: space-around; margin: 20px 0; flex-wrap: wrap; }
+                        .stat-box { text-align: center; padding: 10px; border: 1px solid #ddd; border-radius: 5px; min-width: 100px; margin: 5px; }
+                        .section { margin: 20px 0; }
+                        .section-title { background: #1e293b; color: white; padding: 8px; font-weight: bold; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background: #f0f0f0; font-weight: bold; }
+                        .status-running { background: #dbeafe; }
+                        .status-available { background: #d4edda; }
+                        .status-unavailable { background: #f8d7da; }
+                        .status-deficient { background: #fff3cd; }
+                        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+                        @media print { .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>🏭 EQUIPMENT CONDITION REPORT</h1>
+                        <h3>Personal Equipment Monitoring</h3>
+                    </div>
+                    
+                    <div class="metadata">
+                        <h3>📋 Report Information</h3>
+                        <p><strong>Date:</strong> ${inspectionDate}</p>
+                        <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-box">
+                            <h4>🔄 Running</h4>
+                            <h2>${stats.running}</h2>
+                        </div>
+                        <div class="stat-box">
+                            <h4>✅ Available</h4>
+                            <h2>${stats.available}</h2>
+                        </div>
+                        <div class="stat-box">
+                            <h4>❌ Unavailable</h4>
+                            <h2>${stats.unavailable}</h2>
+                        </div>
+                        <div class="stat-box">
+                            <h4>⚠️ Deficient</h4>
+                            <h2>${stats.deficient}</h2>
+                        </div>
+                        <div class="stat-box">
+                            <h4>Overall Health</h4>
+                            <h2>${stats.healthPercentage}</h2>
+                        </div>
+                    </div>
+            `;
+
+            // Add equipment data for each section
+            const sectionNames = {
+                'irong-barat-a': 'IRONG BARAT A',
+                'irong-barat-b': 'IRONG BARAT B', 
+                'irong-barat-c': 'IRONG BARAT C'
+            };
+
+            Object.keys(equipmentData).forEach(sectionId => {
+                reportHtml += `
+                    <div class="section">
+                        <div class="section-title">${sectionNames[sectionId]}</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Equipment Name</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                Object.keys(equipmentData[sectionId]).forEach(equipment => {
+                    const data = equipmentData[sectionId][equipment];
+                    if (data.status) {
+                        const statusClass = `status-${data.status}`;
+                        const statusIcon = data.status === 'running' ? '🔄' : data.status === 'available' ? '✅' : data.status === 'unavailable' ? '❌' : '⚠️';
+                        
+                        reportHtml += `
+                            <tr class="${statusClass}">
+                                <td>${equipment}</td>
+                                <td>${statusIcon} ${data.status.toUpperCase()}</td>
+                                <td>${data.comment || '-'}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                reportHtml += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+
+            reportHtml += `
+                    <div class="footer">
+                        <p>Report generated: ${new Date().toLocaleString()}</p>
+                        <button class="no-print" onclick="window.print()" style="padding: 10px 20px; margin: 10px; background: #1e293b; color: white; border: none; border-radius: 5px; cursor: pointer;">🖨️ Print</button>
+                        <button class="no-print" onclick="window.close()" style="padding: 10px 20px; margin: 10px; background: #6b7280; color: white; border: none; border-radius: 5px; cursor: pointer;">❌ Close</button>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            openReportWindow(reportHtml);
+            showNotification('Full report generated! 📋', 'success');
+        }
+
+        // ============================================
+        // GENERATE PROBLEM REPORT
+        // ============================================
+        
+        function generateProblemReport() {
+            const inspectionDate = document.getElementById('inspectionDate').value || 'Not specified';
+            const equipmentData = collectEquipmentData();
+            const currentTime = new Date().toLocaleString();
+            
+            // Filter only problematic equipment
+            const problemEquipment = [];
+            Object.keys(equipmentData).forEach(sectionId => {
+                Object.keys(equipmentData[sectionId]).forEach(equipment => {
+                    const data = equipmentData[sectionId][equipment];
+                    if (data.status === 'unavailable' || data.status === 'deficient') {
+                        problemEquipment.push({
+                            section: sectionId.replace(/-/g, ' ').toUpperCase(),
+                            equipment: equipment,
+                            status: data.status,
+                            comment: data.comment
+                        });
+                    }
+                });
+            });
+
+            if (problemEquipment.length === 0) {
+                showNotification('No problems found! All systems OK ✅', 'success');
+                return;
+            }
+
+            let reportHtml = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Equipment Problem Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+                        .header { text-align: center; border-bottom: 2px solid #dc2626; padding-bottom: 15px; margin-bottom: 20px; }
+                        .alert-banner { background: #fee2e2; border: 1px solid #dc2626; color: #dc2626; padding: 15px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-weight: bold; }
+                        .metadata { background: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background: #dc2626; color: white; font-weight: bold; }
+                        .status-unavailable { background: #fecaca; color: #dc2626; font-weight: bold; }
+                        .status-deficient { background: #fde68a; color: #d97706; font-weight: bold; }
+                        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+                        @media print { .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>⚠️ EQUIPMENT PROBLEM REPORT</h1>
+                        <h3>Issues Requiring Attention</h3>
+                    </div>
+                    
+                    <div class="alert-banner">
+                        🚨 ${problemEquipment.length} EQUIPMENT ISSUE(S) DETECTED 🚨
+                    </div>
+                    
+                    <div class="metadata">
+                        <h3>📋 Report Information</h3>
+                        <p><strong>Date:</strong> ${inspectionDate}</p>
+                        <p><strong>Generated:</strong> ${currentTime}</p>
+                    </div>
+
+                    <h3>🔧 Problem List</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Section</th>
+                                <th>Equipment Name</th>
+                                <th>Status</th>
+                                <th>Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            problemEquipment.forEach((item) => {
+                const statusClass = `status-${item.status}`;
+                const statusIcon = item.status === 'unavailable' ? '❌' : '⚠️';
+                
+                reportHtml += `
+                    <tr>
+                        <td>${item.section}</td>
+                        <td><strong>${item.equipment}</strong></td>
+                        <td class="${statusClass}">${statusIcon} ${item.status.toUpperCase()}</td>
+                        <td>${item.comment || 'No description provided'}</td>
+                    </tr>
+                `;
+            });
+
+            reportHtml += `
+                        </tbody>
+                    </table>
+
+                    <div class="footer">
+                        <p><strong>⚠️ Please address these issues promptly</strong></p>
+                        <p>Report generated: ${currentTime}</p>
+                        <button class="no-print" onclick="window.print()" style="padding: 10px 20px; margin: 10px; background: #dc2626; color: white; border: none; border-radius: 5px; cursor: pointer;">🖨️ Print</button>
+                        <button class="no-print" onclick="window.close()" style="padding: 10px 20px; margin: 10px; background: #6b7280; color: white; border: none; border-radius: 5px; cursor: pointer;">❌ Close</button>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            openReportWindow(reportHtml);
+            showNotification(`Problem report generated! ${problemEquipment.length} issues found ⚠️`, 'warning');
+        }
+
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        
+        function openReportWindow(htmlContent) {
+            const newWindow = window.open('', '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
+            newWindow.document.write(htmlContent);
+            newWindow.document.close();
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+	setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function toggleDarkMode() {
+            const body = document.body;
+            const button = document.querySelector('.dark-mode-toggle');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                button.textContent = '☀️';
+                try {
+                    localStorage.setItem('darkMode', 'true');
+                } catch (e) {}
+            } else {
+                button.textContent = '🌙';
+                try {
+                    localStorage.setItem('darkMode', 'false');
+                } catch (e) {}
+            }
+        }
+
+        // ============================================
+        // AUTO-LOAD FROM MASTER DATA
+        // ============================================
+        
+        function loadEquipmentFromMaster() {
+            try {
+                const savedData = localStorage.getItem('masterEquipmentData');
+                if (!savedData) {
+                    console.log('ℹ️ No saved data found');
+                    return false;
+                }
+                
+                const masterData = JSON.parse(savedData);
+                console.log('📂 Loading saved data from:', masterData.dateTime);
+                
+                // Restore each equipment status and comment
+                masterData.equipment.forEach(item => {
+                    const tabContent = document.getElementById(item.tab);
+                    if (!tabContent) return;
+                    
+                    const rows = tabContent.querySelectorAll('.equipment-table tbody tr');
+                    rows.forEach(row => {
+                        const equipmentName = row.querySelector('.equipment-name');
+                        if (equipmentName && equipmentName.textContent.trim() === item.name) {
+                            const statusSelect = row.querySelector('.status-select');
+                            const cell = row.querySelector('.comment-cell');
+                            const iconBtn = cell.querySelector('.comment-icon-btn');
+                            const textarea = cell.querySelector('.comment-textarea');
+                            
+                            if (statusSelect) {
+                                statusSelect.value = item.status;
+                            }
+                            
+                            if (textarea && item.comment) {
+                                textarea.value = item.comment;
+                                
+                                // Update visibility based on status and content
+                                if (item.status === 'unavailable' || item.status === 'deficient') {
+                                    // Required - show textarea with red styling
+                                    textarea.classList.add('required');
+                                    textarea.classList.remove('expanded');
+                                    cell.classList.add('textarea-visible');
+                                } else if (item.comment.trim()) {
+                                    // Has content - show textarea with blue styling
+                                    textarea.classList.add('expanded');
+                                    textarea.classList.remove('required');
+                                    cell.classList.add('textarea-visible');
+                                    iconBtn.classList.add('has-content');
+                                } else {
+                                    // Empty - show icon only
+                                    textarea.classList.remove('expanded');
+                                    textarea.classList.remove('required');
+                                    cell.classList.remove('textarea-visible');
+                                    iconBtn.classList.remove('has-content');
+                                }
+                            }
+                            
+                            // Trigger toggle to update all styling
+                            if (statusSelect) {
+                                toggleComment(statusSelect);
+                            }
+                        }
+                    });
+                });
+                
+                // Update statistics
+                updateStatistics();
+                
+                showNotification('✅ Data restored from last session!', 'success');
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+                return false;
+            }
+        }
+
+        // ============================================
+        // AUTO-SYNC TO HANDOVER - MASTER DATA
+        // ============================================
+        
+        function saveEquipmentToMaster() {
+            const equipmentData = [];
+            
+            // Collect all equipment status and comments from ALL tabs
+            const tabs = ['irong-barat-a', 'irong-barat-b', 'irong-barat-c'];
+            
+            tabs.forEach(tabId => {
+                const tabContent = document.getElementById(tabId);
+                if (!tabContent) return;
+                
+                const rows = tabContent.querySelectorAll('.equipment-table tbody tr');
+                
+                rows.forEach(row => {
+                    const equipmentName = row.querySelector('.equipment-name');
+                    const statusSelect = row.querySelector('.status-select');
+                    const textarea = row.querySelector('.comment-textarea');
+                    
+                    if (equipmentName && statusSelect) {
+                        equipmentData.push({
+                            name: equipmentName.textContent.trim(),
+                            status: statusSelect.value,
+                            comment: textarea ? textarea.value : '',
+                            tab: tabId
+                        });
+                    }
+                });
+            });
+            
+            // Save to localStorage with timestamp
+            const masterData = {
+                timestamp: new Date().toISOString(),
+                dateTime: new Date().toLocaleString(),
+                equipment: equipmentData,
+                statistics: {
+                    running: document.getElementById('running-count').textContent,
+                    available: document.getElementById('available-count').textContent,
+                    unavailable: document.getElementById('unavailable-count').textContent,
+                    deficient: document.getElementById('deficient-count').textContent
+                }
+            };
+            
+            try {
+                localStorage.setItem('masterEquipmentData', JSON.stringify(masterData));
+                console.log('✅ Equipment data auto-saved to master storage');
+                return true;
+            } catch (error) {
+                console.error('❌ Error saving equipment data:', error);
+                return false;
+            }
+        }
+
+        // ============================================
+        // SETUP AUTO-SAVE LISTENERS
+        // ============================================
+        
+        function setupAutoSave() {
+            // Auto-save on status change
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    saveEquipmentToMaster();
+                });
+            });
+            
+            // Auto-save on comment input
+			document.querySelectorAll('.comment-textarea').forEach(textarea => {
+				textarea.addEventListener('input', function() {
+					// Auto-expand textarea
+					autoExpandTextarea(this);
+					
+					// Auto-save
+					clearTimeout(window.autoSaveTimer);
+					window.autoSaveTimer = setTimeout(function() {
+						saveEquipmentToMaster();
+					}, 1000);
+				});
+			});
+            
+            console.log('🔧 Auto-save listeners ready');
+        }
+
+        // ============================================
+        // INITIALIZE ON PAGE LOAD
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Equipment Dashboard Initializing...');
+            
+            // Initialize all status selects with default styling
+            const allSelects = document.querySelectorAll('.status-select');
+            allSelects.forEach(select => {
+                select.classList.add('status-available');
+            });
+
+            // Initialize section summaries
+            const allSections = document.querySelectorAll('[data-section]');
+            const uniqueSections = [...new Set(Array.from(allSections).map(el => el.getAttribute('data-section')))];
+            uniqueSections.forEach(sectionName => {
+                updateSectionSummary(sectionName);
+            });
+
+            // Initialize overall statistics
+            updateStatistics();
+
+            // Set default date to today
+            document.getElementById('inspectionDate').value = new Date().toISOString().split('T')[0];
+
+            // Load dark mode preference
+            try {
+                if (localStorage.getItem('darkMode') === 'true') {
+                    document.body.classList.add('dark-mode');
+                    document.querySelector('.dark-mode-toggle').textContent = '☀️';
+                }
+            } catch (e) {
+                console.log('⚠️ Could not load dark mode preference');
+            }
+            
+            // AUTO-LOAD SAVED DATA after a short delay
+            setTimeout(function() {
+                loadEquipmentFromMaster();
+            }, 100);
+
+            // Initialize auto-save after loading
+            setTimeout(function() {
+                setupAutoSave();
+            }, 500);
+            
+            console.log('✅ Equipment Dashboard Ready!');
+            console.log('📌 Icon Pattern: Click ✏️ to add comments');
+            console.log('📌 Blue icon = Has comment');
+            console.log('📌 Auto-save enabled');
+        });
+    </script>
+</body>
+</html>		

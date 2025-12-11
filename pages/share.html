@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sharing Library - Safety Reviews</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8f9fa;
+    color: #2c3e50;
+    line-height: 1.6;
+  }
+  
+  .app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  header {
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    padding: 20px 0;
+    margin-bottom: 30px;
+  }
+  
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+  
+  nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-left: auto;
+  }
+  
+  .tab-btn {
+    border: 1px solid #e9ecef;
+    background: white;
+    color: #6c757d;
+    padding: 12px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  .tab-btn:hover {
+    border-color: #007bff;
+    color: #007bff;
+    background: #f8f9fa;
+  }
+  
+  .tab-btn.active {
+    background: #007bff;
+    border-color: #007bff;
+    color: white;
+  }
+  
+  .btn {
+    appearance: none;
+    border: 1px solid #e9ecef;
+    background: white;
+    color: #6c757d;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+  }
+  
+  .btn:hover {
+    border-color: #007bff;
+    color: #007bff;
+  }
+  
+  .btn.primary {
+    background: #007bff;
+    border-color: #007bff;
+    color: white;
+  }
+  
+  .btn.primary:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+  }
+  
+  main {
+    flex: 1;
+    padding: 0 20px;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .grid {
+    display: grid;
+    gap: 20px;
+  }
+  
+  .grid.cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  .grid.cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  
+  @media (max-width: 1100px) {
+    .grid.cols-4 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  @media (max-width: 800px) {
+    .grid.cols-2, .grid.cols-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  
+  .card h3 {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1rem;
+  }
+  
+  .card .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .card .body {
+    padding: 20px;
+  }
+  
+  .muted {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #e9ecef;
+    background: white;
+  }
+  
+  .badge.ok {
+    background: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+  }
+  
+  .badge.warn {
+    background: #fff3cd;
+    color: #856404;
+    border-color: #ffeaa7;
+  }
+  
+  .badge.bad {
+    background: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+  }
+  
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  input[type="text"], input[type="number"], textarea, select {
+    width: 100%;
+    background: white;
+    color: #2c3e50;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 12px;
+    outline: none;
+    transition: border-color 0.2s ease;
+    font-size: 0.9rem;
+  }
+  
+  input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+    border-color: #007bff;
+  }
+  
+  input[type="file"] {
+    width: 100%;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th, .table td {
+    border-bottom: 1px solid #e9ecef;
+    padding: 12px 8px;
+    text-align: left;
+  }
+  
+  .table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .tag {
+    display: inline-flex;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    margin-right: 4px;
+    font-size: 0.75rem;
+    color: #6c757d;
+  }
+  
+  .row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .half {
+    flex: 1;
+    min-width: 260px;
+  }
+  
+  .dropzone {
+    border: 2px dashed #e9ecef;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .dropzone.drag {
+    border-color: #007bff;
+    background: #e7f3ff;
+    color: #007bff;
+  }
+  
+  .dropzone:hover {
+    border-color: #007bff;
+  }
+  
+  .modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+  }
+  
+  .modal.open {
+    display: flex;
+  }
+  
+  .modal .panel {
+    width: min(900px, 92vw);
+    max-height: 88vh;
+    overflow: auto;
+  }
+  
+  .pres-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr 380px;
+    gap: 15px;
+  }
+  
+  .pres-layout.presentation-active {
+    grid-template-columns: 1fr;
+  }
+  
+  @media (max-width: 1200px) {
+    .pres-layout {
+      grid-template-columns: 220px 1fr;
+    }
+    .pres-layout.presentation-active {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 1000px) {
+    .pres-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .thumbs {
+    overflow: auto;
+    max-height: 70vh;
+    padding: 8px;
+  }
+  
+  .thumb {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .thumb:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0,123,255,0.15);
+  }
+  
+  .thumb.active {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+  }
+  
+  .stage-wrap {
+    position: relative;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+  }
+  
+  .stage {
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+    background: #000;
+  }
+  
+  canvas.render, canvas.overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  canvas.overlay {
+    pointer-events: auto;
+  }
+  
+  #presMode:fullscreen {
+    background: #000;
+    padding: 0;
+  }
+  
+  #presMode:fullscreen .card {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  #presMode:fullscreen .head {
+    background: rgba(0, 0, 0, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 20px;
+  }
+  
+  #presMode:fullscreen .head h3,
+  #presMode:fullscreen .head .toolbar {
+    color: white;
+  }
+  
+  #presMode:fullscreen .body {
+    flex: 1;
+    padding: 0;
+    background: #000;
+    overflow: hidden;
+  }
+  
+  #presMode:fullscreen .pres-layout {
+    height: 100%;
+    gap: 0;
+  }
+  
+  #presMode:fullscreen #mainStage {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  #presMode:fullscreen .tools {
+    background: rgba(0, 0, 0, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    flex-shrink: 0;
+  }
+  
+  #presMode:fullscreen .stage-wrap {
+    flex: 1;
+    border-radius: 0;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+  }
+  
+  #presMode:fullscreen .statusbar {
+    background: rgba(0, 0, 0, 0.9);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 8px 12px;
+    flex-shrink: 0;
+  }
+  
+  #presMode:fullscreen #thumbsPanel,
+  #presMode:fullscreen #notesPanel {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .tools {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    align-items: center;
+  }
+  
+  .tools .btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  
+  #annotationsMenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 10;
+    margin-top: 4px;
+    min-width: 180px;
+  }
+  
+  #annotationsMenu .btn {
+    width: 100%;
+    text-align: left;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+  }
+  
+  #annotationsMenu .btn:hover {
+    background: #f8f9fa;
+  }
+  
+  #annotationsMenu hr {
+    margin: 4px 0;
+    border: none;
+    border-top: 1px solid #e9ecef;
+  }
+  
+  .notes-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 70vh;
+    overflow: auto;
+  }
+  
+  .note-section {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .note-section .section-header {
+    background: #f8f9fa;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #2c3e50;
+  }
+  
+  .note-section .section-content {
+    padding: 12px 16px;
+  }
+  
+  .note-section textarea {
+    border: none;
+    background: transparent;
+    resize: vertical;
+    min-height: 60px;
+    padding: 8px 0;
+  }
+  
+  .note-section textarea:focus {
+    border: none;
+    outline: none;
+  }
+  
+  .note-section .note-items {
+    max-height: 120px;
+    overflow-y: auto;
+  }
+  
+  .note-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+  }
+  
+  .note-item .timestamp {
+    color: #6c757d;
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+  }
+  
+  .statusbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    font-size: 0.85rem;
+  }
+  
+  .kbd {
+    font-family: monospace;
+    font-size: 0.8rem;
+    background: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+  }
+  
+  .metric-card {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    text-align: center;
+    border: 1px solid #e9ecef;
+  }
+  
+  .metric-card h3 {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .metric-card .number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+  
+  footer {
+    padding: 20px;
+    text-align: center;
+    color: #6c757d;
+    border-top: 1px solid #e9ecef;
+    background: white;
+    font-size: 0.85rem;
+  }
+  
+  .data-management {
+    text-align: right;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .topbar {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+    }
+    
+    nav {
+      margin-left: 0;
+    }
+    
+    .title {
+      font-size: 1.2rem;
+    }
+    
+    .data-management {
+      text-align: center;
+    }
+  }
+
+  .error-msg {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 10px 0;
+  }
+
+  .desc-preview {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #6c757d;
+    max-height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="topbar">
+      <div class="title">Safety Reviews - Sharing Library</div>
+      <nav id="tabs"></nav>
+    </div>
+  </header>
+  <main>
+    <section id="view-dashboard" class="view">
+      <div class="data-management">
+        <div class="toolbar">
+          <button class="btn" id="btnExport">Export Data</button>
+          <label class="btn" for="importFile">Import Data</label>
+          <button class="btn" id="btnClearAllData" style="background: #dc3545; color: white; border-color: #dc3545;">Clear All Data</button>
+          <input id="importFile" type="file" accept="application/json" hidden>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 30px;">
+        <div class="head"><h3>Overview</h3><span class="badge ok">Offline Ready</span></div>
+        <div class="body">
+          <div class="grid cols-4">
+            <div class="metric-card">
+              <h3>Presentations</h3>
+              <div class="number" id="metricPres">0</div>
+            </div>
+            <div class="metric-card">
+              <h3>Reports</h3>
+              <div class="number" id="metricReports">0</div>
+            </div>
+            <div class="metric-card">
+              <h3>Storage</h3>
+              <div class="number" id="storageText">0 MB</div>
+            </div>
+            <div class="metric-card">
+              <h3>Activities</h3>
+              <div class="number" id="metricActivity">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head"><h3>Recent Activity</h3><span class="badge">Last 15</span></div>
+        <div class="body">
+          <div id="recent"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-sharing" class="view" hidden>
+      <div class="grid cols-2">
+        <div class="card">
+          <div class="head"><h3>Upload to Sharing Library</h3><span class="badge">Auto-Convert to JPEG</span></div>
+          <div class="body">
+            <div id="pdfStatus" class="error-msg" style="display:none;">
+              PDF.js library not loaded. PDF conversion unavailable.
+            </div>
+            <div class="row">
+              <div class="half"><label>Title *<input id="pTitle" type="text" placeholder="Presentation title" required></label></div>
+              <div class="half"><label>Category<select id="pCategory"><option>Safety</option><option>Policy</option><option>Campaign</option><option>Others</option></select></label></div>
+            </div>
+            <label>Description *<textarea id="pDesc" rows="3" placeholder="Describe the content, purpose, or key points..." required></textarea></label>
+            <div id="pDrop" class="dropzone">
+              <div id="pDropText">Drop slides (PDF / PNG / JPG) or click to select</div>
+              <div id="pFileList" style="margin-top: 8px; display: none;"></div>
+              <input id="pFile" type="file" accept="application/pdf,image/png,image/jpeg" multiple hidden>
+            </div>
+            <div class="toolbar" style="margin-top: 12px">
+              <button class="btn primary" id="btnAddPres">Upload to Library</button>
+              <button class="btn" id="btnEnterMode">Open Presentation Mode</button>
+              <button class="btn" id="btnClearPresForm">Clear Form</button>
+            </div>
+            <div class="muted" style="margin-top: 8px">PDF pages and images will be converted to JPEG for presentation</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="head"><h3>Sharing Library</h3><span class="badge" id="presCount">0 items</span></div>
+          <div class="body">
+            <table class="table" id="presTable">
+              <thead><tr><th>Title</th><th>Description</th><th>Slides</th><th>Category</th><th>Added</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="presMode" hidden>
+        <div class="head"><h3 id="pmTitle">Review Mode</h3>
+          <div class="toolbar">
+            <button class="btn" id="btnToggleMode">Switch to Presentation</button>
+            <button class="btn" id="btnFullscreen">Fullscreen</button>
+            <button class="btn primary" id="btnSummary">Generate Summary</button>
+            <button class="btn" id="btnExitMode">Exit</button>
+          </div>
+        </div>
+        <div class="body pres-layout" id="presLayout">
+          <aside class="card" id="thumbsPanel" style="overflow: hidden">
+            <div class="head"><h3>Slides</h3><span class="badge">Thumbnails</span></div>
+            <div class="thumbs" id="thumbs"></div>
+          </aside>
+
+          <section id="mainStage">
+            <div class="tools">
+              <button class="btn" id="btnPrev">Previous</button>
+              <button class="btn primary" id="btnNext">Next</button>
+              <div style="position: relative; display: inline-block;">
+                <button class="btn" id="btnAnnotations">Annotations</button>
+                <div id="annotationsMenu">
+                  <button class="btn" data-tool="pen">Pen</button>
+                  <button class="btn" data-tool="highlight">Highlight</button>
+                  <button class="btn" data-tool="text">Text</button>
+                  <hr>
+                  <button class="btn" id="btnClearMenu">Clear Slide</button>
+                  <button class="btn" id="btnClearAllSlidesMenu" style="color: #dc3545;">Clear All Slides</button>
+                </div>
+              </div>
+              <button class="btn" id="btnToggleThumbs" style="display: none;">Show Thumbnails</button>
+              <button class="btn" id="btnToggleNotes" style="display: none;">Show Notes</button>
+              <span class="muted">Use arrow keys or buttons</span>
+            </div>
+            <div class="stage-wrap">
+              <div class="stage">
+                <canvas class="render" id="renderCanvas" width="1920" height="1080"></canvas>
+                <canvas class="overlay" id="overlayCanvas" width="1920" height="1080"></canvas>
+              </div>
+            </div>
+            <div class="statusbar">
+              <div id="pmStatus" class="muted">Slide 1/1</div>
+              <div class="muted">Canvas: 1920x1080</div>
+            </div>
+          </section>
+
+          <aside class="card" id="notesPanel">
+            <div class="head"><h3>Discussion & Notes</h3><span class="badge">Structured</span></div>
+            <div class="notes-panel">
+              
+              <div class="note-section">
+                <div class="section-header">Key Discussion Points</div>
+                <div class="section-content">
+                  <textarea id="discussionPoints" placeholder="Record main discussion points here..."></textarea>
+                </div>
+              </div>
+
+              <div class="note-section">
+                <div class="section-header">Lessons Learned</div>
+                <div class="section-content">
+                  <textarea id="lessonsLearned" placeholder="What did we learn from this presentation?"></textarea>
+                </div>
+              </div>
+
+              <div class="note-section">
+                <div class="section-header">Immediate Actions</div>
+                <div class="section-content">
+                  <textarea id="immediateActions" placeholder="Actions to be taken immediately..."></textarea>
+                </div>
+              </div>
+
+              <div class="note-section">
+                <div class="section-header">Discussion Feedback</div>
+                <div class="section-content">
+                  <textarea id="discussionFeedback" placeholder="Feedback from participants..."></textarea>
+                </div>
+              </div>
+
+              <div class="note-section">
+                <div class="section-header">Follow-up Actions</div>
+                <div class="section-content">
+                  <textarea id="followupActions" placeholder="Actions for follow-up with owners and timelines..."></textarea>
+                </div>
+              </div>
+
+              <div class="note-section">
+                <div class="section-header">Timestamped Notes</div>
+                <div class="section-content">
+                  <div class="note-items" id="timestampedNotes"></div>
+                  <input type="text" id="noteInput" placeholder="Type note and press Enter" style="margin-top: 8px;">
+                </div>
+              </div>
+
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-search" class="view" hidden>
+      <div class="card">
+        <div class="head"><h3>Global Search</h3><span class="badge">Presentations + Reports</span></div>
+        <div class="body">
+          <input id="searchInput" type="text" placeholder="Search in titles, descriptions...">
+          <div id="searchResults" style="margin-top: 15px"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-reports" class="view" hidden>
+      <div class="grid cols-2">
+        <div class="card">
+          <div class="head"><h3>Create Safety Report</h3><span class="badge">From Presentations</span></div>
+          <div class="body">
+            <label>Select Presentation
+              <select id="rPresentationSelect">
+                <option value="">Select a presentation...</option>
+              </select>
+            </label>
+            <label>Report Title<input id="rTitle" type="text" placeholder="e.g. Safety Review Summary"></label>
+            <label>Additional Scope<textarea id="rScope" rows="2" placeholder="Additional scope or context..."></textarea></label>
+            <label>Additional Content<textarea id="rContent" rows="6" placeholder="Additional notes, findings, or recommendations..."></textarea></label>
+            <div class="toolbar">
+              <button class="btn" id="btnLoadPresData">Load Presentation Data</button>
+              <button class="btn" id="btnGenWhatsApp">Generate WhatsApp</button>
+              <button class="btn" id="btnGenEmail">Generate Email</button>
+              <button class="btn" id="btnGenMgmt">Generate Management</button>
+              <button class="btn primary" id="btnSaveReport">Save Report</button>
+              <button class="btn" id="btnClearReportForm">Clear Form</button>
+            </div>
+            <div class="body" id="rPreview" style="margin-top: 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="head"><h3>Saved Reports</h3><span class="badge" id="repCount">0 items</span></div>
+          <div class="body">
+            <table class="table" id="repTable">
+              <thead><tr><th>Title</th><th>Type</th><th>Based On</th><th>Saved</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="modal">
+    <div class="panel card">
+      <div class="head"><h3 id="modalTitle">Item</h3><button class="btn" id="modalClose">Close</button></div>
+      <div class="body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <footer>
+    Built for offline reviews - Professional Sharing Library System
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if(typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  window.pdfLibLoaded = true;
+} else {
+  window.pdfLibLoaded = false;
+  document.getElementById('pdfStatus').style.display = 'block';
+}
+</script>
+
+<script>
+const DB_KEY = 'sr_data_v2';
+const defaultDB = { presentations: [], reports: [], history: [] };
+let DB = loadDB();
+
+function loadDB(){
+  try{ 
+    const raw = localStorage.getItem(DB_KEY); 
+    return raw ? JSON.parse(raw) : structuredClone(defaultDB);
+  }catch(e){
+    console.error('DB parse error', e); 
+    return structuredClone(defaultDB);
+  }
+}
+
+function saveDB(){ 
+  localStorage.setItem(DB_KEY, JSON.stringify(DB)); 
+  refreshMetrics(); 
+}
+
+function addHistory(action, detail){ 
+  DB.history.unshift({ id:nid(), ts:Date.now(), action, detail }); 
+  DB.history = DB.history.slice(0,200); 
+  saveDB(); 
+  renderRecent(); 
+}
+
+function nid(){ 
+  return Math.random().toString(36).slice(2,9); 
+}
+
+const TABS = [
+  {id:'dashboard', label:'Dashboard'},
+  {id:'sharing', label:'Sharing Library'},
+  {id:'search', label:'Search'},
+  {id:'reports', label:'Reports'}
+];
+
+const tabsEl = document.getElementById('tabs');
+TABS.forEach(t=>{
+  const b = document.createElement('button'); 
+  b.className='tab-btn'; 
+  b.textContent=t.label; 
+  b.dataset.view=t.id; 
+  b.addEventListener('click', ()=>showView(t.id)); 
+  tabsEl.appendChild(b);
+});
+
+function showView(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.view===id));
+  document.querySelectorAll('.view').forEach(v=>v.hidden = v.id !== 'view-'+id);
+  if(id==='dashboard') {renderRecent(); refreshMetrics();}
+  if(id==='reports') {populatePresentationSelect();}
+}
+
+showView('dashboard'); 
+document.querySelector('.tab-btn').classList.add('active');
+
+function fmtDate(ts){ 
+  const d=new Date(ts); 
+  return d.toLocaleString(); 
+}
+
+function bytesToSize(bytes){ 
+  const i=Math.floor(Math.log(bytes||1)/Math.log(1024)); 
+  const sizes=['B','KB','MB','GB','TB']; 
+  return (bytes/Math.pow(1024,i)).toFixed((i===0)?0:1)+' '+sizes[i]; 
+}
+
+function estimateStorage(){ 
+  let total=(localStorage.getItem(DB_KEY)||'').length; 
+  return total; 
+}
+
+function downloadText(filename, text){ 
+  const a=document.createElement('a'); 
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(text); 
+  a.download=filename; 
+  a.click(); 
+}
+
+function base64FromFile(file){ 
+  return new Promise((res,rej)=>{ 
+    const r=new FileReader(); 
+    r.onload=()=>res(r.result.split(',')[1]); 
+    r.onerror=rej; 
+    r.readAsDataURL(file); 
+  }); 
+}
+
+function dataUrl(mime, b64){ 
+  return `data:${mime};base64,${b64}`; 
+}
+
+function fileTypeFromName(name){ 
+  const ext=(name.split('.').pop()||'').toLowerCase(); 
+  if(['jpg','jpeg','png'].includes(ext)) return 'image'; 
+  if(ext==='pdf') return 'pdf'; 
+  return ext; 
+}
+
+function refreshMetrics(){
+  document.getElementById('metricPres').textContent = DB.presentations.length;
+  document.getElementById('metricReports').textContent = DB.reports.length;
+  document.getElementById('metricActivity').textContent = DB.history.length;
+  const used=estimateStorage();
+  document.getElementById('storageText').textContent = bytesToSize(used);
+}
+
+function renderRecent(){
+  const box=document.getElementById('recent'); 
+  box.innerHTML='';
+  
+  if(DB.history.length === 0) {
+    box.innerHTML = '<div class="muted" style="padding: 20px; text-align: center;">No activity yet</div>';
+    return;
+  }
+  
+  DB.history.slice(0,15).forEach(h=>{
+    const div=document.createElement('div'); 
+    div.className='note-item';
+    div.innerHTML = `<div class="timestamp">${fmtDate(h.ts)}</div><div><b>${escapeHtml(h.action)}</b>${h.detail ? ' • ' + escapeHtml(h.detail) : ''}</div>`;
+    box.appendChild(div);
+  });
+}
+
+const pTitle = document.getElementById('pTitle');
+const pDesc = document.getElementById('pDesc');
+const pCategory = document.getElementById('pCategory');
+const pDrop = document.getElementById('pDrop');
+const pFile = document.getElementById('pFile');
+let pendingSlides=[];
+
+pDrop.addEventListener('click', ()=>pFile.click());
+['dragenter','dragover'].forEach(ev=>pDrop.addEventListener(ev,(e)=>{e.preventDefault(); pDrop.classList.add('drag')}));
+['dragleave','drop'].forEach(ev=>pDrop.addEventListener(ev,(e)=>{e.preventDefault(); pDrop.classList.remove('drag')}));
+pDrop.addEventListener('drop', e=> handlePresFiles(e.dataTransfer.files));
+pFile.addEventListener('change', e=> handlePresFiles(e.target.files));
+
+async function handlePresFiles(files){
+  pendingSlides=[]; 
+  const list=[...files];
+  let totalSlides = 0;
+  
+  const fileListDiv = document.getElementById('pFileList');
+  const dropText = document.getElementById('pDropText');
+  
+  if (files.length > 0) {
+    dropText.textContent = `Processing ${files.length} file(s)...`;
+    fileListDiv.innerHTML = '';
+    fileListDiv.style.display = 'block';
+    
+    [...files].forEach(file => {
+      const fileDiv = document.createElement('div');
+      fileDiv.style.cssText = 'padding: 4px; background: rgba(0,123,255,0.1); border-radius: 4px; margin: 2px 0; font-size: 0.85rem;';
+      fileDiv.textContent = `${file.name} (${fileTypeFromName(file.name)})`;
+      fileListDiv.appendChild(fileDiv);
+    });
+  }
+  
+  for(const f of list){
+    const type=fileTypeFromName(f.name);
+    if(type==='image'){
+      const jpegData = await convertImageToJpeg(f);
+      pendingSlides.push({type:'image', mime:'image/jpeg', b64:jpegData.split(',')[1], name:f.name});
+      totalSlides++;
+    } else if(type==='pdf'){
+      if (!window.pdfLibLoaded) {
+        alert(`${f.name}: PDF.js library not available.`);
+        continue;
+      }
+      
+      try {
+        const b64=await base64FromFile(f);
+        const pdfSlides = await convertPdfPagesToJpeg(dataUrl(f.type, b64));
+        pendingSlides.push(...pdfSlides);
+        totalSlides += pdfSlides.length;
+      } catch (error) {
+        console.error('PDF conversion error:', error);
+        alert(`${f.name}: Failed to convert PDF.`);
+      }
+    }
+  }
+  
+  if(totalSlides > 0) {
+    dropText.textContent = `${totalSlides} slide(s) converted and ready to add`;
+    dropText.style.color = '#155724';
+  } else {
+    dropText.textContent = 'No valid files processed. Try again.';
+    dropText.style.color = '#721c24';
+    fileListDiv.style.display = 'none';
+  }
+}
+
+async function convertImageToJpeg(file) {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/jpeg', 0.9));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+async function convertPdfPagesToJpeg(pdfDataUrl) {
+  if (!window.pdfLibLoaded) {
+    throw new Error('PDF.js library not loaded');
+  }
+  
+  const doc = await pdfjsLib.getDocument(pdfDataUrl).promise;
+  const slides = [];
+  
+  for(let pageNum = 1; pageNum <= doc.numPages; pageNum++) {
+    const page = await doc.getPage(pageNum);
+    const viewport = page.getViewport({ scale: 2 });
+    
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    
+    await page.render({
+      canvasContext: ctx,
+      viewport: viewport
+    }).promise;
+    
+    const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    slides.push({
+      type: 'image',
+      mime: 'image/jpeg',
+      b64: jpegDataUrl.split(',')[1],
+      name: `Page ${pageNum}`
+    });
+  }
+  
+  return slides;
+}
+
+async function addPresentation(){
+  if(!pTitle.value.trim()){ 
+    alert('Please enter a title'); 
+    return;
+  }
+  
+  if(!pDesc.value.trim()){ 
+    alert('Please enter a description'); 
+    return;
+  }
+  
+  if(pendingSlides.length===0){ 
+    alert('Please add files'); 
+    return;
+  }
+  
+  const pres={ 
+    id:nid(), 
+    title:pTitle.value.trim(), 
+    description:pDesc.value.trim(),
+    category:pCategory.value, 
+    added:Date.now(), 
+    slides:pendingSlides.slice(), 
+    notes: { 
+      discussionPoints:'', 
+      lessonsLearned:'', 
+      immediateActions:'', 
+      discussionFeedback:'', 
+      followupActions:'', 
+      timestamped:[] 
+    } 
+  };
+  
+  DB.presentations.unshift(pres); 
+  addHistory('Uploaded', `${pres.title}`); 
+  saveDB(); 
+  renderPresentations();
+  clearPresentationForm();
+}
+
+document.getElementById('btnAddPres').addEventListener('click', addPresentation);
+
+function clearPresentationForm(){
+  pTitle.value=''; 
+  pDesc.value='';
+  pCategory.value='Safety'; 
+  pFile.value=''; 
+  pendingSlides=[];
+  
+  const fileListDiv = document.getElementById('pFileList');
+  const dropText = document.getElementById('pDropText');
+  dropText.textContent = 'Drop slides (PDF / PNG / JPG) or click to select';
+  dropText.style.color = '';
+  fileListDiv.style.display = 'none';
+  fileListDiv.innerHTML = '';
+}
+
+document.getElementById('btnClearPresForm').addEventListener('click', clearPresentationForm);
+
+function renderPresentations(){
+  const tbody=document.querySelector('#presTable tbody'); 
+  tbody.innerHTML='';
+  
+  DB.presentations.forEach(p=>{
+    const tr=document.createElement('tr');
+	const descPreview = p.description ? 
+	  (p.description.length > 50 ? p.description.slice(0,50) + '...' : p.description) : 
+	  'No description available';
+    
+    tr.innerHTML=`
+      <td><strong>${escapeHtml(p.title)}</strong></td>
+      <td><div class="desc-preview">${escapeHtml(descPreview)}</div></td>
+      <td>${p.slides.length}</td>
+      <td>${p.category||'General'}</td>
+      <td>${fmtDate(p.added)}</td>
+      <td><button class='btn primary' data-id='${p.id}'>Present</button></td>
+    `;
+    tr.querySelector('[data-id]').addEventListener('click', ()=>enterPresentationMode(p.id));
+    tbody.appendChild(tr);
+  });
+  
+  document.getElementById('presCount').textContent = DB.presentations.length+ ' items';
+}
+
+const searchInput=document.getElementById('searchInput');
+searchInput.addEventListener('input', doSearch);
+
+function doSearch(){
+  const q=(searchInput.value||'').toLowerCase(); 
+  const out=document.getElementById('searchResults'); 
+  out.innerHTML='';
+  
+  if(!q){ 
+    out.innerHTML='<div class="muted">Type to search...</div>'; 
+    return;
+  }
+  
+  const res=[];
+  DB.presentations.forEach(p=>{ 
+    const blob=(p.title+' '+p.description+' '+p.category+
+	' '+Object.values(p.notes||{}).join(' ')).toLowerCase(); 
+    if(blob.includes(q)) 
+      res.push({type:'Presentation', title:p.title, ts:p.added, id:p.id}); 
+  });
+  DB.reports.forEach(r=>{ 
+    if((r.title+r.type+r.body).toLowerCase().includes(q)) 
+      res.push({type:'Report', title:r.title, ts:r.saved, id:r.id}); 
+  });
+  
+  if(res.length === 0) {
+    out.innerHTML='<div class="muted">No results found</div>';
+    return;
+  }
+  
+  res.sort((a,b)=>b.ts-a.ts);
+  res.slice(0,100).forEach(r=>{
+    const div=document.createElement('div'); 
+    div.className='note-item';
+    div.innerHTML = `<div class="timestamp">${fmtDate(r.ts)}</div><div><b>${r.type}</b> • ${escapeHtml(r.title)}</div>`;
+    out.appendChild(div);
+  });
+}
+
+const rPresentationSelect=document.getElementById('rPresentationSelect');
+const rTitle=document.getElementById('rTitle');
+const rScope=document.getElementById('rScope');
+const rContent=document.getElementById('rContent');
+const rPreview=document.getElementById('rPreview');
+
+function populatePresentationSelect() {
+  rPresentationSelect.innerHTML = '<option value="">Select a presentation...</option>';
+  DB.presentations.forEach(p => {
+    const option = document.createElement('option');
+    option.value = p.id;
+    option.textContent = `${p.title} (${p.slides.length} slides)`;
+    rPresentationSelect.appendChild(option);
+  });
+}
+
+function loadPresentationData() {
+  const selectedId = rPresentationSelect.value;
+  if (!selectedId) {
+    alert('Please select a presentation first');
+    return;
+  }
+  
+  const pres = DB.presentations.find(p => p.id === selectedId);
+  if (!pres) return;
+  
+  rTitle.value = `${pres.title} - Safety Review Report`;
+  
+  let content = '';
+  if (pres.description) content += `DESCRIPTION:\n${pres.description}\n\n`;
+  if (pres.notes) {
+    if (pres.notes.discussionPoints) content += `DISCUSSION POINTS:\n${pres.notes.discussionPoints}\n\n`;
+    if (pres.notes.lessonsLearned) content += `LESSONS LEARNED:\n${pres.notes.lessonsLearned}\n\n`;
+    if (pres.notes.immediateActions) content += `IMMEDIATE ACTIONS:\n${pres.notes.immediateActions}\n\n`;
+    if (pres.notes.discussionFeedback) content += `FEEDBACK:\n${pres.notes.discussionFeedback}\n\n`;
+    if (pres.notes.followupActions) content += `FOLLOW-UP ACTIONS:\n${pres.notes.followupActions}\n\n`;
+    
+    if (pres.notes.timestamped && pres.notes.timestamped.length > 0) {
+      content += `TIMESTAMPED NOTES:\n`;
+      pres.notes.timestamped.forEach(note => {
+        content += `• ${note.text}\n`;
+      });
+    }
+  }
+  
+  rContent.value = content;
+  addHistory('Report Data Load', `Loaded from ${pres.title}`);
+}
+
+function refine(text, tone){
+  let t=text.replace(/\s+/g,' ').trim();
+  t=t.replace(/(^\w|[\.\!\?]\s+\w)/g, s=>s.toUpperCase());
+  
+  if(tone==='whatsapp'){
+    t = t.replace(/[-•]\s*/g,'\n• ').replace(/\n{2,}/g,'\n');
+    return `*${rTitle.value||'Safety Update'}*\n_${rScope.value||''}_\n${t}`;
+  }
+  if(tone==='email'){
+    return `Subject: ${rTitle.value||'Safety Report'}\n\nDear Team,\n\n${t}\n\nRegards,\nAziz Mohamad`;
+  }
+  if(tone==='management'){
+    const first = t.split(' ').slice(0,120).join(' ');
+    return `Executive Summary:\n${first}\n\nDetails:\n${t}`;
+  }
+  return t;
+}
+
+function preview(type){ 
+  const baseContent = rContent.value + (rScope.value ? `\n\nAdditional Scope: ${rScope.value}` : '');
+  const text = refine(baseContent, type); 
+  rPreview.innerHTML = `<pre style='white-space:pre-wrap'>${escapeHtml(text)}</pre>`; 
+  addHistory('Report Preview', type); 
+}
+
+function saveReport(){ 
+  if(!rTitle.value){
+    alert('Enter report title'); 
+    return;
+  } 
+  
+  const selectedPresId = rPresentationSelect.value;
+  const basedOn = selectedPresId ? DB.presentations.find(p => p.id === selectedPresId)?.title : 'Manual';
+  const item={ 
+    id:nid(), 
+    title:rTitle.value.trim(), 
+    type:rPreview.textContent.startsWith('Subject:')? 'Email' : (rPreview.textContent.startsWith('*')? 'WhatsApp' : 'Management'), 
+    body:rPreview.textContent, 
+    basedOn: basedOn,
+    presentationId: selectedPresId,
+    saved:Date.now() 
+  }; 
+  
+  DB.reports.unshift(item); 
+  saveDB(); 
+  renderReports(); 
+  addHistory('Report Saved', item.title); 
+}
+
+document.getElementById('btnLoadPresData').addEventListener('click', loadPresentationData);
+document.getElementById('btnGenWhatsApp').addEventListener('click', ()=>preview('whatsapp'));
+document.getElementById('btnGenEmail').addEventListener('click', ()=>preview('email'));
+document.getElementById('btnGenMgmt').addEventListener('click', ()=>preview('management'));
+document.getElementById('btnSaveReport').addEventListener('click', saveReport);
+
+function clearReportForm(){
+  rPresentationSelect.value=''; 
+  rTitle.value=''; 
+  rScope.value=''; 
+  rContent.value=''; 
+  rPreview.innerHTML='';
+}
+
+document.getElementById('btnClearReportForm').addEventListener('click', clearReportForm);
+
+function renderReports(){ 
+  const tbody=document.querySelector('#repTable tbody'); 
+  tbody.innerHTML=''; 
+  
+  DB.reports.forEach(r=>{ 
+    const tr=document.createElement('tr'); 
+    tr.innerHTML=`<td>${escapeHtml(r.title)}</td><td>${r.type}</td><td>${r.basedOn||'Manual'}</td><td>${fmtDate(r.saved)}</td><td><button class='btn' data-id='${r.id}'>View</button></td>`; 
+    tr.querySelector('button').addEventListener('click',()=>openReport(r)); 
+    tbody.appendChild(tr); 
+  }); 
+  
+  document.getElementById('repCount').textContent=DB.reports.length+' items'; 
+}
+
+function openReport(r){ 
+  openModal(r.title, `<pre style='white-space:pre-wrap'>${escapeHtml(r.body)}</pre>`); 
+}
+
+const modal=document.getElementById('modal'); 
+const modalBody=document.getElementById('modalBody'); 
+const modalTitle=document.getElementById('modalTitle');
+
+function openModal(title, html){ 
+  modalTitle.textContent=title; 
+  modalBody.innerHTML=html; 
+  modal.classList.add('open'); 
+}
+
+document.getElementById('modalClose').addEventListener('click', ()=>modal.classList.remove('open'));
+modal.addEventListener('click', (e)=>{ 
+  if(e.target===modal) modal.classList.remove('open');
+});
+
+const pm = {
+  currentPres:null, 
+  slideIndex:0, 
+  tool:'pen',
+  strokes:{}, 
+  rects:{},   
+  texts:{}
+};
+
+const renderCanvas=document.getElementById('renderCanvas');
+const overlayCanvas=document.getElementById('overlayCanvas');
+const rctx=renderCanvas.getContext('2d');
+const octx=overlayCanvas.getContext('2d');
+
+const discussionPoints = document.getElementById('discussionPoints');
+const lessonsLearned = document.getElementById('lessonsLearned');
+const immediateActions = document.getElementById('immediateActions');
+const discussionFeedback = document.getElementById('discussionFeedback');
+const followupActions = document.getElementById('followupActions');
+const timestampedNotes = document.getElementById('timestampedNotes');
+const noteInput = document.getElementById('noteInput');
+
+function autoSaveNotes() {
+  if (!pm.currentPres) return;
+  pm.currentPres.notes = pm.currentPres.notes || {};
+  pm.currentPres.notes.discussionPoints = discussionPoints.value;
+  pm.currentPres.notes.lessonsLearned = lessonsLearned.value;
+  pm.currentPres.notes.immediateActions = immediateActions.value;
+  pm.currentPres.notes.discussionFeedback = discussionFeedback.value;
+  pm.currentPres.notes.followupActions = followupActions.value;
+  saveDB();
+}
+
+[discussionPoints, lessonsLearned, immediateActions, discussionFeedback, followupActions].forEach(elem => {
+  elem.addEventListener('blur', autoSaveNotes);
+});
+
+function setTool(t){ 
+  pm.tool=t; 
+  document.getElementById('pmStatus').textContent = `Slide ${pm.slideIndex+1}/${getSlides().length} • Tool: ${t}`; 
+}
+
+document.getElementById('btnPrev').addEventListener('click', ()=> navSlide(-1));
+document.getElementById('btnNext').addEventListener('click', ()=> navSlide(1));
+
+function getSlides(){ 
+  return pm.currentPres?.slides||[]; 
+}
+
+function slideId(){ 
+  return pm.currentPres.id+':' + pm.slideIndex; 
+}
+
+let drawing=false; 
+let lastPt=null; 
+let startRect=null;
+let presentationModeActive = false;
+let fullscreenThumbsVisible = false;
+let fullscreenNotesVisible = false;
+
+document.getElementById('btnToggleMode').addEventListener('click', togglePresentationMode);
+
+function togglePresentationMode() {
+  presentationModeActive = !presentationModeActive;
+  const btn = document.getElementById('btnToggleMode');
+  const title = document.getElementById('pmTitle');
+  const layout = document.getElementById('presLayout');
+  
+  if (presentationModeActive) {
+    btn.textContent = 'Switch to Review';
+    title.textContent = pm.currentPres ? pm.currentPres.title + ' - Presentation' : 'Presentation Mode';
+    layout.classList.add('presentation-active');
+    document.getElementById('thumbsPanel').style.display = 'none';
+    document.getElementById('notesPanel').style.display = 'none';
+  } else {
+    btn.textContent = 'Switch to Presentation';
+    title.textContent = pm.currentPres ? pm.currentPres.title + ' - Review' : 'Review Mode';
+    layout.classList.remove('presentation-active');
+    document.getElementById('thumbsPanel').style.display = '';
+    document.getElementById('notesPanel').style.display = '';
+    document.getElementById('btnToggleThumbs').style.display = 'none';
+    document.getElementById('btnToggleNotes').style.display = 'none';
+  }
+}
+
+document.getElementById('btnAnnotations').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const menu = document.getElementById('annotationsMenu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+});
+
+document.addEventListener('click', () => {
+  document.getElementById('annotationsMenu').style.display = 'none';
+});
+
+document.querySelectorAll('#annotationsMenu [data-tool]').forEach(b => {
+  b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setTool(b.dataset.tool);
+    document.getElementById('annotationsMenu').style.display = 'none';
+  });
+});
+
+document.getElementById('btnClearMenu').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const id=slideId(); 
+  pm.strokes[id]=[]; 
+  pm.rects[id]=[]; 
+  pm.texts[id]=[]; 
+  drawOverlay(); 
+  document.getElementById('annotationsMenu').style.display = 'none';
+});
+
+document.getElementById('btnClearAllSlidesMenu').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if(confirm('Clear all annotations on ALL slides?')) {
+    pm.strokes={}; 
+    pm.rects={}; 
+    pm.texts={}; 
+    drawOverlay(); 
+    addHistory('Clear All Slides', 'All annotations cleared');
+  }
+  document.getElementById('annotationsMenu').style.display = 'none';
+});
+
+document.getElementById('btnToggleThumbs').addEventListener('click', () => {
+  fullscreenThumbsVisible = !fullscreenThumbsVisible;
+  const panel = document.getElementById('thumbsPanel');
+  const btn = document.getElementById('btnToggleThumbs');
+  
+  if (fullscreenThumbsVisible) {
+    panel.style.display = '';
+    btn.textContent = 'Hide Thumbnails';
+  } else {
+    panel.style.display = 'none';
+    btn.textContent = 'Show Thumbnails';
+  }
+});
+
+document.getElementById('btnToggleNotes').addEventListener('click', () => {
+  fullscreenNotesVisible = !fullscreenNotesVisible;
+  const panel = document.getElementById('notesPanel');
+  const btn = document.getElementById('btnToggleNotes');
+  
+  if (fullscreenNotesVisible) {
+    panel.style.display = '';
+    btn.textContent = 'Hide Notes';
+  } else {
+    panel.style.display = 'none';
+    btn.textContent = 'Show Notes';
+  }
+});
+
+function canvasPos(e){ 
+  const rect=overlayCanvas.getBoundingClientRect(); 
+  const x=(e.clientX - rect.left)/rect.width; 
+  const y=(e.clientY - rect.top)/rect.height; 
+  return {x,y}; 
+}
+
+overlayCanvas.addEventListener('pointerdown', e=>{
+  const pos=canvasPos(e); 
+  if(pm.tool==='pen'){ 
+    drawing=true; 
+    lastPt=pos; 
+    pushStrokePoint(pos,true); 
+  }
+  if(pm.tool==='highlight'){ 
+    drawing=true; 
+    startRect=pos; 
+  }
+  if(pm.tool==='text'){
+    const text=prompt('Enter text'); 
+    if(text){ 
+      const id=slideId(); 
+      pm.texts[id]=pm.texts[id]||[]; 
+      pm.texts[id].push({x:pos.x, y:pos.y, text}); 
+      drawOverlay(); 
+    }
+  }
+});
+
+overlayCanvas.addEventListener('pointermove', e=>{
+  if(!drawing) return; 
+  const pos=canvasPos(e);
+  if(pm.tool==='pen'){ 
+    smoothLineTo(pos); 
+    drawOverlay(); 
+  }
+  if(pm.tool==='highlight'){ 
+    drawOverlay(pos); 
+  }
+});
+
+['pointerup','pointerleave','pointercancel'].forEach(ev=> overlayCanvas.addEventListener(ev, e=>{ 
+  if(drawing){ 
+    drawing=false; 
+    if(pm.tool==='highlight'){ 
+      const end=canvasPos(e); 
+      commitRect(end); 
+    } 
+  }
+}));
+
+function pushStrokePoint(p, newStroke=false){ 
+  const id=slideId(); 
+  pm.strokes[id]=pm.strokes[id]||[]; 
+  if(newStroke) pm.strokes[id].push({points:[], color:'#ff2d2d', size:6}); 
+  pm.strokes[id][pm.strokes[id].length-1].points.push(p); 
+}
+
+function smoothLineTo(p){ 
+  pushStrokePoint(p,false); 
+  lastPt=p; 
+}
+
+function commitRect(end){ 
+  const id=slideId(); 
+  pm.rects[id]=pm.rects[id]||[]; 
+  const r={ 
+    x:Math.min(startRect.x,end.x), 
+    y:Math.min(startRect.y,end.y), 
+    w:Math.abs(end.x-startRect.x), 
+    h:Math.abs(end.y-startRect.y) 
+  }; 
+  pm.rects[id].push(r); 
+  startRect=null; 
+  drawOverlay(); 
+}
+
+function drawOverlay(previewPos=null){
+  octx.clearRect(0,0,overlayCanvas.width, overlayCanvas.height);
+  const id=slideId(); 
+  const strokes=pm.strokes[id]||[]; 
+  const rects=pm.rects[id]||[]; 
+  const texts=pm.texts[id]||[];
+  
+  octx.lineCap='round'; 
+  octx.lineJoin='round';
+  
+  for(const s of strokes){ 
+    octx.beginPath(); 
+    for(let i=0;i<s.points.length;i++){ 
+      const pt=s.points[i]; 
+      const x=pt.x*overlayCanvas.width, y=pt.y*overlayCanvas.height; 
+      if(i===0) octx.moveTo(x,y); 
+      else octx.lineTo(x,y); 
+    } 
+    octx.strokeStyle=s.color; 
+    octx.lineWidth=s.size; 
+    octx.stroke(); 
+  }
+  
+  octx.strokeStyle='rgba(255,230,0,.85)'; 
+  octx.lineWidth=3; 
+  octx.fillStyle='rgba(255,230,0,.18)';
+  rects.forEach(r=>{ 
+    octx.fillRect(r.x*overlayCanvas.width, r.y*overlayCanvas.height, r.w*overlayCanvas.width, r.h*overlayCanvas.height); 
+    octx.strokeRect(r.x*overlayCanvas.width, r.y*overlayCanvas.height, r.w*overlayCanvas.width, r.h*overlayCanvas.height); 
+  });
+  
+  if(previewPos && pm.tool==='highlight' && startRect){ 
+    const r={ 
+      x:Math.min(startRect.x,previewPos.x), 
+      y:Math.min(startRect.y,previewPos.y), 
+      w:Math.abs(previewPos.x-startRect.x), 
+      h:Math.abs(previewPos.y-startRect.y) 
+    }; 
+    octx.fillRect(r.x*overlayCanvas.width, r.y*overlayCanvas.height, r.w*overlayCanvas.width, r.h*overlayCanvas.height); 
+    octx.strokeRect(r.x*overlayCanvas.width, r.y*overlayCanvas.height, r.w*overlayCanvas.width, r.h*overlayCanvas.height); 
+  }
+  
+  octx.fillStyle='#ffffff'; 
+  octx.font='24px sans-serif';
+  texts.forEach(t=>{ 
+    octx.fillText(t.text, t.x*overlayCanvas.width, t.y*overlayCanvas.height); 
+  });
+}
+
+window.addEventListener('keydown', e=>{ 
+  if(document.getElementById('presMode').hidden) return; 
+  if(e.key==='ArrowRight') navSlide(1); 
+  if(e.key==='ArrowLeft') navSlide(-1); 
+});
+
+function navSlide(delta){ 
+  const slides=getSlides(); 
+  pm.slideIndex = (pm.slideIndex + delta + slides.length) % slides.length; 
+  renderSlide(); 
+}
+
+noteInput.addEventListener('keydown', e=>{ 
+  if(e.key==='Enter' && noteInput.value.trim()){ 
+    const txt=noteInput.value.trim(); 
+    const rec={ id:nid(), ts:Date.now(), slide:pm.slideIndex+1, text:txt }; 
+    pm.currentPres.notes = pm.currentPres.notes || {};
+    pm.currentPres.notes.timestamped = pm.currentPres.notes.timestamped || [];
+    pm.currentPres.notes.timestamped.unshift(rec); 
+    addHistory('Note Added', txt.slice(0,60)); 
+    saveDB(); 
+    renderTimestampedNotes(); 
+    noteInput.value=''; 
+  } 
+});
+
+function renderTimestampedNotes(){ 
+  if (!pm.currentPres || !pm.currentPres.notes || !pm.currentPres.notes.timestamped) {
+    timestampedNotes.innerHTML = '<div class="muted" style="padding: 8px;">No timestamped notes yet</div>';
+    return;
+  }
+  
+  timestampedNotes.innerHTML=''; 
+  pm.currentPres.notes.timestamped.forEach(n=>{ 
+    const d=document.createElement('div'); 
+    d.className='note-item'; 
+    d.innerHTML = `<div class="timestamp">${fmtDate(n.ts)} • Slide ${n.slide}</div><div>${escapeHtml(n.text)}</div>`; 
+    timestampedNotes.appendChild(d); 
+  }); 
+}
+
+function generateSummary(){ 
+  const pres=pm.currentPres; 
+  const notes = pres.notes || {};
+  const timestamped = (notes.timestamped||[]).slice(0,20).map(n=>`- ${n.text}`).join('\n'); 
+  const slides=getSlides().length; 
+  
+  let summary = `Presentation: ${pres.title}\nSlides: ${slides}\nCategory: ${pres.category||'General'}\n\n`;
+  
+  if (pres.description) summary += `DESCRIPTION:\n${pres.description}\n\n`;
+  if (notes.discussionPoints) summary += `KEY DISCUSSION POINTS:\n${notes.discussionPoints}\n\n`;
+  if (notes.lessonsLearned) summary += `LESSONS LEARNED:\n${notes.lessonsLearned}\n\n`;
+  if (notes.immediateActions) summary += `IMMEDIATE ACTIONS:\n${notes.immediateActions}\n\n`;
+  if (notes.discussionFeedback) summary += `DISCUSSION FEEDBACK:\n${notes.discussionFeedback}\n\n`;
+  if (notes.followupActions) summary += `FOLLOW-UP ACTIONS:\n${notes.followupActions}\n\n`;
+  
+  if (timestamped) {
+    summary += `TIMESTAMPED NOTES:\n${timestamped}\n\n`;
+  }
+  
+  summary += `Generated: ${new Date().toLocaleString()}`;
+  
+  openModal('Presentation Summary', `<pre style='white-space:pre-wrap'>${escapeHtml(summary)}</pre>`); 
+  addHistory('Summary Generated', pres.title); 
+}
+
+document.getElementById('btnSummary').addEventListener('click', generateSummary);
+
+function enterPresentationMode(id){
+  pm.currentPres = DB.presentations.find(p=>p.id===id);
+  if(!pm.currentPres){ 
+    alert('Presentation not found'); 
+    return;
+  }
+  
+  presentationModeActive = false;
+  fullscreenThumbsVisible = false;
+  fullscreenNotesVisible = false;
+  
+  document.getElementById('pmTitle').textContent = pm.currentPres.title + ' - Review';
+  document.getElementById('btnToggleMode').textContent = 'Switch to Presentation';
+  document.getElementById('presMode').hidden=false;
+  document.getElementById('presLayout').classList.remove('presentation-active');
+  document.getElementById('thumbsPanel').style.display = '';
+  document.getElementById('notesPanel').style.display = '';
+  document.getElementById('btnToggleThumbs').style.display = 'none';
+  document.getElementById('btnToggleNotes').style.display = 'none';
+  
+  pm.slideIndex = 0; 
+  pm.strokes={}; 
+  pm.rects={}; 
+  pm.texts={};
+  
+  const notes = pm.currentPres.notes || {};
+  discussionPoints.value = notes.discussionPoints || '';
+  lessonsLearned.value = notes.lessonsLearned || '';
+  immediateActions.value = notes.immediateActions || '';
+  discussionFeedback.value = notes.discussionFeedback || '';
+  followupActions.value = notes.followupActions || '';
+  
+  buildThumbnails(); 
+  renderSlide(); 
+  renderTimestampedNotes(); 
+  addHistory('Presented', pm.currentPres.title);
+}
+
+document.getElementById('btnExitMode').addEventListener('click', ()=>{ 
+  autoSaveNotes();
+  if (document.fullscreenElement) {
+    document.exitFullscreen?.();
+  }
+  presentationModeActive = false;
+  document.getElementById('presMode').hidden=true; 
+});
+
+document.getElementById('btnFullscreen').addEventListener('click', async ()=>{
+  const wrap=document.getElementById('presMode'); 
+  
+  if(!document.fullscreenElement) {
+    try {
+      if (wrap.hidden) {
+        alert('Please open a presentation first');
+        return;
+      }
+      
+      if (wrap.requestFullscreen) {
+        await wrap.requestFullscreen();
+      } else if (wrap.webkitRequestFullscreen) {
+        await wrap.webkitRequestFullscreen();
+      } else if (wrap.msRequestFullscreen) {
+        await wrap.msRequestFullscreen();
+      } else {
+        alert('Fullscreen not supported');
+        return;
+      }
+      
+      setTimeout(() => {
+        document.getElementById('thumbsPanel').style.display = 'none';
+        document.getElementById('notesPanel').style.display = 'none';
+        document.getElementById('btnToggleThumbs').style.display = 'inline-block';
+        document.getElementById('btnToggleNotes').style.display = 'inline-block';
+        fullscreenThumbsVisible = false;
+        fullscreenNotesVisible = false;
+        document.getElementById('btnToggleThumbs').textContent = 'Show Thumbnails';
+        document.getElementById('btnToggleNotes').textContent = 'Show Notes';
+      }, 100);
+      
+    } catch (error) {
+      console.error('Fullscreen error:', error);
+    }
+  } else {
+    try {
+      if (document.exitFullscreen) {
+        await document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        await document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        await document.msExitFullscreen();
+      }
+      
+      if (presentationModeActive) {
+        document.getElementById('thumbsPanel').style.display = 'none';
+        document.getElementById('notesPanel').style.display = 'none';
+      } else {
+        document.getElementById('thumbsPanel').style.display = '';
+        document.getElementById('notesPanel').style.display = '';
+      }
+      document.getElementById('btnToggleThumbs').style.display = 'none';
+      document.getElementById('btnToggleNotes').style.display = 'none';
+      
+    } catch (error) {
+      console.error('Exit fullscreen error:', error);
+    }
+  }
+});
+
+document.addEventListener('fullscreenchange', handleFullscreenChange);
+document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+function handleFullscreenChange() {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement && 
+      !document.mozFullScreenElement && !document.msFullscreenElement) {
+    if (presentationModeActive) {
+      document.getElementById('thumbsPanel').style.display = 'none';
+      document.getElementById('notesPanel').style.display = 'none';
+    } else {
+      document.getElementById('thumbsPanel').style.display = '';
+      document.getElementById('notesPanel').style.display = '';
+    }
+    document.getElementById('btnToggleThumbs').style.display = 'none';
+    document.getElementById('btnToggleNotes').style.display = 'none';
+  }
+}
+
+function buildThumbnails(){ 
+  const thumbs=document.getElementById('thumbs'); 
+  thumbs.innerHTML=''; 
+  const slides=getSlides(); 
+  
+  slides.forEach((s,i)=>{
+    const div=document.createElement('div'); 
+    div.className='thumb'+(i===pm.slideIndex?' active':'');
+    const cv=document.createElement('canvas'); 
+    cv.width=320; 
+    cv.height=180; 
+    div.appendChild(cv);
+    thumbs.appendChild(div); 
+    div.addEventListener('click', ()=>{ 
+      pm.slideIndex=i; 
+      updateThumbActive(); 
+      renderSlide(); 
+    });
+    renderSlideToCanvas(s, cv);
+  }); 
+}
+
+function updateThumbActive(){ 
+  document.querySelectorAll('.thumb').forEach((t,i)=>t.classList.toggle('active', i===pm.slideIndex)); 
+}
+
+async function renderSlide(){
+  const slides=getSlides(); 
+  if(slides.length===0){ 
+    rctx.clearRect(0,0,renderCanvas.width,renderCanvas.height); 
+    return;
+  }
+  
+  const s=slides[pm.slideIndex]; 
+  await renderSlideToCanvas(s, renderCanvas, true);
+  drawOverlay(); 
+  document.getElementById('pmStatus').textContent = `Slide ${pm.slideIndex+1}/${slides.length} • Tool: ${pm.tool}`; 
+  updateThumbActive();
+}
+
+async function renderSlideToCanvas(s, canvas){
+  const ctx=canvas.getContext('2d'); 
+  ctx.fillStyle='#000'; 
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  
+  if(s.type==='image'){
+    await new Promise(res=>{ 
+      const img=new Image(); 
+      img.onload=()=>{ 
+        const {w,h,ox,oy}=fitContain(img.width,img.height, canvas.width, canvas.height); 
+        ctx.drawImage(img, ox, oy, w, h); 
+        res();
+      }; 
+      img.src=dataUrl(s.mime, s.b64); 
+    });
+  }
+}
+
+function fitContain(sw,sh,cw,ch){ 
+  const s=Math.min(cw/sw, ch/sh); 
+  const w=sw*s, h=sh*s; 
+  return {w,h,ox:(cw-w)/2, oy:(ch-h)/2}; 
+}
+
+function clearAllData(){
+  if(confirm('DELETE ALL DATA? This cannot be undone!')) {
+    if(confirm('Are you ABSOLUTELY sure?')) {
+      localStorage.removeItem(DB_KEY);
+      DB = structuredClone(defaultDB);
+      saveDB();
+      renderAll();
+      addHistory('System Reset', 'All data cleared');
+      alert('All data cleared successfully');
+    }
+  }
+}
+
+document.getElementById('btnClearAllData').addEventListener('click', clearAllData);
+
+document.getElementById('btnExport').addEventListener('click', ()=>{
+  const payload = JSON.stringify(DB); 
+  const now = new Date();
+  const dateStr = now.getFullYear() + '-' + 
+                  String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                  String(now.getDate()).padStart(2, '0');
+  const filename = `sharing-library-${dateStr}.json`;
+  downloadText(filename, payload); 
+  addHistory('Export', `Backup saved as ${filename}`); 
+});
+
+document.getElementById('importFile').addEventListener('change', async (e)=>{
+  const f=e.target.files[0]; 
+  if(!f) return; 
+  
+  try{ 
+    const txt=await f.text(); 
+    const json=JSON.parse(txt); 
+    if(!json.presentations||!json.reports) throw new Error('Invalid backup'); 
+    DB=json; 
+    saveDB(); 
+    renderAll(); 
+    addHistory('Import', f.name);
+  }catch(err){ 
+    alert('Import failed: '+err.message); 
+  }
+});
+
+function escapeHtml(s){ 
+  return (s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); 
+}
+
+function renderAll(){ 
+  renderPresentations(); 
+  renderReports(); 
+  renderRecent(); 
+  refreshMetrics(); 
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderAll();
+});
+
+const btnEnterMode=document.getElementById('btnEnterMode');
+btnEnterMode.addEventListener('click', ()=>{ 
+  const p=DB.presentations[0]; 
+  if(!p){ 
+    alert('No presentations yet'); 
+    return;
+  } 
+  enterPresentationMode(p.id); 
+});
+</script>
+</body>
+</html>

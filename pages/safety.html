@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OIM Assist - Safety & Operations Suite</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#e3f2fd 0%,#f8f9fa 100%);color:#2c3e50;line-height:1.6;min-height:100vh}
+        .nav{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid #e1e8ed;padding:0;box-shadow:0 2px 10px rgba(59,130,246,0.1)}
+        .nav-container{max-width:1400px;margin:0 auto;display:flex;padding:0 16px;overflow-x:auto}
+        .nav-button{border:none;background:none;padding:12px 16px;font-size:13px;font-weight:500;cursor:pointer;color:#64748b;transition:all 0.3s ease;border-bottom:2px solid transparent;white-space:nowrap}
+        .nav-button:hover{color:#3b82f6;background:rgba(59,130,246,0.1)}
+        .nav-button.active{color:#3b82f6;border-bottom-color:#3b82f6;background:rgba(59,130,246,0.1)}
+        .container{max-width:1400px;margin:0 auto;padding:20px 16px}
+        .header{margin-bottom:24px;text-align:center}
+        .header h1{font-size:24px;font-weight:700;color:#1e40af;margin-bottom:8px;text-shadow:0 2px 4px rgba(59,130,246,0.2)}
+        .header p{color:#64748b;font-size:14px}
+        .card{background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid rgba(59,130,246,0.2);box-shadow:0 4px 16px rgba(59,130,246,0.1)}
+        .card h3{font-size:16px;font-weight:600;color:#1e40af;margin-bottom:12px}
+        .card h4{font-size:14px;font-weight:600;color:#374151;margin-bottom:8px}
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px;align-items:start}
+        .form-group{display:flex;flex-direction:column}
+        .form-group label{font-size:12px;font-weight:500;color:#374151;margin-bottom:4px}
+        .form-control{padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;transition:all 0.3s ease;background:rgba(255,255,255,0.9);width:100%}
+        .form-control:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+        textarea.form-control{min-height:100px;resize:vertical;font-family:inherit;line-height:1.6}
+        .btn{padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.3s ease;display:inline-flex;align-items:center;gap:6px}
+        .btn-primary{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 3px 10px rgba(59,130,246,0.3)}
+        .btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(59,130,246,0.4)}
+        .btn-success{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 3px 10px rgba(16,185,129,0.3)}
+        .btn-success:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(16,185,129,0.4)}
+        .btn-secondary{background:linear-gradient(135deg,#6b7280,#4b5563);color:#fff;box-shadow:0 3px 10px rgba(107,114,128,0.3)}
+        .btn-secondary:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(107,114,128,0.4)}
+        .btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 3px 10px rgba(239,68,68,0.3)}
+        .btn-danger:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(239,68,68,0.4)}
+        .btn-warning{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 3px 10px rgba(245,158,11,0.3)}
+        .btn-warning:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(245,158,11,0.4)}
+        .btn-info{background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;box-shadow:0 3px 10px rgba(6,182,212,0.3)}
+        .btn-info:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(6,182,212,0.4)}
+        .hidden{display:none}
+        
+        .report-box{background:rgba(248,250,252,0.9);padding:16px;border-radius:8px;border:1px solid rgba(59,130,246,0.2);margin:12px 0;backdrop-filter:blur(5px)}
+        .report-text{white-space:pre-wrap;font-size:12px;color:#374151;font-family:'SF Mono',Monaco,'Cascadia Code','Roboto Mono',Consolas,'Courier New',monospace;line-height:1.5}
+        .alert{padding:12px 16px;border-radius:6px;margin:12px 0;border-left:4px solid;font-size:12px;backdrop-filter:blur(5px)}
+        .alert-success{background:rgba(236,253,245,0.9);border-color:#10b981;color:#065f46}
+        .alert-info{background:rgba(239,246,255,0.9);border-color:#3b82f6;color:#1e40af}
+        .alert-warning{background:rgba(255,251,235,0.9);border-color:#f59e0b;color:#92400e}
+        .alert-danger{background:rgba(254,242,242,0.9);border-color:#ef4444;color:#991b1b}
+        
+        .wizard-step{border:2px solid #e5e7eb;border-radius:10px;padding:16px;margin-bottom:12px;background:rgba(255,255,255,0.95)}
+        .wizard-step.active{border-color:#3b82f6;background:rgba(59,130,246,0.05)}
+        .wizard-step.completed{border-color:#10b981;background:rgba(16,185,129,0.05)}
+        
+        .pear-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
+        .pear-card{background:rgba(255,255,255,0.95);border:2px solid #e5e7eb;border-radius:10px;padding:12px;transition:all 0.3s ease}
+        .pear-card.selected{border-color:#3b82f6;background:rgba(59,130,246,0.1)}
+        
+        .rating-display{background:linear-gradient(135deg,#f3f4f6,#e5e7eb);border-radius:10px;padding:16px;margin:12px 0;text-align:center}
+        .rating-display.rating-1{background:linear-gradient(135deg,#ecfdf5,#d1fae5);color:#065f46}
+        .rating-display.rating-2{background:linear-gradient(135deg,#eff6ff,#dbeafe);color:#1e40af}
+        .rating-display.rating-3{background:linear-gradient(135deg,#fffbeb,#fef3c7);color:#92400e}
+        .rating-display.rating-4{background:linear-gradient(135deg,#fef2f2,#fecaca);color:#991b1b}
+        .rating-display.rating-5{background:linear-gradient(135deg,#450a0a,#7f1d1d);color:#ffffff}
+        
+        .medical-flow{background:rgba(255,255,255,0.95);border-radius:10px;padding:16px;margin:12px 0}
+        .medical-step{background:rgba(34,197,94,0.1);border:1px solid #22c55e;border-radius:6px;padding:10px;margin:8px 0;font-size:12px}
+        .medical-decision{background:rgba(59,130,246,0.1);border:1px solid #3b82f6;border-radius:6px;padding:10px;margin:8px 0;text-align:center}
+        
+        .progress-bar{background:#e5e7eb;border-radius:6px;height:6px;margin:12px 0}
+        .progress-fill{background:linear-gradient(135deg,#3b82f6,#1d4ed8);height:100%;border-radius:6px;transition:width 0.3s ease}
+        
+        .menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+        .menu-card{background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:20px;border-radius:10px;border:1px solid rgba(59,130,246,0.2);cursor:pointer;transition:all 0.3s ease;text-align:center}
+        .menu-card:hover{border-color:#3b82f6;transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,0.2)}
+        
+        .scenario-btn{width:100%;margin:4px 0;padding:10px;text-align:left;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;transition:all 0.2s}
+        .scenario-btn:hover{background:#e2e8f0;border-color:#3b82f6}
+        
+        .export-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:16px}
+        
+        @media (max-width:768px){
+            .container{padding:12px 8px}
+            .nav-container{padding:0 8px}
+            .nav-button{padding:10px 12px;font-size:12px}
+            .form-grid,.pear-grid,.menu-grid,.export-grid{grid-template-columns:1fr}
+            .header h1{font-size:20px}
+            .card{padding:16px}
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <button class="nav-button active" onclick="showView('home')" id="nav-home">🏠 Home</button>
+            <button class="nav-button" onclick="showView('assessment')" id="nav-assessment">📝 PEAR+L</button>
+            <button class="nav-button" onclick="showView('medical')" id="nav-medical">🏥 MEDEVAC</button>
+            <button class="nav-button" onclick="showView('reporting')" id="nav-reporting">📋 Scenarios</button>
+            <button class="nav-button" onclick="showView('report')" id="nav-report">📄 Reports</button>
+            <button class="nav-button" onclick="showView('history')" id="nav-history">📚 History</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Home View -->
+        <div id="view-home">
+            <div class="header">
+                <h1>🛡️ OIM Assist - Safety & Operations Suite</h1>
+                <p>Comprehensive incident assessment, medical procedures & safety reporting</p>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-card" onclick="showView('assessment')">
+                    <h3>📝 PEAR+L Assessment</h3>
+                    <p>Step-by-step incident classification following Petronas standards</p>
+                </div>
+                <div class="menu-card" onclick="showView('medical')">
+                    <h3>🏥 MEDEVAC Process</h3>
+                    <p>Medical emergency flowchart and evacuation procedures</p>
+                </div>
+                <div class="menu-card" onclick="showView('reporting')">
+                    <h3>📋 Reporting Scenarios</h3>
+                    <p>Quick guide for different incident reporting requirements</p>
+                </div>
+                <div class="menu-card" onclick="showView('report')">
+                    <h3>📄 Safety Reports</h3>
+                    <p>Generate professional safety reports with classification</p>
+                </div>
+                <div class="menu-card" onclick="showView('history')">
+                    <h3>📚 History</h3>
+                    <p>Review assessments, medical cases and reports</p>
+                </div>
+                <div class="menu-card" onclick="window.open('calculators.html', '_blank')">
+                    <h3>🧮 Engineering Calculators</h3>
+                    <p>12 offshore engineering calculators - opens in new tab</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PEAR+L Assessment View -->
+        <div id="view-assessment" class="hidden">
+            <div class="header">
+                <h1>📝 PEAR+L Incident Assessment</h1>
+                <p>Follow the step-by-step process to classify your incident</p>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width:0%"></div>
+            </div>
+
+            <div class="wizard-step active" id="step1">
+                <h4>Step 1: HSSE Assessment</h4>
+                <p>Is this a Health, Safety, Security, or Environment related incident?</p>
+                <div class="form-grid" style="margin-top:12px">
+                    <button class="btn btn-success" onclick="selectHSSE('yes')">✅ Yes - HSSE Related</button>
+                    <button class="btn btn-secondary" onclick="selectHSSE('no')">❌ No - Operational Issue</button>
+                </div>
+                <div id="operationalResult" class="alert alert-warning" style="display:none">
+                    <strong>Classification: Operational Excellence (Lost Event)</strong><br>
+                    ➡️ Follow PMA Facilities Failure Notification (FFN) Guideline
+                </div>
+            </div>
+
+            <div class="wizard-step" id="step2" style="display:none">
+                <h4>Step 2: PEAR Impact Check</h4>
+                <p>Does this incident have actual impact on PEAR (People, Environment, Assets, Reputation)?</p>
+                <div class="form-grid" style="margin-top:12px">
+                    <button class="btn btn-danger" onclick="selectPEAR('yes')">⚠️ Yes - Actual Impact</button>
+                    <button class="btn btn-primary" onclick="selectPEAR('no')">⚡ No - Near Miss</button>
+                </div>
+                <div id="nearMissResult" class="alert alert-info" style="display:none">
+                    <strong>Classification: Near Miss</strong><br>
+                    ➡️ Incident Owner (OIM) to raise Near Miss Form in IMS
+                </div>
+            </div>
+
+            <div class="wizard-step" id="step3" style="display:none">
+                <h4>Step 3: PEAR+L Detailed Assessment</h4>
+                <p>Rate each category based on actual impact. Final rating = highest score.</p>
+                
+                <div class="pear-grid">
+                    <div class="pear-card">
+                        <h4>👥 PEOPLE (P)</h4>
+                        <select id="peopleRating" class="form-control" onchange="updatePEARRating()">
+                            <option value="0">No impact</option>
+                            <option value="1">First Aid / No Treatment</option>
+                            <option value="2">Medical Treatment / LWC <4 days</option>
+                            <option value="3">LWC >4 days / PPD</option>
+                            <option value="4">PTD / Single Fatality</option>
+                            <option value="5">Multiple Fatalities</option>
+                        </select>
+                    </div>
+
+                    <div class="pear-card">
+                        <h4>🌍 ENVIRONMENT (E)</h4>
+                        <select id="environmentRating" class="form-control" onchange="updatePEARRating()">
+                            <option value="0">No impact</option>
+                            <option value="1">Slight - Contained</option>
+                            <option value="2">Minor - Limited staining</option>
+                            <option value="3">Localised - Off-site contamination</option>
+                            <option value="4">Major - Significant disruption</option>
+                            <option value="5">Massive - Extensive damage</option>
+                        </select>
+                    </div>
+
+                    <div class="pear-card">
+                        <h4>🏭 ASSET (A)</h4>
+                        <select id="assetRating" class="form-control" onchange="updatePEARRating()">
+                            <option value="0">No damage</option>
+                            <option value="1">< USD 2,500</option>
+                            <option value="2">USD 2,500 - 99,999</option>
+                            <option value="3">USD 100,000 - 999,999</option>
+                            <option value="4">USD 1M - 9.99M</option>
+                            <option value="5">≥ USD 10M</option>
+                        </select>
+                    </div>
+
+                    <div class="pear-card">
+                        <h4>📰 REPUTATION (R)</h4>
+                        <select id="reputationRating" class="form-control" onchange="updatePEARRating()">
+                            <option value="0">No exposure</option>
+                            <option value="1">Insignificant</option>
+                            <option value="2">Minor adverse attention</option>
+                            <option value="3">Moderate - Local media</option>
+                            <option value="4">Major - National media</option>
+                            <option value="5">Severe - International</option>
+                        </select>
+                    </div>
+
+                    <div class="pear-card">
+                        <h4>💧 LOPC (L)</h4>
+                        <select id="lopcRating" class="form-control" onchange="updatePEARRating()">
+                            <option value="0">No release</option>
+                            <option value="1">Slight - Below Tier 2</option>
+                            <option value="2">Minor - Above Tier 2</option>
+                            <option value="3">Local - Above Tier 1</option>
+                            <option value="4">Major - 10-100x Tier 1</option>
+                            <option value="5">Extensive - >100x Tier 1</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="pearResults" style="display:none">
+                    <div class="rating-display" id="finalRatingDisplay">
+                        <h3 id="finalRatingText">Final Rating: 0</h3>
+                        <p id="classificationText">Classification</p>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h4>📅 Reporting Requirements</h4>
+                        <div id="timelineText">Select ratings to see requirements</div>
+                    </div>
+
+                    <div style="text-align:center;margin-top:16px">
+                        <button class="btn btn-primary" onclick="proceedToReport()">📄 Generate Safety Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical MEDEVAC View -->
+        <div id="view-medical" class="hidden">
+            <div class="header">
+                <h1>🏥 Medical Emergency & MEDEVAC Process</h1>
+                <p>Step-by-step medical emergency response and evacuation procedures</p>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="medProgressBar" style="width:0%"></div>
+            </div>
+
+            <div class="wizard-step active" id="med-step1">
+                <h4>Medical Emergency Assessment</h4>
+                <p>What is the medical situation?</p>
+                <div class="form-grid" style="margin-top:12px">
+                    <button class="btn btn-success" onclick="selectMedical('routine')">🩹 Routine Medical</button>
+                    <button class="btn btn-warning" onclick="selectMedical('emergency')">🚨 Medical Emergency</button>
+                    <button class="btn btn-danger" onclick="selectMedical('critical')">⚠️ Critical - MEDEVAC Needed</button>
+                </div>
+            </div>
+
+            <div class="wizard-step" id="med-step2" style="display:none">
+                <h4>Emergency Medical Response</h4>
+                <div class="medical-flow">
+                    <div class="medical-step">
+                        <strong>Step 1:</strong> IP meet offshore medic for treatment
+                    </div>
+                    <div class="medical-step">
+                        <strong>Step 2:</strong> PKA SOS Medic consult PKA SOS ARC Doctor while treating IP
+                    </div>
+                    <div class="medical-decision">
+                        <strong>Medical Decision Required:</strong><br>
+                        <p>Does this require MEDEVAC?</p>
+                        <div class="form-grid" style="margin-top:8px">
+                            <button class="btn btn-danger" onclick="selectMEDEVAC('yes')">🚁 Yes - MEDEVAC Required</button>
+                            <button class="btn btn-secondary" onclick="selectMEDEVAC('no')">🏥 No - Refer to Incident Management</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wizard-step" id="med-step3" style="display:none">
+                <h4>MEDEVAC Activation Process</h4>
+                <div class="medical-flow">
+                    <div class="alert alert-danger">
+                        <strong>🚨 MEDEVAC ACTIVATED</strong><br>
+                        Follow this critical process immediately:
+                    </div>
+                    
+                    <div class="medical-step">
+                        <strong>Immediate Actions:</strong><br>
+                        • PKA SOS ARC Doctor notify EMT IC, OSC, Medic and PMA OH/IH Manager<br>
+                        • EMT IC instruct Logistics SC to contact Aviation focal for chopper activation<br>
+                        • EMT IC request HSE & Liaison Officer prepare PETRONAS NF for review
+                    </div>
+                    
+                    <div class="medical-step">
+                        <strong>Coordination Actions:</strong><br>
+                        • Aviation Focal notify EMT Logistics SC on ETD/ETA times<br>
+                        • PKA SOS Medic inform ARC Doctor on ETD from Platform<br>
+                        • OSC inform Contractor/HR for next of kin notification<br>
+                        • PKA SOS ARC inform KRP & CHS for ground arrangements
+                    </div>
+                    
+                    <div class="medical-step">
+                        <strong>Transport & Handover:</strong><br>
+                        • Upon arrival: IP transported via ambulance to HSNZ<br>
+                        • Company/contractor rep engage CHS Doctor for handover<br>
+                        • PKA SOS ARC Doctor provide daily updates until discharge
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>Key Contacts:</strong><br>
+                        • <strong>HSNZ:</strong> Hospital Sultanah Nur Zahirah, KT<br>
+                        • <strong>KRP:</strong> Klinik Rantau PETRONAS<br>
+                        • <strong>CHS:</strong> Cheriyan Health Services<br>
+                        • <strong>ARC:</strong> PKA SOS Asia Response Centre
+                    </div>
+                </div>
+            </div>
+
+            <div class="wizard-step" id="med-step4" style="display:none">
+                <h4>Incident Management Process</h4>
+                <div class="medical-flow">
+                    <div class="alert alert-info">
+                        <strong>Non-MEDEVAC Medical Incident</strong><br>
+                        Proceed with standard incident management process
+                    </div>
+                    
+                    <div class="medical-step">
+                        <strong>Actions Required:</strong><br>
+                        • Continue on-site medical treatment<br>
+                        • Monitor patient condition closely<br>
+                        • Document all medical interventions<br>
+                        • Follow standard incident reporting procedures<br>
+                        • Prepare for potential status change
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align:center;margin-top:16px">
+                <button class="btn btn-secondary" onclick="resetMedical()">🔄 Start Over</button>
+            </div>
+        </div>
+
+        <!-- Reporting Scenarios View -->
+        <div id="view-reporting" class="hidden">
+            <div class="header">
+                <h1>📋 Incident Reporting Scenarios</h1>
+                <p>Quick guide for different incident reporting requirements</p>
+            </div>
+
+            <div class="card">
+                <h3>Select Your Incident Scenario</h3>
+                <p style="font-size:12px;color:#64748b;margin-bottom:12px">Choose the scenario that best matches your situation</p>
+                
+                <div class="form-grid">
+                    <div>
+                        <h4>🏥 Medical/Health Related</h4>
+                        <button class="scenario-btn" onclick="showRepResult('injury-work')">🩹 Injury Case (Work Related)</button>
+                        <button class="scenario-btn" onclick="showRepResult('illness-work')">🤒 Illness Case (Work Related)</button>
+                        <button class="scenario-btn" onclick="showRepResult('medevac')">🚁 Emergency MEDEVAC</button>
+                        <button class="scenario-btn" onclick="showRepResult('injury-non-work')">🩹 Injury (Non-work Related)</button>
+                        <button class="scenario-btn" onclick="showRepResult('illness-non-work')">🤧 Illness (Non-work Related)</button>
+                    </div>
+                    
+                    <div>
+                        <h4>⚠️ Safety/Security Related</h4>
+                        <button class="scenario-btn" onclick="showRepResult('nem-work')">⚠️ NEM Work Related</button>
+                        <button class="scenario-btn" onclick="showRepResult('nem-non-work')">🔥 NEM Non-Work Related</button>
+                        <button class="scenario-btn" onclick="showRepResult('security')">🔒 Security Incident</button>
+                        <button class="scenario-btn" onclick="showRepResult('near-miss')">⚡ Near Miss</button>
+                    </div>
+                    
+                    <div>
+                        <h4>🌍 Environmental Related</h4>
+                        <button class="scenario-btn" onclick="showRepResult('oil-spill')">🛢️ Oil Spill</button>
+                        <button class="scenario-btn" onclick="showRepResult('lopc-slight')">💧 LOPC - Slight Release</button>
+                        <button class="scenario-btn" onclick="showRepResult('spill-transport')">🚚 Spill During Transport</button>
+                    </div>
+                    
+                    <div>
+                        <h4>📰 Other Incidents</h4>
+                        <button class="scenario-btn" onclick="showRepResult('reputation')">📰 Reputation Impact</button>
+                        <button class="scenario-btn" onclick="showRepResult('operational')">⚙️ Operational Excellence Loss</button>
+                        <button class="scenario-btn" onclick="showRepResult('admin')">📋 Administrative Case</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rep-result" class="card" style="display:none">
+                <h3 id="rep-title"></h3>
+                <div id="rep-summary" style="margin-bottom:12px"></div>
+                <div id="rep-explanation" style="background:#f8fafc;padding:12px;border-radius:6px;margin-bottom:12px;font-size:12px"></div>
+                <div id="rep-actions"></div>
+                <button class="btn btn-secondary" onclick="resetReporting()">🔄 Start Over</button>
+            </div>
+        </div>
+
+        <!-- Report Generator View -->
+        <div id="view-report" class="hidden">
+            <div class="header">
+                <h1>📄 Safety Report Generator</h1>
+                <p>Generate professional safety reports with classification</p>
+            </div>
+
+            <div class="card">
+                <h3>Report Configuration</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Report Type</label>
+                        <select id="reportType" class="form-control">
+                            <option value="lopc">LOPC (Loss of Primary Containment)</option>
+                            <option value="emergency">Emergency / Fire Alarm</option>
+                            <option value="medical">Medical Case</option>
+                            <option value="near-miss">Near Miss</option>
+                            <option value="accident">Accident</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Platform</label>
+                        <select id="platform" class="form-control">
+                            <option value="IbA">Irong Barat A (IbA)</option>
+                            <option value="IbB">Irong Barat B (IbB)</option>
+                            <option value="IbC">Irong Barat C (IbC)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Module/Area</label>
+                        <input type="text" id="moduleArea" class="form-control" placeholder="e.g., Process Module A">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Incident Details</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Incident Title</label>
+                        <input type="text" id="incidentTitle" class="form-control" placeholder="Brief incident description">
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="incidentDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Time</label>
+                        <input type="time" id="incidentTime" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Brief Description</label>
+                    <textarea id="briefDescription" class="form-control" placeholder="Detailed description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Action Taken</label>
+                    <textarea id="actionTaken" class="form-control" placeholder="Immediate actions..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Way Forward</label>
+                    <textarea id="wayForward" class="form-control" placeholder="Next steps..."></textarea>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+                    <h3>Generated Safety Report</h3>
+                    <div style="display:flex;gap:6px">
+                        <button class="btn btn-primary" onclick="generateReport()">📄 Generate</button>
+                        <button class="btn btn-success" onclick="downloadReport()">💾 Download</button>
+                        <button class="btn btn-secondary" onclick="copyReport()">📋 Copy</button>
+                    </div>
+                </div>
+                <div class="report-box">
+                    <pre class="report-text" id="reportContent">Configure and generate safety report...</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- History View -->
+        <div id="view-history" class="hidden">
+            <div class="header">
+                <h1>📚 Assessment & Report History</h1>
+                <p>Review previous assessments, medical cases and reports</p>
+            </div>
+            
+            <div class="export-grid">
+                <button class="btn btn-primary" onclick="exportAllData()">💾 Export All Data</button>
+                <button class="btn btn-secondary" onclick="importData()">📂 Import Data</button>
+                <button class="btn btn-success" onclick="exportCSV()">📊 Export CSV</button>
+                <button class="btn btn-warning" onclick="saveAsPDF()">📄 Save as PDF</button>
+                <button class="btn btn-info" onclick="saveAsTXT()">📝 Save as TXT</button>
+                <button class="btn btn-danger" onclick="clearHistory()">🗑️ Clear All History</button>
+            </div>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImportFile(event)">
+            
+            <div id="historyContent">
+                <div class="card" style="text-align:center;padding:40px">
+                    <h3 style="color:#64748b">📄 No Data Yet</h3>
+                    <p style="color:#94a3b8">Complete assessments or generate reports to see history</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentView = 'home';
+        let assessmentData = {
+            hsseRelated: null,
+            pearImpact: null,
+            ratings: {people: 0, environment: 0, asset: 0, reputation: 0, lopc: 0},
+            finalRating: 0,
+            classification: '',
+            timeline: ''
+        };
+        let history = [];
+
+        function init() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('incidentDate').value = today;
+            loadHistory();
+        }
+
+        function showView(view) {
+            document.querySelectorAll('[id^="view-"]').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
+            document.getElementById('view-' + view).classList.remove('hidden');
+            document.getElementById('nav-' + view)?.classList.add('active');
+            currentView = view;
+            if (view === 'history') renderHistory();
+        }
+
+        // PEAR+L Assessment Functions
+        function selectHSSE(choice) {
+            assessmentData.hsseRelated = choice;
+            updateProgress(25);
+            
+            if (choice === 'no') {
+                document.getElementById('operationalResult').style.display = 'block';
+                document.getElementById('step1').classList.add('completed');
+                assessmentData.classification = 'Operational Excellence';
+                assessmentData.timeline = 'Follow PMA Facilities Failure Notification (FFN) Guideline';
+                saveAssessment();
+            } else {
+                document.getElementById('operationalResult').style.display = 'none';
+                document.getElementById('step1').classList.add('completed');
+                document.getElementById('step2').style.display = 'block';
+                document.getElementById('step2').classList.add('active');
+                updateProgress(50);
+            }
+        }
+
+        function selectPEAR(choice) {
+            assessmentData.pearImpact = choice;
+            
+            if (choice === 'no') {
+                document.getElementById('nearMissResult').style.display = 'block';
+                document.getElementById('step2').classList.add('completed');
+                assessmentData.classification = 'Near Miss';
+                assessmentData.timeline = 'Incident Owner (OIM) to raise Near Miss Form in IMS';
+                updateProgress(100);
+                saveAssessment();
+            } else {
+                document.getElementById('nearMissResult').style.display = 'none';
+                document.getElementById('step2').classList.add('completed');
+                document.getElementById('step3').style.display = 'block';
+                document.getElementById('step3').classList.add('active');
+                updateProgress(75);
+            }
+        }
+
+        function updatePEARRating() {
+            const people = parseInt(document.getElementById('peopleRating').value) || 0;
+            const environment = parseInt(document.getElementById('environmentRating').value) || 0;
+            const asset = parseInt(document.getElementById('assetRating').value) || 0;
+            const reputation = parseInt(document.getElementById('reputationRating').value) || 0;
+            const lopc = parseInt(document.getElementById('lopcRating').value) || 0;
+
+            assessmentData.ratings = {people, environment, asset, reputation, lopc};
+            const finalRating = Math.max(people, environment, asset, reputation, lopc);
+            assessmentData.finalRating = finalRating;
+
+            if (finalRating > 0) {
+                document.getElementById('pearResults').style.display = 'block';
+                updateRatingDisplay(finalRating);
+                updateProgress(100);
+                saveAssessment();
+            }
+        }
+
+        function updateRatingDisplay(rating) {
+            const display = document.getElementById('finalRatingDisplay');
+            const ratingText = document.getElementById('finalRatingText');
+            const classificationText = document.getElementById('classificationText');
+            const timelineText = document.getElementById('timelineText');
+
+            display.className = 'rating-display rating-' + rating;
+            ratingText.textContent = `Final Rating: ${rating}`;
+
+            let classification = '';
+            let timeline = '';
+
+            if (rating >= 4) {
+                classification = 'Major Incident';
+                timeline = '🚨 EMERGENCY: Notify COMCEN within 1 hour, updates every 6 hours<br>📞 Notify PD & Head HSE by phone<br>📄 EMT (HSE & Liaison Officer) to raise Incident Notification Form in IMS';
+            } else if (rating === 3) {
+                classification = 'Major Incident';
+                timeline = '⚠️ NON-EMERGENCY (Rating 3): Notify COMCEN within 1 hour<br>📄 EMT (HSE & Liaison Officer) to raise Incident Notification Form in IMS';
+            } else if (rating >= 1) {
+                classification = 'Minor Incident';
+                timeline = '📋 NON-EMERGENCY (Rating 1-2): Notify COMCEN within 24 hours<br>📄 EMT (HSE & Liaison Officer) to raise Incident Notification Form in IMS';
+            }
+
+            assessmentData.classification = classification;
+            assessmentData.timeline = timeline;
+
+            classificationText.textContent = classification;
+            timelineText.innerHTML = timeline;
+
+            document.querySelectorAll('.pear-card').forEach((card, index) => {
+                const ratings = [assessmentData.ratings.people, assessmentData.ratings.environment, 
+                               assessmentData.ratings.asset, assessmentData.ratings.reputation, assessmentData.ratings.lopc];
+                if (ratings[index] > 0) {
+                    card.classList.add('selected');
+                }
+            });
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        function proceedToReport() {
+            showView('report');
+            if (assessmentData.classification) {
+                document.getElementById('incidentTitle').value = `${assessmentData.classification} - Rating ${assessmentData.finalRating}`;
+            }
+        }
+
+        // Medical Emergency Functions
+        function selectMedical(type) {
+            updateMedProgress(33);
+            
+            if (type === 'routine') {
+                document.getElementById('med-step1').classList.add('completed');
+                showAlert('Routine medical case - follow standard first aid procedures', 'info');
+                saveMedicalCase('Routine Medical Case', 'Standard first aid procedures followed');
+                return;
+            }
+            
+            if (type === 'critical') {
+                document.getElementById('med-step1').classList.add('completed');
+                document.getElementById('med-step2').style.display = 'none';
+                document.getElementById('med-step3').style.display = 'block';
+                updateMedProgress(100);
+                saveMedicalCase('Critical MEDEVAC', 'MEDEVAC activated immediately');
+                return;
+            }
+            
+            // Emergency case
+            document.getElementById('med-step1').classList.add('completed');
+            document.getElementById('med-step2').style.display = 'block';
+            updateMedProgress(66);
+        }
+
+        function selectMEDEVAC(choice) {
+            if (choice === 'yes') {
+                document.getElementById('med-step2').classList.add('completed');
+                document.getElementById('med-step3').style.display = 'block';
+                updateMedProgress(100);
+                saveMedicalCase('Emergency MEDEVAC', 'MEDEVAC process activated after medical assessment');
+            } else {
+                document.getElementById('med-step2').classList.add('completed');
+                document.getElementById('med-step4').style.display = 'block';
+                updateMedProgress(100);
+                saveMedicalCase('Medical Emergency', 'Non-MEDEVAC medical incident - standard incident management');
+            }
+        }
+
+        function updateMedProgress(percent) {
+            document.getElementById('medProgressBar').style.width = percent + '%';
+        }
+
+        function resetMedical() {
+            document.querySelectorAll('#view-medical .wizard-step').forEach(step => {
+                step.style.display = 'none';
+                step.classList.remove('completed');
+            });
+            document.getElementById('med-step1').style.display = 'block';
+            document.getElementById('med-step1').classList.add('active');
+            updateMedProgress(0);
+        }
+
+        // Reporting Scenarios Functions
+        function showRepResult(scenario) {
+            const repScenarios = {
+                'injury-work': {
+                    title: 'Injury Case (Work Related)',
+                    nf: true,
+                    report: true,
+                    explanation: 'All work-related injuries require formal notification and reporting to ensure proper medical care and regulatory compliance.',
+                    actions: ['Submit Notification Form (NF) immediately', 'Report to management', 'Provide medical care', 'Document details', 'Investigate thoroughly']
+                },
+                'illness-work': {
+                    title: 'Illness Case (Work Related)',
+                    nf: true,
+                    report: true,
+                    explanation: 'Work-related illnesses require formal documentation to track occupational health trends.',
+                    actions: ['Submit Notification Form (NF)', 'Report to management', 'Medical assessment', 'Determine work relationship', 'Monitor condition']
+                },
+                'medevac': {
+                    title: 'Emergency MEDEVAC',
+                    nf: true,
+                    report: true,
+                    explanation: 'Medical evacuations require immediate formal notification for emergency coordination.',
+                    actions: ['Submit Notification Form (NF) IMMEDIATELY', 'Report to management', 'Activate MEDEVAC', 'Contact medical support', 'Notify next of kin']
+                },
+                'nem-work': {
+                    title: 'NEM Work Related',
+                    nf: true,
+                    report: true,
+                    explanation: 'Work-related near miss events require formal documentation to prevent future incidents.',
+                    actions: ['Submit Notification Form (NF)', 'Report to management', 'Investigate thoroughly', 'Implement corrective measures']
+                },
+                'security': {
+                    title: 'Security Incident',
+                    nf: true,
+                    report: true,
+                    explanation: 'Security incidents require formal reporting for investigation and evidence preservation.',
+                    actions: ['Submit Notification Form (NF)', 'Report to management', 'Contact security team', 'Secure area', 'Preserve evidence']
+                },
+                'oil-spill': {
+                    title: 'Oil Spill',
+                    nf: true,
+                    report: true,
+                    explanation: 'Environmental releases require immediate formal notification due to regulatory requirements.',
+                    actions: ['Submit Notification Form (NF) within 1 hour', 'Report to management', 'Contain spill', 'Assess impact', 'Notify authorities']
+                },
+                'reputation': {
+                    title: 'Incident with Reputation Impact',
+                    nf: true,
+                    report: true,
+                    explanation: 'Incidents affecting company reputation require formal notification for communication strategy.',
+                    actions: ['Submit Notification Form (NF)', 'Report immediately', 'Assess media risk', 'Prepare communication strategy']
+                },
+                'nem-non-work': {
+                    title: 'NEM Non-Work Related',
+                    nf: false,
+                    report: true,
+                    explanation: 'Non-work related near miss events typically do not require formal notification forms.',
+                    actions: ['No Notification Form required', 'Report to management for awareness', 'Document details', 'Consider preventive measures']
+                },
+                'lopc-slight': {
+                    title: 'LOPC - Slight Release',
+                    nf: false,
+                    report: true,
+                    explanation: 'Slight releases below thresholds may not require formal notification but should be reported.',
+                    actions: ['No Notification Form required', 'Report to management', 'Monitor levels', 'Document incident']
+                },
+                'spill-transport': {
+                    title: 'Spill During Transport',
+                    nf: false,
+                    report: true,
+                    explanation: 'Transport spills follow different procedures but require management awareness.',
+                    actions: ['No Notification Form required', 'Report to management', 'Follow transport procedures', 'Notify contractor']
+                },
+                'near-miss': {
+                    title: 'Near Miss',
+                    nf: false,
+                    report: true,
+                    explanation: 'Near misses are learning opportunities that help identify trends and prevent incidents.',
+                    actions: ['No Notification Form required', 'Report to management', 'Investigate causes', 'Share lessons learned']
+                },
+                'admin': {
+                    title: 'Administrative Case',
+                    nf: false,
+                    report: false,
+                    explanation: 'Administrative cases involve routine matters handled through normal channels.',
+                    actions: ['No Notification Form required', 'No formal reporting required', 'Handle through admin channels']
+                },
+                'injury-non-work': {
+                    title: 'Injury (Non-work Related)',
+                    nf: false,
+                    report: false,
+                    explanation: 'Non-work related injuries do not require formal incident reporting.',
+                    actions: ['No Notification Form required', 'No formal reporting required', 'Provide basic assistance']
+                },
+                'illness-non-work': {
+                    title: 'Illness (Non-work Related)',
+                    nf: false,
+                    report: false,
+                    explanation: 'Personal illnesses not work-related typically require only basic support.',
+                    actions: ['No Notification Form required', 'No formal reporting required', 'Provide basic assistance']
+                },
+                'operational': {
+                    title: 'Operational Excellence Loss',
+                    nf: false,
+                    report: false,
+                    explanation: 'Operational events follow different reporting procedures focused on equipment performance.',
+                    actions: ['No Notification Form required', 'No safety reporting required', 'Follow operational procedures']
+                }
+            };
+
+            const result = repScenarios[scenario];
+            document.getElementById('rep-title').textContent = result.title;
+            
+            const summaryHtml = `
+                <div style="background:#f1f5f9;padding:10px;border-radius:6px;">
+                    <strong>Requirements:</strong><br>
+                    📋 Notification Form: <span style="color:${result.nf ? '#dc2626' : '#16a34a'};font-weight:bold;">${result.nf ? 'REQUIRED' : 'Not Required'}</span><br>
+                    📢 Management Reporting: <span style="color:${result.report ? '#dc2626' : '#16a34a'};font-weight:bold;">${result.report ? 'REQUIRED' : 'Not Required'}</span>
+                </div>
+            `;
+            
+            document.getElementById('rep-summary').innerHTML = summaryHtml;
+            document.getElementById('rep-explanation').innerHTML = `<strong>Why:</strong> ${result.explanation}`;
+            document.getElementById('rep-actions').innerHTML = '<ul>' + result.actions.map(a => `<li>${a}</li>`).join('') + '</ul>';
+            
+            document.getElementById('rep-result').style.display = 'block';
+        }
+
+        function resetReporting() {
+            document.getElementById('rep-result').style.display = 'none';
+        }
+
+        // Report Functions
+        function generateReport() {
+            const type = document.getElementById('reportType').value;
+            const platform = document.getElementById('platform').value;
+            const module = document.getElementById('moduleArea').value || '[Module/Area]';
+            const title = document.getElementById('incidentTitle').value || '[Title]';
+            const date = document.getElementById('incidentDate').value;
+            const time = document.getElementById('incidentTime').value;
+            const desc = document.getElementById('briefDescription').value || '[Description]';
+            const action = document.getElementById('actionTaken').value || '[Action]';
+            const forward = document.getElementById('wayForward').value || '[Way Forward]';
+            const fDate = new Date(date).toLocaleDateString('en-GB');
+            const platformName = platform === 'IbA' ? 'Irong Barat A' : platform === 'IbB' ? 'Irong Barat B' : 'Irong Barat C';
+
+            let assessmentSection = '';
+            if (assessmentData.finalRating > 0) {
+                const breakdown = assessmentData.ratings;
+                assessmentSection = `
+
+*PEAR+L Assessment Results:*
+Final Rating: ${assessmentData.finalRating} - ${assessmentData.classification}
+PEAR+L: P:${breakdown.people} | E:${breakdown.environment} | A:${breakdown.asset} | R:${breakdown.reputation} | L:${breakdown.lopc}
+
+*Reporting Requirements:*
+${assessmentData.timeline.replace(/<br>/g, '\n')}`;
+            }
+
+            const report = `*${type.toUpperCase()} Report*
+Dear PMA IC,
+
+*Title:* ${title}
+*Date:* ${fDate} at ${time}
+*Platform:* ${platformName}
+*Module/Area:* ${module}${assessmentSection}
+
+*Description:*
+${desc}
+
+*Action Taken:*
+${action}
+
+*Way Forward:*
+${forward}
+
+Regards,
+Aziz Mohamad - OIM ${platformName}`;
+
+            document.getElementById('reportContent').textContent = report;
+            saveToHistory('Safety Report', report);
+            showAlert('Safety report generated successfully', 'success');
+        }
+
+        function downloadReport() {
+            const content = document.getElementById('reportContent').textContent;
+            const blob = new Blob([content], {type: 'text/plain'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `safety-report-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showAlert('Report downloaded', 'success');
+        }
+
+        function copyReport() {
+            const content = document.getElementById('reportContent').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                showAlert('Report copied to clipboard', 'success');
+            }).catch(() => {
+                showAlert('Copy failed', 'warning');
+            });
+        }
+
+        // Export/Import Functions
+        function exportAllData() {
+            const currentDate = new Date();
+            const dateStr = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+            
+            const exportData = {
+                exportInfo: {
+                    date: currentDate.toISOString(),
+                    version: "1.0",
+                    platform: getCurrentPlatform(),
+                    totalRecords: history.length
+                },
+                assessments: history.filter(h => h.type.includes('Assessment')),
+                medicalCases: history.filter(h => h.type.includes('Medical') || h.type.includes('MEDEVAC')),
+                safetyReports: history.filter(h => h.type === 'Safety Report'),
+                allHistory: history, // Complete backup
+                appVersion: "OIM Assist v1.0"
+            };
+
+            // Create download
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `safety-${dateStr}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showAlert(`Data exported: safety-${dateStr}.json (${history.length} records)`, 'success');
+        }
+
+        function exportCSV() {
+            if (!history.length) {
+                showAlert('No data to export', 'warning');
+                return;
+            }
+
+            const csvData = history.map(item => ({
+                Date: new Date(item.timestamp).toLocaleDateString('en-GB'),
+                Time: new Date(item.timestamp).toLocaleTimeString('en-GB'),
+                Type: item.type,
+                Classification: item.classification || '',
+                Rating: item.finalRating || '',
+                Content: item.content ? item.content.replace(/\n/g, ' ').substring(0, 100) + '...' : ''
+            }));
+
+            const headers = Object.keys(csvData[0]);
+            const csvContent = [
+                headers.join(','),
+                ...csvData.map(row => headers.map(header => 
+                    `"${(row[header] || '').toString().replace(/"/g, '""')}"`
+                ).join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], {type: 'text/csv'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `safety-data-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showAlert('CSV exported successfully', 'success');
+        }
+
+        function getCurrentPlatform() {
+            // Try to get platform from current report form or default
+            const platformSelect = document.getElementById('platform');
+            if (platformSelect && platformSelect.value) {
+                return platformSelect.value;
+            }
+            return 'Unknown'; // Default fallback
+        }
+
+        function importData() {
+            document.getElementById('importFile').click();
+        }
+
+        function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.name.endsWith('.json')) {
+                showAlert('Please select a JSON file', 'danger');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Validate data structure
+                    if (!importedData.allHistory && !importedData.history) {
+                        showAlert('Invalid data format', 'danger');
+                        return;
+                    }
+
+                    // Confirm import
+                    const importedRecords = importedData.allHistory || importedData.history || [];
+                    const importedCount = importedRecords.length;
+                    const currentCount = history.length;
+                    
+                    // Show import options
+                    const importChoice = confirm(
+                        `Import ${importedCount} records?\n\n` +
+                        `Current data: ${currentCount} records\n` +
+                        `Imported data: ${importedCount} records\n\n` +
+                        `Click OK to MERGE (combine data)\n` +
+                        `Click Cancel to choose REPLACE option`
+                    );
+                    
+                    if (importChoice) {
+                        // MERGE: Combine with existing data, avoid duplicates by timestamp
+                        const existingIds = new Set(history.map(item => item.id || item.timestamp));
+                        const newRecords = importedRecords.filter(item => 
+                            !existingIds.has(item.id || item.timestamp)
+                        );
+                        
+                        history = [...history, ...newRecords];
+                        // Sort by timestamp (newest first)
+                        history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                        
+                        saveHistory();
+                        renderHistory();
+                        showAlert(`Successfully merged ${newRecords.length} new records (${history.length} total)`, 'success');
+                    } else {
+                        // Ask for REPLACE confirmation
+                        const replaceChoice = confirm(
+                            `REPLACE current data?\n\n` +
+                            `This will DELETE your current ${currentCount} records\n` +
+                            `and replace with ${importedCount} imported records.\n\n` +
+                            `This action cannot be undone!`
+                        );
+                        
+                        if (replaceChoice) {
+                            history = importedRecords;
+                            saveHistory();
+                            renderHistory();
+                            showAlert(`Successfully replaced data with ${history.length} records`, 'success');
+                        }
+                    }
+                } catch (error) {
+                    showAlert('Error reading file: ' + error.message, 'danger');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        // History Functions
+        function saveAssessment() {
+            const assessmentRecord = {
+                id: Date.now(),
+                type: 'PEAR+L Assessment',
+                classification: assessmentData.classification,
+                finalRating: assessmentData.finalRating,
+                timestamp: new Date().toISOString()
+            };
+            history.unshift(assessmentRecord);
+            saveHistory();
+        }
+
+        function saveMedicalCase(type, content) {
+            const record = {
+                id: Date.now(),
+                type: type,
+                content: content,
+                timestamp: new Date().toISOString()
+            };
+            history.unshift(record);
+            saveHistory();
+        }
+
+        function saveToHistory(type, content) {
+            const record = {
+                id: Date.now(),
+                type: type,
+                content: content,
+                timestamp: new Date().toISOString()
+            };
+            history.unshift(record);
+            saveHistory();
+        }
+
+        function saveHistory() {
+            localStorage.setItem('oimSafetyHistory', JSON.stringify(history));
+        }
+
+        function loadHistory() {
+            const saved = localStorage.getItem('oimSafetyHistory');
+            if (saved) {
+                history = JSON.parse(saved);
+            }
+        }
+
+        function renderHistory() {
+            const content = document.getElementById('historyContent');
+            if (!history.length) {
+                content.innerHTML = `<div class="card" style="text-align:center;padding:40px">
+                    <h3 style="color:#64748b">📄 No Data Yet</h3>
+                    <p style="color:#94a3b8">Complete assessments or generate reports to see history</p>
+                </div>`;
+                return;
+            }
+
+            content.innerHTML = history.map(item => `
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                        <div>
+                            <h4>${item.type}</h4>
+                            <p style="color:#64748b;font-size:11px">${new Date(item.timestamp).toLocaleString()}</p>
+                            ${item.classification ? `<p style="color:#3b82f6;font-weight:600;font-size:12px">${item.classification}${item.finalRating ? ` - Rating ${item.finalRating}` : ''}</p>` : ''}
+                        </div>
+                        <button class="btn btn-danger" onclick="deleteHistoryItem(${item.id})" style="padding:4px 8px;font-size:11px">🗑️</button>
+                    </div>
+                    ${item.content ? `<div class="report-box"><pre class="report-text">${item.content}</pre></div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function deleteHistoryItem(id) {
+            if (confirm('Delete this item?')) {
+                history = history.filter(item => item.id !== id);
+                saveHistory();
+                renderHistory();
+                showAlert('Item deleted', 'info');
+            }
+        }
+
+        function clearHistory() {
+            if (confirm('Clear all history? This cannot be undone.')) {
+                history = [];
+                saveHistory();
+                renderHistory();
+                showAlert('History cleared', 'info');
+            }
+        }
+
+        function showAlert(msg, type) {
+            const div = document.createElement('div');
+            div.className = `alert alert-${type}`;
+            div.textContent = msg;
+            div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;min-width:250px;box-shadow:0 6px 16px rgba(59,130,246,0.2)';
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+
+        function saveAsPDF() {
+            if (!history.length) {
+                showAlert('No data to save as PDF', 'warning');
+                return;
+            }
+
+            // For Electron offline use, create printable HTML that opens in new window
+            const currentDate = new Date().toLocaleDateString('en-GB');
+            const platform = getCurrentPlatform();
+            
+            let htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+    <title>Safety Reports - ${currentDate}</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 10mm; 
+            line-height: 1.4; 
+            font-size: 11pt;
+        }
+        .header { 
+            text-align: center; 
+            border-bottom: 2px solid #333; 
+            padding-bottom: 10px; 
+            margin-bottom: 20px; 
+        }
+        .record { 
+            margin-bottom: 15px; 
+            border: 1px solid #ddd; 
+            padding: 10px; 
+            border-radius: 3px;
+            page-break-inside: avoid;
+        }
+        .record-header { 
+            font-weight: bold; 
+            color: #000; 
+            margin-bottom: 5px; 
+            font-size: 12pt;
+        }
+        .record-meta { 
+            color: #555; 
+            font-size: 9pt; 
+            margin-bottom: 8px; 
+        }
+        .record-content { 
+            white-space: pre-wrap; 
+            font-family: 'Courier New', monospace; 
+            background: #f9f9f9; 
+            padding: 8px; 
+            border-radius: 3px; 
+            font-size: 9pt;
+            line-height: 1.3;
+        }
+        .page-break { 
+            page-break-before: always; 
+        }
+        @media print { 
+            body { margin: 0; } 
+            .no-print { display: none; }
+        }
+        .print-instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="print-instructions no-print">
+        <h3>📄 Print to PDF Instructions:</h3>
+        <p>1. Press <strong>Ctrl+P</strong> (Windows) or <strong>Cmd+P</strong> (Mac)</p>
+        <p>2. Select <strong>"Save as PDF"</strong> as printer</p>
+        <p>3. Click <strong>"Save"</strong> and choose location</p>
+        <hr>
+        <p><em>This instruction box will not appear in the printed PDF</em></p>
+    </div>
+    
+    <div class="header">
+        <h1>OIM ASSIST - SAFETY REPORTS</h1>
+        <p>Platform: ${platform} | Generated: ${currentDate} | Total Records: ${history.length}</p>
+    </div>`;
+
+            history.forEach((item, index) => {
+                htmlContent += `
+    <div class="record">
+        <div class="record-header">${index + 1}. ${item.type}${item.classification ? ` - ${item.classification}` : ''}</div>
+        <div class="record-meta">
+            Date: ${new Date(item.timestamp).toLocaleString('en-GB')}${item.finalRating ? ` | Rating: ${item.finalRating}` : ''}
+        </div>
+        ${item.content ? `<div class="record-content">${item.content}</div>` : ''}
+    </div>
+    ${(index + 1) % 4 === 0 && index !== history.length - 1 ? '<div class="page-break"></div>' : ''}`;
+            });
+
+            htmlContent += `
+    <div style="text-align: center; margin-top: 30px; color: #666; font-size: 9pt;">
+        Generated by OIM Assist v1.0 - ${new Date().toLocaleString('en-GB')}
+    </div>
+</body>
+</html>`;
+
+            // Open in new window for printing
+            const newWindow = window.open();
+            newWindow.document.write(htmlContent);
+            newWindow.document.close();
+            
+            // Auto-trigger print dialog after small delay
+            setTimeout(() => {
+                newWindow.focus();
+                newWindow.print();
+            }, 500);
+            
+            showAlert('Print window opened - use Ctrl+P to save as PDF', 'success');
+        }
+
+        function saveAsTXT() {
+            if (!history.length) {
+                showAlert('No data to save as TXT', 'warning');
+                return;
+            }
+
+            const currentDate = new Date().toLocaleDateString('en-GB');
+            const platform = getCurrentPlatform();
+            
+            // Create plain text content with proper formatting
+            let textContent = '';
+            textContent += 'OIM ASSIST - SAFETY REPORTS\n';
+            textContent += '================================================\n';
+            textContent += `Platform: ${platform}\n`;
+            textContent += `Generated: ${currentDate}\n`;
+            textContent += `Total Records: ${history.length}\n`;
+            textContent += '================================================\n\n';
+
+            history.forEach((item, index) => {
+                textContent += `[${index + 1}] ${item.type.toUpperCase()}`;
+                if (item.classification) {
+                    textContent += ` - ${item.classification.toUpperCase()}`;
+                }
+                textContent += '\n';
+                textContent += '='.repeat(60) + '\n';
+                textContent += `Date: ${new Date(item.timestamp).toLocaleString('en-GB')}\n`;
+                
+                if (item.classification) {
+                    textContent += `Classification: ${item.classification}\n`;
+                }
+                if (item.finalRating) {
+                    textContent += `Rating: ${item.finalRating}\n`;
+                }
+                
+                textContent += '\n';
+                
+                if (item.content) {
+                    // Clean content for plain text (remove HTML entities if any)
+                    const cleanContent = item.content
+                        .replace(/&amp;/g, '&')
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>')
+                        .replace(/&quot;/g, '"')
+                        .replace(/&#39;/g, "'");
+                    
+                    textContent += cleanContent;
+                } else {
+                    textContent += 'No additional content available';
+                }
+                
+                textContent += '\n\n';
+                textContent += '_'.repeat(80) + '\n\n';
+            });
+
+            textContent += 'End of Report\n';
+            textContent += `Generated by OIM Assist v1.0 on ${new Date().toLocaleString('en-GB')}`;
+
+            // Create and download proper TXT file
+            const blob = new Blob([textContent], { 
+                type: 'text/plain;charset=utf-8' 
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `safety-reports-${new Date().toISOString().split('T')[0]}.txt`;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showAlert('TXT file saved successfully', 'success');
+        }
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

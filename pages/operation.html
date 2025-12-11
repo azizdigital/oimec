@@ -1,0 +1,2734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operation Page - Field Operations Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e293b;
+            --secondary: #475569;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--slate-50);
+            color: var(--slate-800);
+            line-height: 1.6;
+        }
+
+        body.dark-mode {
+            --slate-50: #0f172a;
+            --slate-100: #1e293b;
+            --slate-200: #334155;
+            --slate-800: #f1f5f9;
+            --slate-700: #e2e8f0;
+            background: #0f172a;
+            color: #f1f5f9;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--slate-700) 100%);
+            color: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .header-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-btn {
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .header-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Quick Stats Bar - 3 ITEMS ONLY */
+        .stats-bar {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--slate-200);
+            display: flex;
+            gap: 32px;
+            overflow-x: auto;
+            justify-content: center;
+        }
+
+        body.dark-mode .stats-bar {
+            background: var(--slate-100);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            white-space: nowrap;
+        }
+
+        .stat-icon {
+            font-size: 1.6rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        body.dark-mode .stat-value {
+            color: var(--slate-700);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            line-height: 1;
+            margin-top: 4px;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            background: white;
+            border-bottom: 1px solid var(--slate-200);
+            display: flex;
+            overflow-x: auto;
+            padding: 0 30px;
+            justify-content: center;
+        }
+
+        body.dark-mode .nav-tabs {
+            background: var(--slate-100);
+        }
+
+        .tab-btn {
+            padding: 16px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--slate-800);
+            background: var(--slate-50);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        body.dark-mode .tab-btn.active {
+            color: var(--slate-700);
+        }
+
+        /* Platform Sub-tabs */
+        .platform-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0;
+        }
+
+        .platform-tab-btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: var(--secondary);
+            font-size: 0.95rem;
+        }
+
+        .platform-tab-btn:hover {
+            color: var(--primary);
+            background: var(--slate-50);
+        }
+
+        body.dark-mode .platform-tab-btn:hover {
+            background: var(--slate-200);
+        }
+
+        .platform-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        body.dark-mode .platform-tab-btn.active {
+            color: var(--slate-700);
+            border-bottom-color: var(--slate-700);
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 32px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .platform-content {
+            display: none;
+        }
+
+        .platform-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--slate-200);
+        }
+
+        body.dark-mode .section-title {
+            color: var(--slate-700);
+        }
+
+        .last-updated {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            font-style: italic;
+            margin-top: 8px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--slate-700);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--slate-300);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            background: white;
+            font-family: inherit;
+        }
+
+        body.dark-mode .form-control {
+            background: var(--slate-200);
+            color: var(--slate-800);
+            border-color: var(--slate-400);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.08);
+        }
+
+        .form-control::placeholder {
+            color: var(--slate-400);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--slate-200);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+
+        body.dark-mode .card {
+            background: var(--slate-100);
+            border-color: var(--slate-300);
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        body.dark-mode .card-title {
+            color: var(--slate-700);
+        }
+
+        /* Platform Summary - HORIZONTAL WITH PIPES */
+        .platform-summary {
+            background: white;
+            padding: 16px 24px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 32px;
+            border: 2px solid var(--slate-200);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+
+        body.dark-mode .platform-summary {
+            background: var(--slate-100);
+            border-color: var(--slate-300);
+        }
+
+        .platform-summary-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0;
+            position: relative;
+        }
+
+        .platform-summary-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 35px;
+            width: 2px;
+            background: var(--slate-300);
+        }
+
+        body.dark-mode .platform-summary-item:not(:last-child)::after {
+            background: var(--slate-400);
+        }
+
+        .platform-summary-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        body.dark-mode .platform-summary-value {
+            filter: brightness(1.1);
+        }
+
+        .platform-summary-label {
+            font-size: 0.95rem;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        /* Wells Grid */
+        .wells-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* Well Mini Card */
+        .well-mini-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--slate-200);
+            border-left: 5px solid var(--slate-300);
+            overflow: hidden;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .well-mini-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .well-mini-card.expanded {
+            cursor: default;
+        }
+
+        body.dark-mode .well-mini-card {
+            background: var(--slate-100);
+            border-color: var(--slate-300);
+        }
+
+        /* Status Border Colors - THICK & COLORFUL! */
+        .well-mini-card.status-active {
+            border-left-color: #10b981;
+            border-left-width: 5px;
+        }
+
+        .well-mini-card.status-available {
+            border-left-color: #3b82f6;
+            border-left-width: 5px;
+        }
+
+        .well-mini-card.status-not-available {
+            border-left-color: #ef4444;
+            border-left-width: 5px;
+        }
+
+        .well-mini-card.status-iwr {
+            border-left-color: #f59e0b;
+            border-left-width: 5px;
+        }
+
+        /* Card Header (Collapsed View) */
+        .well-card-header {
+            padding: 16px;
+            position: relative;
+        }
+
+        .well-mini-card:not(.expanded) .well-card-header:hover {
+            background: var(--slate-50);
+        }
+
+        body.dark-mode .well-mini-card:not(.expanded) .well-card-header:hover {
+            background: var(--slate-200);
+        }
+
+        .well-card-header::after {
+            content: '▼';
+            position: absolute;
+            top: 18px;
+            right: 16px;
+            font-size: 0.7rem;
+            color: var(--secondary);
+            transition: transform 0.3s;
+            pointer-events: none;
+        }
+
+        .well-mini-card.expanded .well-card-header::after {
+            transform: rotate(180deg);
+        }
+
+        .well-card-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-right: 20px;
+        }
+
+        .well-card-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        body.dark-mode .well-card-name {
+            color: var(--slate-700);
+        }
+
+        .well-card-type {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            background: var(--slate-100);
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        body.dark-mode .well-card-type {
+            background: var(--slate-200);
+        }
+
+        .well-card-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .well-card-summary {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            line-height: 1.4;
+        }
+
+        /* Card Body (Expanded View) */
+        .well-card-body {
+            display: none;
+            padding: 0 16px 16px 16px;
+            border-top: 1px solid var(--slate-200);
+            margin-top: 12px;
+            animation: slideDown 0.3s ease;
+        }
+
+        .well-card-body.show {
+            display: block;
+        }
+
+        .well-card-body * {
+            cursor: default;
+        }
+
+        .well-card-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+        }
+
+        .well-card-data {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .well-card-data-full {
+            grid-column: 1 / -1;
+        }
+
+        .well-data-item {
+            background: var(--slate-50);
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        body.dark-mode .well-data-item {
+            background: var(--slate-200);
+        }
+
+        .well-data-label {
+            font-size: 0.75rem;
+            color: var(--secondary);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .well-data-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        body.dark-mode .well-data-value {
+            color: var(--slate-700);
+        }
+
+        .well-data-input input,
+        .well-data-input textarea,
+        .well-data-input select {
+            padding: 8px 10px;
+            font-size: 0.85rem;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+            }
+        }
+
+        /* Dashboard Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .dashboard-box {
+            background: white;
+            border-radius: 10px;
+            padding: 24px;
+            border: 1px solid var(--slate-200);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        body.dark-mode .dashboard-box {
+            background: var(--slate-100);
+            border-color: var(--slate-300);
+        }
+
+        .dashboard-box-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        body.dark-mode .dashboard-box-title {
+            color: var(--slate-700);
+        }
+
+        .platform-breakdown-item {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .platform-breakdown-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .platform-breakdown-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        body.dark-mode .platform-breakdown-name {
+            color: var(--slate-700);
+        }
+
+        .platform-breakdown-stats {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 12px;
+            align-items: center;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .platform-breakdown-stats > div:nth-child(1),
+        .platform-breakdown-stats > div:nth-child(4) {
+            text-align: right;
+        }
+
+        .platform-breakdown-stats > div:nth-child(3),
+        .platform-breakdown-stats > div:nth-child(6) {
+            text-align: left;
+        }
+
+        .platform-breakdown-stats > div:nth-child(2),
+        .platform-breakdown-stats > div:nth-child(5) {
+            color: var(--slate-400);
+            font-weight: 500;
+        }
+
+        .platform-stat-value {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Pigging Table */
+        .pigging-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .pigging-table th {
+            background: var(--slate-100);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid var(--slate-200);
+        }
+
+        .pigging-table td {
+            padding: 12px;
+            border: 1px solid var(--slate-200);
+        }
+
+        /* Defeat Item */
+        .defeat-item {
+            background: #fef3cd;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .defeat-remove {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: 1px solid var(--slate-400);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        body.dark-mode .btn {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-color: var(--slate-500);
+        }
+
+        body.dark-mode .btn:hover {
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+        }
+
+        .btn-delete {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            border-color: #dc2626;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            border-color: #dc2626;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        body.dark-mode .modal-content {
+            background: var(--slate-100);
+        }
+
+        .modal-header {
+            padding: 24px 30px;
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid var(--slate-200);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            display: none;
+            max-width: 400px;
+        }
+
+        .notification.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #22c55e;
+        }
+
+        .notification.error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+		/* Save Indicator */
+		.save-indicator {
+			position: fixed;
+			top: 80px;
+			right: 20px;
+			padding: 12px 20px;
+			background: white;
+			border-radius: 8px;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+			z-index: 9998;
+			display: none;
+			align-items: center;
+			gap: 10px;
+			font-weight: 500;
+			border: 2px solid var(--success);
+		}
+
+		.save-indicator.show {
+			display: flex;
+			animation: slideInRight 0.3s ease;
+		}
+
+		.save-indicator.saved {
+			border-color: var(--success);
+			background: #dcfce7;
+			color: #166534;
+		}
+
+		.save-indicator.error {
+			border-color: var(--danger);
+			background: #fef2f2;
+			color: #991b1b;
+		}
+
+		@keyframes slideInRight {
+			from { transform: translateX(400px); opacity: 0; }
+			to { transform: translateX(0); opacity: 1; }
+		}
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Summary Section */
+        .summary-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--slate-200);
+        }
+
+        body.dark-mode .summary-section {
+            background: var(--slate-100);
+        }
+
+        .summary-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--slate-200);
+        }
+
+        .summary-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--secondary);
+            margin-right: 8px;
+        }
+
+        /* History Layout */
+        .history-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .history-column {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--slate-200);
+        }
+
+        body.dark-mode .history-column {
+            background: var(--slate-100);
+        }
+
+        .history-column-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--slate-200);
+        }
+
+        body.dark-mode .history-column-title {
+            color: var(--slate-700);
+        }
+
+        .history-item {
+            background: var(--slate-50);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 4px solid var(--info);
+        }
+
+        .history-time {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        .history-action {
+            margin-top: 4px;
+            color: var(--slate-800);
+            font-size: 0.9rem;
+        }
+
+        .summary-history-item {
+            background: var(--slate-50);
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--slate-200);
+        }
+
+        .summary-history-item:hover {
+            background: var(--slate-100);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .summary-timestamp {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .summary-preview {
+            font-size: 0.85rem;
+            color: var(--slate-700);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Search Box */
+        .search-box {
+            margin-bottom: 16px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid var(--slate-300);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        /* Settings Group */
+        .settings-group {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--slate-200);
+        }
+
+        body.dark-mode .settings-group {
+            background: var(--slate-100);
+        }
+
+        .settings-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .danger-zone {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        body.dark-mode .danger-zone {
+            background: #450a0a;
+            border-color: #7f1d1d;
+        }
+
+        .danger-zone-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #dc2626;
+            margin-bottom: 8px;
+        }
+
+        .danger-zone-warning {
+            color: #991b1b;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        /* Collapsible Well Management */
+        .well-management-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px;
+            background: var(--slate-50);
+            border-radius: 6px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+
+        .well-management-header:hover {
+            background: var(--slate-100);
+        }
+
+        .well-management-content {
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .well-management-content.show {
+            display: block;
+        }
+
+        .well-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--slate-50);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            padding: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        .app-footer {
+            background: var(--slate-100);
+            border-top: 1px solid var(--slate-200);
+            padding: 24px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        body.dark-mode .app-footer {
+            background: var(--slate-200);
+            border-top-color: var(--slate-400);
+        }
+
+        .footer-copyright {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+
+        .footer-company {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        body.dark-mode .footer-company {
+            color: var(--slate-700);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .wells-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .history-container {
+                grid-template-columns: 1fr;
+            }
+
+            .platform-summary {
+                flex-wrap: wrap;
+                gap: 16px;
+                justify-content: center;
+            }
+            
+            .platform-summary-item:not(:last-child)::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+		<!-- Save Indicator -->
+		<div id="saveIndicator" class="save-indicator">
+			<span id="saveIndicatorText">💾 Saving...</span>
+		</div>
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div>
+                    <div class="header-title">🛢️ Operation Page</div>
+                    <div class="header-subtitle">Field Operations Management System</div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn" onclick="openSettings()">⚙️ Settings</button>
+                    <button class="header-btn" onclick="refreshAllData()">🔄 Refresh</button>
+					<button class="header-btn" onclick="exportJSON()">💾 Export JSON</button>
+                    <button class="header-btn" onclick="loadJSON()">📂 Load JSON</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats - 3 ITEMS ONLY -->
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <div class="stat-icon">🟢</div>
+                <div>
+                    <div class="stat-value" id="activeWells">0</div>
+                    <div class="stat-label">Active Wells</div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">🚨</div>
+                <div>
+                    <div class="stat-value" id="piggingOverdue">0</div>
+                    <div class="stat-label">Pigging Overdue</div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">⚠️</div>
+                <div>
+                    <div class="stat-value" id="activeDefeats">0</div>
+                    <div class="stat-label">Active Defeats</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('wells')">🛢️ Well Status & SDC</button>
+            <button class="tab-btn" onclick="switchTab('pigging')">🔧 Pigging</button>
+            <button class="tab-btn" onclick="switchTab('defeats')">⚠️ Safety Defeats</button>
+            <button class="tab-btn" onclick="switchTab('issues')">📝 Operation Issues</button>
+            <button class="tab-btn" onclick="switchTab('summary')">📄 Summary Viewer</button>
+            <button class="tab-btn" onclick="switchTab('history')">📜 History</button>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <h2 class="section-title">Dashboard Overview</h2>
+                <div class="card">
+                    <div class="card-title">Quick Statistics</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div style="background: var(--slate-50); padding: 20px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2.5rem; font-weight: 700; color: var(--success);" id="dash-active-wells">0</div>
+                            <div style="color: var(--secondary); font-weight: 500;">Active Wells</div>
+                        </div>
+                        <div style="background: var(--slate-50); padding: 20px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2.5rem; font-weight: 700; color: var(--info);" id="dash-wells-available">0</div>
+                            <div style="color: var(--secondary); font-weight: 500;">Available Wells</div>
+                        </div>
+                        <div style="background: var(--slate-50); padding: 20px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2.5rem; font-weight: 700; color: var(--danger);" id="dash-wells-down">0</div>
+                            <div style="color: var(--secondary); font-weight: 500;">Wells Down</div>
+                        </div>
+                        <div style="background: var(--slate-50); padding: 20px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2.5rem; font-weight: 700; color: var(--warning);" id="dash-pigging-overdue">0</div>
+                            <div style="color: var(--secondary); font-weight: 500;">Pigging Overdue</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-box">
+                        <div class="dashboard-box-title">Platform Breakdown</div>
+                        <div id="platformBreakdown"></div>
+                    </div>
+
+                    <div class="dashboard-box">
+                        <div class="dashboard-box-title">Alerts & Warnings</div>
+                        <div id="alertsContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wells & SDC Tab -->
+            <div id="wells" class="tab-content">
+                <h2 class="section-title">Well Status & SDC</h2>
+                <div class="last-updated" id="wells-updated">Last updated: Never</div>
+
+                <div class="card">
+                    <div class="card-title">SDC Information</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">SDC Value (kl/d):</label>
+                            <input type="number" id="sdcValue" class="form-control" step="0.1" placeholder="Enter SDC value" onchange="updateData()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Effective Date:</label>
+                            <input type="date" id="sdcDate" class="form-control" onchange="updateData()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Platform Sub-tabs -->
+                <div class="platform-tabs">
+                    <button class="platform-tab-btn active" onclick="switchPlatform('IbA')">Irong Barat A</button>
+                    <button class="platform-tab-btn" onclick="switchPlatform('IbB')">Irong Barat B</button>
+                    <button class="platform-tab-btn" onclick="switchPlatform('IbC')">Irong Barat C</button>
+                </div>
+
+                <div id="IbA" class="platform-content active"></div>
+                <div id="IbB" class="platform-content"></div>
+                <div id="IbC" class="platform-content"></div>
+            </div>
+
+            <!-- Pigging Tab -->
+            <div id="pigging" class="tab-content">
+                <h2 class="section-title">Pigging Activities and Schedule</h2>
+                <div class="last-updated" id="pigging-updated">Last updated: Never</div>
+
+                <div class="card">
+                    <table class="pigging-table">
+                        <thead>
+                            <tr>
+                                <th>Pipeline</th>
+                                <th>Last Done</th>
+                                <th>Next Schedule</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="piggingTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Safety Defeats Tab -->
+            <div id="defeats" class="tab-content">
+                <h2 class="section-title">Safety Systems Defeated (Temporary Defeats)</h2>
+                <div class="last-updated" id="defeats-updated">Last updated: Never</div>
+
+                <div class="form-group">
+                    <button class="btn" onclick="addDefeat()">+ Add Safety System Defeat</button>
+                </div>
+
+                <div id="defeatsContainer"></div>
+            </div>
+
+            <!-- Operation Issues Tab -->
+            <div id="issues" class="tab-content">
+                <h2 class="section-title">Operation Issues & Field Changes</h2>
+                <div class="last-updated" id="issues-updated">Last updated: Never</div>
+
+                <div class="card">
+                    <div class="card-title">Operation Issues</div>
+                    <div class="form-group">
+                        <textarea id="operationIssues" class="form-control" rows="8" placeholder="Enter any operational issues..." onchange="updateData()"></textarea>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Field Changes</div>
+                    <div class="form-group">
+                        <textarea id="fieldChanges" class="form-control" rows="8" placeholder="Enter any field changes..." onchange="updateData()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Tab -->
+            <div id="summary" class="tab-content">
+                <h2 class="section-title">Summary Viewer</h2>
+
+                <div style="margin-bottom: 24px;">
+                    <button class="btn" onclick="generateSummary(false)">📄 Generate Summary</button>
+                    <button class="btn" onclick="generateSummary(true)">💾 Generate & Save to History</button>
+                    <button class="btn" onclick="exportSummaryTXT()">📄 Export TXT</button>
+                    <button class="btn" onclick="exportSummaryPDF()">📄 Export PDF</button>
+                </div>
+
+                <div id="summaryContent"></div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history" class="tab-content">
+                <h2 class="section-title">Activity History & Generated Summaries</h2>
+
+                <div style="margin-bottom: 24px; display: flex; gap: 12px;">
+                    <button class="btn" onclick="exportHistory()">📤 Export History</button>
+					<button class="btn" onclick="clearActivityLog()">🗑️ Clear Activity Log</button>
+                    <button class="btn" onclick="clearHistory()">🗑️ Clear History</button>
+                </div>
+
+                <div class="history-container">
+                    <div class="history-column">
+                        <div class="history-column-title">Activity Log</div>
+                        <div class="search-box">
+                            <input type="text" id="activitySearch" placeholder="🔍 Search activities..." oninput="filterActivities()">
+                        </div>
+                        <div id="activityLog"></div>
+                    </div>
+                    <div class="history-column">
+                        <div class="history-column-title">Generated Summaries</div>
+                        <div class="search-box">
+                            <input type="text" id="summarySearch" placeholder="🔍 Search summaries..." oninput="filterSummaries()">
+                        </div>
+                        <div id="summaryLog"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn" onclick="manualSaveToStorage()">💾 Save Progress</button>
+            <button class="btn" onclick="exportJSON()">📤 Export All Data (JSON)</button>
+            <button class="btn" onclick="loadJSON()">📥 Load Data (JSON)</button>
+            <button class="btn" onclick="syncToHandover()">🔄 Sync to Handover</button>
+            <button class="btn" onclick="clearAllData()">🗑️ Clear All Data</button>
+        </div>
+
+        <!-- Footer -->
+        <div class="app-footer">
+            <div class="footer-copyright">
+                © 2025 <span class="footer-company">Aziz Mohamad</span><br>
+                Enterprise Solutions Division
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ Settings</h2>
+            </div>
+            <div class="modal-body">
+                <div class="settings-group">
+                    <div class="settings-title">Notification Thresholds</div>
+                    <div class="form-group">
+                        <label class="form-label">Pigging Alert (days before due):</label>
+                        <input type="number" id="settingPiggingAlert" class="form-control" value="7" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Defeat Expiry Alert (days before):</label>
+                        <input type="number" id="settingDefeatAlert" class="form-control" value="7" min="1">
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-title">Date Format</div>
+                    <div class="form-group">
+                        <label class="form-label">Preferred Date Format:</label>
+                        <select id="settingDateFormat" class="form-control">
+                            <option value="dd/mm/yyyy">DD/MM/YYYY</option>
+                            <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+                            <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-title">Theme</div>
+                    <div class="form-group">
+                        <label class="form-label">Theme Mode:</label>
+                        <select id="settingTheme" class="form-control" onchange="toggleTheme()">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-title">Well Management</div>
+                    <div class="well-management-header" onclick="toggleWellManagement()">
+                        <span style="font-weight: 600;">➕ Add or Remove Wells</span>
+                        <span id="wellToggleIcon">▼</span>
+                    </div>
+                    <div class="well-management-content" id="wellManagementContent">
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: grid; grid-template-columns: 150px 150px 1fr auto; gap: 12px; margin-bottom: 12px;">
+                                <select id="newWellPlatform" class="form-control">
+                                    <option value="IbA">Irong Barat A</option>
+                                    <option value="IbB">Irong Barat B</option>
+                                    <option value="IbC">Irong Barat C</option>
+                                </select>
+                                <input type="text" id="newWellNumber" class="form-control" placeholder="Well number">
+                                <div></div>
+                                <button class="btn" onclick="addWell()">+ Add</button>
+                            </div>
+                        </div>
+                        <div id="wellsList" style="max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="settings-group">
+                    <div class="danger-zone">
+                        <div class="danger-zone-title">🗑️ Danger Zone</div>
+                        <div class="danger-zone-warning">⚠️ Warning: This action cannot be undone!</div>
+                        <div class="form-group">
+                            <label class="form-label">Security Code (type 'RESET2025'):</label>
+                            <input type="text" id="resetSecurityCode" class="form-control" placeholder="Enter security code" oninput="checkResetCode()">
+                        </div>
+                        <button class="btn btn-danger" id="resetAllDataBtn" onclick="resetAllData()" disabled>🗑️ Reset All Data</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeSettings()">Close</button>
+                <button class="btn" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Detail Modal -->
+    <div id="summaryDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="summaryDetailTitle">Summary Details</h2>
+            </div>
+            <div class="modal-body">
+                <div id="summaryDetailContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeSummaryDetail()">Close</button>
+                <button class="btn" onclick="exportCurrentSummary()">📄 Export This Summary</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Global State
+        let appData = {
+            sdc: { value: '', date: '' },
+            wells: [],
+            pigging: [
+                { name: '16" IbA—TaP MOL (1M)', lastDone: '', nextSchedule: '', remarks: '', routine: 1 },
+                { name: '6" IbA—IbB MGL pigging (6M)', lastDone: '', nextSchedule: '', remarks: '', routine: 6 },
+                { name: '6" IbA—IbC MGL pigging (6M)', lastDone: '', nextSchedule: '', remarks: '', routine: 6 },
+                { name: '8" IbB—IbA FWS pigging (1M)', lastDone: '', nextSchedule: '', remarks: '', routine: 1 },
+                { name: '12" IbC—IbA FWS pigging (1M)', lastDone: '', nextSchedule: '', remarks: '', routine: 1 },
+                { name: '12" SmA—IbA MOL pigging (1M)', lastDone: '', nextSchedule: '', remarks: '', routine: 1 },
+                { name: '6" TaP—IbA MGL pigging (6M)', lastDone: '', nextSchedule: '', remarks: '', routine: 6 }
+            ],
+            defeats: [],
+            operationIssues: '',
+            fieldChanges: '',
+            history: [],
+            summaries: [],
+            settings: {
+                piggingAlertDays: 7,
+                defeatAlertDays: 7,
+                dateFormat: 'dd/mm/yyyy',
+                theme: 'light',
+				wellsList: [
+					'IbA-1', 'IbA-2U', 'IbA-2L', 'IbA-3', 'IbA-4', 'IbA-5', 'IbA-7L', 'IbA-8U', 'IbA-8L', 'IbA-9',
+					'IbA-10', 'IbA-11U', 'IbA-11L', 'IbA-12', 'IbA-13U', 'IbA-13L', 'IbA-14', 'IbA-15U', 'IbA-16',
+					'IbA-17', 'IbA-18', 'IbA-19', 'IbA-20', 'IbA-21U', 'IbA-21L', 'IbA-22', 'IbA-23L', 'IbA-25U', 'IbA-25L',
+					'IbA-26', 'IbA-27', 'IbA-28',
+					'IbB-1', 'IbB-2', 'IbB-3', 'IbB-4U', 'IbB-4L', 'IbB-5U', 'IbB-5L', 'IbB-6U', 'IbB-6L',
+					'IbC-1', 'IbC-2', 'IbC-3', 'IbC-4', 'IbC-5', 'IbC-6U', 'IbC-6L', 'IbC-7U', 'IbC-8U', 'IbC-8L',
+					'IbC-9', 'IbC-11U', 'IbC-11L', 'IbC-12', 'IbC-13U', 'IbC-14', 'IbC-15', 'IbC-16'
+				]
+            }
+        };
+
+        let defeatCounter = 0;
+        let hasUnsavedChanges = false;
+        let currentSummaryForExport = null;
+		// Show Save Indicator
+		function showSaveIndicator(status, message) {
+			const indicator = document.getElementById('saveIndicator');
+			const text = document.getElementById('saveIndicatorText');
+			
+			indicator.className = 'save-indicator show ' + status;
+			text.textContent = message;
+			
+			setTimeout(() => {
+				indicator.classList.remove('show');
+			}, 3000);
+		}
+
+		// Check localStorage availability
+		function checkLocalStorageAvailability() {
+			try {
+				const testKey = '__storage_test__';
+				window.localStorage.setItem(testKey, 'test');
+				window.localStorage.removeItem(testKey);
+				console.log('✅ localStorage is available');
+				return true;
+			} catch (e) {
+				console.error('❌ localStorage is NOT available:', e);
+				showNotification('⚠️ Storage unavailable! Data will not persist.', 'error');
+				return false;
+			}
+		}
+
+        // Initialize
+		function init() {
+		// Check localStorage availability
+			checkLocalStorageAvailability();
+			loadFromLocalStorage();
+            initializeWells();
+            initializePigging();
+            renderWellsList();
+            updateStats();
+            updateDashboard();
+            loadHistory();
+            loadSummaries();
+            applyTheme();
+        }
+
+		// Refresh All Data Function
+		function refreshAllData() {
+			console.log('🔄 Refreshing all data...');
+			showSaveIndicator('saving', '🔄 Refreshing data...');
+			
+			try {
+				// Clear and reinitialize platforms
+				document.getElementById('IbA').innerHTML = '';
+				document.getElementById('IbB').innerHTML = '';
+				document.getElementById('IbC').innerHTML = '';
+				
+				// Reinitialize everything
+				initializeWells();
+				initializePigging();
+				updateStats();
+				updateDashboard();
+				loadHistory();
+				loadSummaries();
+				
+				// Show success
+				showSaveIndicator('saved', '✅ Data refreshed!');
+				showNotification('✅ All data refreshed successfully!', 'success');
+				addHistory('Manual refresh triggered');
+				
+				console.log('✅ Refresh completed');
+			} catch (error) {
+				console.error('❌ Refresh failed:', error);
+				showSaveIndicator('error', '❌ Refresh failed!');
+				showNotification('❌ Refresh failed: ' + error.message, 'error');
+			}
+		}
+
+        // Initialize Wells by Platform
+        function initializeWells() {
+            const platforms = { IbA: [], IbB: [], IbC: [] };
+
+            appData.settings.wellsList.forEach(wellName => {
+                const platform = wellName.split('-')[0];
+                if (platforms[platform]) {
+                    platforms[platform].push(wellName);
+                }
+            });
+
+            Object.keys(platforms).forEach(platform => {
+                const container = document.getElementById(platform);
+                container.innerHTML = '';
+
+                // Calculate platform stats
+                const platformWells = platforms[platform];
+                let activeCount = 0, availableCount = 0, downCount = 0;
+                platformWells.forEach(wellName => {
+                    const well = appData.wells.find(w => w.name === wellName);
+                    if (well) {
+                        if (well.status === 'Active') activeCount++;
+                        else if (well.status === 'Available') availableCount++;
+                        else if (well.status === 'Not Available' || well.status === 'IWR') downCount++;
+                    }
+                });
+
+                // Create platform summary (HORIZONTAL WITH PIPES - CANTIK!)
+                const summaryDiv = document.createElement('div');
+                summaryDiv.className = 'platform-summary';
+                summaryDiv.innerHTML = `
+                    <div class="platform-summary-item">
+                        <div class="platform-summary-label">Active:</div>
+                        <div class="platform-summary-value" style="color: #10b981;">${activeCount}</div>
+                    </div>
+                    <div class="platform-summary-item">
+                        <div class="platform-summary-label">Available:</div>
+                        <div class="platform-summary-value" style="color: #3b82f6;">${availableCount}</div>
+                    </div>
+                    <div class="platform-summary-item">
+                        <div class="platform-summary-label">Down:</div>
+                        <div class="platform-summary-value" style="color: #ef4444;">${downCount}</div>
+                    </div>
+                    <div class="platform-summary-item">
+                        <div class="platform-summary-label">Total:</div>
+                        <div class="platform-summary-value" style="color: var(--primary);">${platformWells.length}</div>
+                    </div>
+                `;
+                container.appendChild(summaryDiv);
+
+                // Create grid container
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'wells-grid';
+
+                platforms[platform].forEach(wellName => {
+                    let wellData = appData.wells.find(w => w.name === wellName);
+                    if (!wellData) {
+                        wellData = {
+                            name: wellName,
+                            type: '',
+                            status: '',
+                            oil: '',
+                            gas: '',
+                            water: '',
+                            wellTestDate: '',
+                            reason: ''
+                        };
+                        appData.wells.push(wellData);
+                    }
+
+                    // Simplify well name display (IbA-01 → A-01)
+                    const displayName = wellName.replace('IbA-', 'A-').replace('IbB-', 'B-').replace('IbC-', 'C-');
+
+                    // Create mini card
+                    const card = document.createElement('div');
+                    card.className = 'well-mini-card';
+                    if (wellData.status) {
+                        card.classList.add(`status-${wellData.status.toLowerCase().replace(' ', '-')}`);
+                    }
+                    card.id = `card-${wellName}`;
+
+                    // Get status icon
+                    const statusIcons = {
+                        'Active': '🟢',
+                        'Available': '🔵',
+                        'Not Available': '⚫',
+                        'IWR': '🟠'
+                    };
+
+                    // Get summary text
+                    let summaryText = 'Not configured';
+                    if (wellData.status === 'Active' || wellData.status === 'Available') {
+                        const oil = parseFloat(wellData.oil) || 0;
+                        summaryText = oil > 0 ? `${oil.toFixed(1)} kl/d oil` : 'No production data';
+                    } else if (wellData.status === 'Not Available' || wellData.status === 'IWR') {
+                        summaryText = wellData.reason ? wellData.reason.substring(0, 50) + (wellData.reason.length > 50 ? '...' : '') : 'No reason provided';
+                    }
+
+                    // Card HTML
+                    card.innerHTML = `
+                        <div class="well-card-header" onclick="toggleWellCard('${wellName}')">
+                            <div class="well-card-title">
+                                <span class="well-card-name">${displayName}</span>
+                                ${wellData.type ? `<span class="well-card-type">${wellData.type}</span>` : ''}
+                            </div>
+                            <div class="well-card-status">
+                                <span>${statusIcons[wellData.status] || '⚪'}</span>
+                                <span>${wellData.status || 'Not set'}</span>
+                            </div>
+                            <div class="well-card-summary">${summaryText}</div>
+                        </div>
+                        
+                        <div class="well-card-body" id="body-${wellName}">
+                            <div class="well-card-controls">
+                                <div class="well-data-item well-data-input">
+                                    <div class="well-data-label">Type</div>
+                                    <select class="form-control" onchange="updateWellAndRefresh('${wellName}', 'type', this.value)">
+                                        <option value="">Select Type</option>
+                                        <option value="PTN" ${wellData.type === 'PTN' ? 'selected' : ''}>PTN (Natural Flow)</option>
+                                        <option value="GL" ${wellData.type === 'GL' ? 'selected' : ''}>GL (Gas Lift)</option>
+                                        <option value="WI" ${wellData.type === 'WI' ? 'selected' : ''}>WI (Water Injection)</option>
+                                        <option value="GI" ${wellData.type === 'GI' ? 'selected' : ''}>GI (Gas Injection)</option>
+                                    </select>
+                                </div>
+                                <div class="well-data-item well-data-input">
+                                    <div class="well-data-label">Status</div>
+                                    <select class="form-control" onchange="handleStatusChangeNew('${wellName}', this.value)">
+                                        <option value="">Select Status</option>
+                                        <option value="Active" ${wellData.status === 'Active' ? 'selected' : ''}>Active</option>
+                                        <option value="Available" ${wellData.status === 'Available' ? 'selected' : ''}>Available</option>
+                                        <option value="Not Available" ${wellData.status === 'Not Available' ? 'selected' : ''}>Not Available</option>
+                                        <option value="IWR" ${wellData.status === 'IWR' ? 'selected' : ''}>IWR</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="well-card-data" id="data-${wellName}">
+                                ${getWellDataFields(wellName, wellData)}
+                            </div>
+                        </div>
+                    `;
+
+                    gridDiv.appendChild(card);
+                });
+
+                container.appendChild(gridDiv);
+            });
+        }
+
+        // Get Well Data Fields based on status
+        function getWellDataFields(wellName, wellData) {
+            if (wellData.status === 'Active') {
+                return `
+                    <div class="well-data-item well-data-input">
+                        <div class="well-data-label">Oil (kl/d)</div>
+                        <input type="number" class="form-control" value="${wellData.oil}" onchange="updateWell('${wellName}', 'oil', this.value)" step="0.1" placeholder="0.0">
+                    </div>
+                    <div class="well-data-item well-data-input">
+                        <div class="well-data-label">Gas (mmscfd)</div>
+                        <input type="number" class="form-control" value="${wellData.gas}" onchange="updateWell('${wellName}', 'gas', this.value)" step="0.1" placeholder="0.00">
+                    </div>
+                    <div class="well-data-item well-data-input">
+                        <div class="well-data-label">Water (kl/d)</div>
+                        <input type="number" class="form-control" value="${wellData.water}" onchange="updateWell('${wellName}', 'water', this.value)" step="0.1" placeholder="0.0">
+                    </div>
+                    <div class="well-data-item well-data-input">
+                        <div class="well-data-label">Well Test Date</div>
+                        <input type="date" class="form-control" value="${wellData.wellTestDate}" onchange="updateWell('${wellName}', 'wellTestDate', this.value)">
+                    </div>
+                `;
+            } else if (wellData.status === 'Available') {
+                return `
+                    <div class="well-data-item well-data-input">
+                        <div class="well-data-label">Oil (kl/d)</div>
+                        <input type="number" class="form-control" value="${wellData.oil}" onchange="updateWell('${wellName}', 'oil', this.value)" step="0.1" placeholder="0.0">
+                    </div>
+                    <div class="well-data-item well-data-input">
+                        <div class="well-data-label">Gas (mmscfd)</div>
+                        <input type="number" class="form-control" value="${wellData.gas}" onchange="updateWell('${wellName}', 'gas', this.value)" step="0.1" placeholder="0.00">
+                    </div>
+                    <div class="well-data-item well-data-input">
+                        <div class="well-data-label">Water (kl/d)</div>
+                        <input type="number" class="form-control" value="${wellData.water}" onchange="updateWell('${wellName}', 'water', this.value)" step="0.1" placeholder="0.0">
+                    </div>
+                `;
+            } else if (wellData.status === 'Not Available' || wellData.status === 'IWR') {
+                return `
+                    <div class="well-data-item well-data-input well-card-data-full">
+                        <div class="well-data-label">Reason</div>
+                        <textarea class="form-control" rows="3" onchange="updateWell('${wellName}', 'reason', this.value)" placeholder="Enter reason...">${wellData.reason}</textarea>
+                    </div>
+                `;
+            }
+            return '<div class="well-data-item well-card-data-full" style="text-align: center; color: var(--secondary); padding: 20px;">Select a status to configure this well</div>';
+        }
+
+        // Toggle Well Card
+        function toggleWellCard(wellName) {
+            const card = document.getElementById(`card-${wellName}`);
+            const body = document.getElementById(`body-${wellName}`);
+            
+            if (body.classList.contains('show')) {
+                body.classList.remove('show');
+                card.classList.remove('expanded');
+            } else {
+                body.classList.add('show');
+                card.classList.add('expanded');
+            }
+        }
+
+        // Update Well and Refresh
+        function updateWellAndRefresh(wellName, field, value) {
+            updateWell(wellName, field, value);
+            
+            const well = appData.wells.find(w => w.name === wellName);
+            const card = document.getElementById(`card-${wellName}`);
+            if (well && card) {
+                const typeSpan = card.querySelector('.well-card-type');
+                if (value && typeSpan) {
+                    typeSpan.textContent = value;
+                    typeSpan.style.display = 'inline-block';
+                } else if (typeSpan && !value) {
+                    typeSpan.style.display = 'none';
+                }
+            }
+        }
+
+        // Handle Status Change New
+        function handleStatusChangeNew(wellName, status) {
+            updateWell(wellName, 'status', status);
+            
+            const card = document.getElementById(`card-${wellName}`);
+            const dataDiv = document.getElementById(`data-${wellName}`);
+            const well = appData.wells.find(w => w.name === wellName);
+            
+            if (card && well) {
+                card.className = 'well-mini-card expanded';
+                if (status) {
+                    card.classList.add(`status-${status.toLowerCase().replace(' ', '-')}`);
+                }
+                
+                const statusIcons = {
+                    'Active': '🟢',
+                    'Available': '🔵',
+                    'Not Available': '⚫',
+                    'IWR': '🟠'
+                };
+                
+                const statusDiv = card.querySelector('.well-card-status');
+                if (statusDiv) {
+                    statusDiv.innerHTML = `
+                        <span>${statusIcons[status] || '⚪'}</span>
+                        <span>${status || 'Not set'}</span>
+                    `;
+                }
+                
+                let summaryText = 'Not configured';
+                if (status === 'Active' || status === 'Available') {
+                    const oil = parseFloat(well.oil) || 0;
+                    summaryText = oil > 0 ? `${oil.toFixed(1)} kl/d oil` : 'No production data';
+                } else if (status === 'Not Available' || status === 'IWR') {
+                    summaryText = well.reason ? well.reason.substring(0, 50) + (well.reason.length > 50 ? '...' : '') : 'No reason provided';
+                }
+                
+                const summaryDiv = card.querySelector('.well-card-summary');
+                if (summaryDiv) {
+                    summaryDiv.textContent = summaryText;
+                }
+                
+                if (dataDiv) {
+                    dataDiv.innerHTML = getWellDataFields(wellName, well);
+                }
+            }
+            
+            updateStats();
+            updateDashboard();
+        }
+
+        // Switch Platform
+        function switchPlatform(platform) {
+            document.querySelectorAll('.platform-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.platform-tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(platform).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Update Well
+        function updateWell(wellName, field, value) {
+            let well = appData.wells.find(w => w.name === wellName);
+            if (well) {
+                well[field] = value;
+                addHistory(`Updated ${wellName} - ${field}: ${value}`);
+                updateLastUpdated('wells');
+                markUnsavedChanges();
+                updateStats();
+                updateDashboard();
+                
+                if (field === 'oil' || field === 'water' || field === 'reason') {
+                    const card = document.getElementById(`card-${wellName}`);
+                    if (card) {
+                        const summaryDiv = card.querySelector('.well-card-summary');
+                        if (summaryDiv) {
+                            let summaryText = 'Not configured';
+                            if (well.status === 'Active' || well.status === 'Available') {
+                                const oil = parseFloat(well.oil) || 0;
+                                summaryText = oil > 0 ? `${oil.toFixed(1)} kl/d oil` : 'No production data';
+                            } else if (well.status === 'Not Available' || well.status === 'IWR') {
+                                summaryText = well.reason ? well.reason.substring(0, 50) + (well.reason.length > 50 ? '...' : '') : 'No reason provided';
+                            }
+                            summaryDiv.textContent = summaryText;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Initialize Pigging
+        function initializePigging() {
+            const tbody = document.getElementById('piggingTableBody');
+            tbody.innerHTML = '';
+
+            appData.pigging.forEach((pig, index) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><strong>${pig.name}</strong></td>
+                    <td><input type="date" class="form-control" value="${pig.lastDone}" onchange="updatePigging(${index}, 'lastDone', this.value)"></td>
+                    <td><input type="date" class="form-control" value="${pig.nextSchedule}" readonly style="background: var(--slate-100);"></td>
+                    <td><textarea class="form-control" rows="2" onchange="updatePigging(${index}, 'remarks', this.value)">${pig.remarks}</textarea></td>
+                `;
+            });
+        }
+
+        // Update Pigging
+        function updatePigging(index, field, value) {
+            appData.pigging[index][field] = value;
+
+            if (field === 'lastDone' && value) {
+                const lastDate = new Date(value);
+                const nextDate = new Date(lastDate);
+                nextDate.setMonth(nextDate.getMonth() + appData.pigging[index].routine);
+                appData.pigging[index].nextSchedule = nextDate.toISOString().split('T')[0];
+                
+                const tbody = document.getElementById('piggingTableBody');
+                const row = tbody.rows[index];
+                row.cells[2].querySelector('input').value = appData.pigging[index].nextSchedule;
+            }
+
+            addHistory(`Updated pigging: ${appData.pigging[index].name}`);
+            updateLastUpdated('pigging');
+            markUnsavedChanges();
+            updateStats();
+            updateDashboard();
+        }
+
+        // Add Defeat
+        function addDefeat() {
+            defeatCounter++;
+            const defeat = {
+                id: defeatCounter,
+                defeatId: '',
+                description: '',
+                expiryDate: '',
+                currentApproval: '',
+                nextApproval: '',
+                plan: ''
+            };
+            appData.defeats.push(defeat);
+            renderDefeat(defeat);
+            updateStats();
+            updateDashboard();
+            addHistory('Added new safety defeat');
+            updateLastUpdated('defeats');
+            markUnsavedChanges();
+        }
+
+        // Render Defeat
+        function renderDefeat(defeat) {
+            const container = document.getElementById('defeatsContainer');
+            const defeatDiv = document.createElement('div');
+            defeatDiv.className = 'defeat-item';
+            defeatDiv.id = `defeat-${defeat.id}`;
+            defeatDiv.innerHTML = `
+                <button class="defeat-remove" onclick="removeDefeat(${defeat.id})">×</button>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Defeat ID:</label>
+                        <input type="text" class="form-control" value="${defeat.defeatId}" onchange="updateDefeat(${defeat.id}, 'defeatId', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expiry Date:</label>
+                        <input type="date" class="form-control" value="${defeat.expiryDate}" onchange="updateDefeat(${defeat.id}, 'expiryDate', this.value)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Defeat Description:</label>
+                    <textarea class="form-control" rows="3" onchange="updateDefeat(${defeat.id}, 'description', this.value)">${defeat.description}</textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Current Approval:</label>
+                        <input type="text" class="form-control" value="${defeat.currentApproval}" onchange="updateDefeat(${defeat.id}, 'currentApproval', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Next Approval:</label>
+                        <input type="text" class="form-control" value="${defeat.nextApproval}" onchange="updateDefeat(${defeat.id}, 'nextApproval', this.value)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Normalization Plan:</label>
+                    <textarea class="form-control" rows="3" onchange="updateDefeat(${defeat.id}, 'plan', this.value)">${defeat.plan}</textarea>
+                </div>
+            `;
+            container.appendChild(defeatDiv);
+        }
+
+        // Update Defeat
+        function updateDefeat(id, field, value) {
+            const defeat = appData.defeats.find(d => d.id === id);
+            if (defeat) {
+                defeat[field] = value;
+                addHistory(`Updated defeat ${defeat.defeatId || id}`);
+                updateLastUpdated('defeats');
+                markUnsavedChanges();
+                updateStats();
+                updateDashboard();
+            }
+        }
+
+        // Remove Defeat
+        function removeDefeat(id) {
+            if (confirm('Remove this defeat?')) {
+                appData.defeats = appData.defeats.filter(d => d.id !== id);
+                document.getElementById(`defeat-${id}`).remove();
+                addHistory(`Removed defeat ${id}`);
+                updateLastUpdated('defeats');
+                markUnsavedChanges();
+                updateStats();
+                updateDashboard();
+            }
+        }
+
+        // Update Data
+        function updateData() {
+            markUnsavedChanges();
+            updateLastUpdated('issues');
+        }
+
+        // Update Stats
+        function updateStats() {
+            const activeWells = appData.wells.filter(w => w.status === 'Active').length;
+            const wellsAvailable = appData.wells.filter(w => w.status === 'Available').length;
+            const wellsDown = appData.wells.filter(w => w.status === 'Not Available' || w.status === 'IWR').length;
+            const piggingOverdue = appData.pigging.filter(p => {
+                if (!p.nextSchedule) return false;
+                const today = new Date();
+                const dueDate = new Date(p.nextSchedule);
+                return dueDate < today;
+            }).length;
+            const activeDefeats = appData.defeats.length;
+
+            document.getElementById('activeWells').textContent = activeWells;
+            document.getElementById('piggingOverdue').textContent = piggingOverdue;
+            document.getElementById('activeDefeats').textContent = activeDefeats;
+
+            document.getElementById('dash-active-wells').textContent = activeWells;
+            document.getElementById('dash-wells-available').textContent = wellsAvailable;
+            document.getElementById('dash-wells-down').textContent = wellsDown;
+            document.getElementById('dash-pigging-overdue').textContent = piggingOverdue;
+        }
+
+        // Update Dashboard
+        function updateDashboard() {
+            const platforms = { 
+                IbA: { active: 0, available: 0, down: 0 }, 
+                IbB: { active: 0, available: 0, down: 0 }, 
+                IbC: { active: 0, available: 0, down: 0 } 
+            };
+            const platformNames = { IbA: 'IRONG BARAT A', IbB: 'IRONG BARAT B', IbC: 'IRONG BARAT C' };
+            
+            appData.wells.forEach(well => {
+                const platform = well.name.split('-')[0];
+                if (platforms[platform]) {
+                    if (well.status === 'Active') platforms[platform].active++;
+                    else if (well.status === 'Available') platforms[platform].available++;
+                    else if (well.status === 'Not Available' || well.status === 'IWR') platforms[platform].down++;
+                }
+            });
+
+            const platformDiv = document.getElementById('platformBreakdown');
+            platformDiv.innerHTML = '';
+            Object.keys(platforms).forEach(platform => {
+                const div = document.createElement('div');
+                div.className = 'platform-breakdown-item';
+                const total = platforms[platform].active + platforms[platform].available + platforms[platform].down;
+                div.innerHTML = `
+                    <div class="platform-breakdown-name">${platformNames[platform]}</div>
+                    <div class="platform-breakdown-stats">
+                        <div class="platform-stat-value" style="color: #10b981;">Active: ${platforms[platform].active}</div>
+                        <div>|</div>
+                        <div class="platform-stat-value" style="color: #3b82f6;">Available: ${platforms[platform].available}</div>
+                        <div class="platform-stat-value" style="color: #ef4444;">Down: ${platforms[platform].down}</div>
+                        <div>|</div>
+                        <div class="platform-stat-value">Total: ${total}</div>
+                    </div>
+                `;
+                platformDiv.appendChild(div);
+            });
+
+            // Alerts
+            const alertsDiv = document.getElementById('alertsContainer');
+            alertsDiv.innerHTML = '';
+            
+            const today = new Date();
+            const alertThreshold = appData.settings.piggingAlertDays;
+            
+            appData.pigging.forEach(pig => {
+                if (pig.nextSchedule) {
+                    const dueDate = new Date(pig.nextSchedule);
+                    const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysUntilDue < 0) {
+                        const alert = document.createElement('div');
+                        alert.style.cssText = 'padding: 12px; background: #fee; border-left: 4px solid var(--danger); margin-bottom: 8px; border-radius: 4px;';
+                        alert.innerHTML = `<strong>⚠️ Overdue:</strong> ${pig.name} - ${Math.abs(daysUntilDue)} days overdue`;
+                        alertsDiv.appendChild(alert);
+                    } else if (daysUntilDue <= alertThreshold) {
+                        const alert = document.createElement('div');
+                        alert.style.cssText = 'padding: 12px; background: #fef3cd; border-left: 4px solid var(--warning); margin-bottom: 8px; border-radius: 4px;';
+                        alert.innerHTML = `<strong>⚠️ Due Soon:</strong> ${pig.name} - ${daysUntilDue} days remaining`;
+                        alertsDiv.appendChild(alert);
+                    }
+                }
+            });
+
+            appData.defeats.forEach(defeat => {
+                if (defeat.expiryDate) {
+                    const expiryDate = new Date(defeat.expiryDate);
+                    const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysUntilExpiry <= appData.settings.defeatAlertDays) {
+                        const alert = document.createElement('div');
+                        alert.style.cssText = 'padding: 12px; background: #fef3cd; border-left: 4px solid var(--warning); margin-bottom: 8px; border-radius: 4px;';
+                        alert.innerHTML = `<strong>⚠️ Defeat Expiring:</strong> ${defeat.defeatId || 'ID not set'} - ${daysUntilExpiry} days remaining`;
+                        alertsDiv.appendChild(alert);
+                    }
+                }
+            });
+
+            if (alertsDiv.children.length === 0) {
+                alertsDiv.innerHTML = '<div style="color: var(--success); font-weight: 500; text-align: center; padding: 20px;">✅ No alerts at this time</div>';
+            }
+        }
+
+        // Generate Summary
+        function generateSummary(saveToHistory = false) {
+            const summaryDiv = document.getElementById('summaryContent');
+            let html = '';
+
+            const now = new Date();
+            html += `
+                <div class="summary-section">
+                    <div class="summary-title">1. DATE INFORMATION</div>
+                    <div class="summary-item"><span class="summary-label">Generated Date:</span>${now.toLocaleString()}</div>
+                    <div class="summary-item"><span class="summary-label">Report Period:</span>${now.toLocaleDateString()}</div>
+                </div>
+            `;
+
+            html += `
+                <div class="summary-section">
+                    <div class="summary-title">2. SDC INFORMATION</div>
+                    <div class="summary-item"><span class="summary-label">SDC Value:</span>${document.getElementById('sdcValue').value || 'Not set'} kl/d</div>
+                    <div class="summary-item"><span class="summary-label">Effective Date:</span>${document.getElementById('sdcDate').value || 'Not set'}</div>
+                </div>
+            `;
+
+            if (appData.defeats.length > 0) {
+                html += `<div class="summary-section"><div class="summary-title">3. SAFETY SYSTEMS DEFEATED (${appData.defeats.length} Active)</div>`;
+                appData.defeats.forEach((d, i) => {
+                    html += `<div class="summary-item" style="margin-bottom: 12px;"><strong>${i + 1}. [${d.defeatId || 'N/A'}] ${d.description}</strong><br><small>Expiry: ${d.expiryDate || 'N/A'} | Approval: ${d.currentApproval || 'N/A'} | Plan: ${d.plan || 'N/A'}</small></div>`;
+                });
+                html += `</div>`;
+            }
+
+            const activeWells = appData.wells.filter(w => w.status === 'Active');
+            const availableWells = appData.wells.filter(w => w.status === 'Available');
+            const notAvailableWells = appData.wells.filter(w => w.status === 'Not Available');
+            const iwrWells = appData.wells.filter(w => w.status === 'IWR');
+
+            let totalOil = 0, totalGas = 0, totalWater = 0;
+            activeWells.forEach(w => {
+                totalOil += parseFloat(w.oil) || 0;
+                totalGas += parseFloat(w.gas) || 0;
+                totalWater += parseFloat(w.water) || 0;
+            });
+
+            html += `
+                <div class="summary-section">
+                    <div class="summary-title">4. GRAND TOTAL WELLS SUMMARY</div>
+                    <div class="summary-item"><strong>Total Wells: ${appData.wells.length} | Active: ${activeWells.length} | Available: ${availableWells.length} | Not Available: ${notAvailableWells.length} | IWR: ${iwrWells.length}</strong></div>
+                    <div class="summary-item"><strong>GRAND TOTAL PRODUCTION: Oil: ${totalOil.toFixed(1)} kl/d | Gas: ${totalGas.toFixed(2)} mmscfd | Water: ${totalWater.toFixed(1)} kl/d</strong></div>
+                </div>
+            `;
+
+            html += `<div class="summary-section"><div class="summary-title">5. WELL STATUS SUMMARY (ACTIVE WELLS BY PLATFORM)</div>`;
+            const platforms = { IbA: 'IRONG BARAT A', IbB: 'IRONG BARAT B', IbC: 'IRONG BARAT C' };
+            Object.keys(platforms).forEach(platform => {
+                const platformWells = activeWells.filter(w => w.name.startsWith(platform));
+                if (platformWells.length > 0) {
+                    platformWells.sort((a, b) => (parseFloat(b.oil) || 0) - (parseFloat(a.oil) || 0));
+                    let platformOil = 0, platformGas = 0, platformWater = 0;
+                    html += `<div style="margin-top: 16px; font-weight: 700;">${platforms[platform]} - Active Wells (${platformWells.length} wells)</div>`;
+                    platformWells.forEach((w, i) => {
+                        const oil = parseFloat(w.oil) || 0;
+                        const gas = parseFloat(w.gas) || 0;
+                        const water = parseFloat(w.water) || 0;
+                        platformOil += oil; platformGas += gas; platformWater += water;
+                        html += `<div class="summary-item">${i + 1}. ${w.name} (${w.type}) | Oil: ${oil.toFixed(1)} kl/d | Gas: ${gas.toFixed(2)} mmscfd | Water: ${water.toFixed(1)} kl/d</div>`;
+                    });
+                    html += `<div class="summary-item" style="font-weight: 600; background: var(--slate-100); padding: 8px;">Platform Total: Oil: ${platformOil.toFixed(1)} kl/d | Gas: ${platformGas.toFixed(2)} mmscfd | Water: ${platformWater.toFixed(1)} kl/d</div>`;
+                }
+            });
+            html += `</div>`;
+
+            const today = new Date();
+            let onSchedule = 0, dueSoon = 0, overdue = 0;
+            appData.pigging.forEach(p => {
+                if (p.nextSchedule) {
+                    const dueDate = new Date(p.nextSchedule);
+                    const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                    if (daysUntilDue < 0) overdue++; else if (daysUntilDue <= appData.settings.piggingAlertDays) dueSoon++; else onSchedule++;
+                }
+            });
+
+            html += `<div class="summary-section"><div class="summary-title">6. PIGGING ACTIVITIES (${appData.pigging.length} pipelines: ${onSchedule} on schedule, ${dueSoon} due soon, ${overdue} overdue)</div>`;
+            appData.pigging.forEach((p, i) => {
+                let status = 'Not scheduled', statusDays = '';
+                if (p.nextSchedule) {
+                    const dueDate = new Date(p.nextSchedule);
+                    const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                    if (daysUntilDue < 0) { status = 'OVERDUE'; statusDays = `(${Math.abs(daysUntilDue)}d)`; }
+                    else if (daysUntilDue <= appData.settings.piggingAlertDays) { status = 'DUE SOON'; statusDays = `(${daysUntilDue}d)`; }
+                    else { status = 'On Schedule'; statusDays = `(${daysUntilDue}d)`; }
+                }
+                const formatDate = (dateStr) => { if (!dateStr) return 'N/A'; const d = new Date(dateStr); return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear().toString().substr(2)}`; };
+                html += `<div class="summary-item">${i + 1}. ${p.name} | Last: ${formatDate(p.lastDone)} | Next: ${formatDate(p.nextSchedule)} | ${status} ${statusDays} | ${p.remarks || 'No remarks'}</div>`;
+            });
+            html += `</div>`;
+
+            const issues = document.getElementById('operationIssues').value;
+            if (issues) { html += `<div class="summary-section"><div class="summary-title">7. OPERATION ISSUES</div><div class="summary-item">${issues.replace(/\n/g, '<br>')}</div></div>`; }
+
+            const fieldChanges = document.getElementById('fieldChanges').value;
+            if (fieldChanges) { html += `<div class="summary-section"><div class="summary-title">8. FIELD CHANGES</div><div class="summary-item">${fieldChanges.replace(/\n/g, '<br>')}</div></div>`; }
+
+            summaryDiv.innerHTML = html;
+            if (saveToHistory) { saveSummaryToHistory(html); }
+            showNotification('Summary generated successfully!', 'success');
+        }
+
+        // Save Summary to History
+        function saveSummaryToHistory(summaryHTML) {
+            const summary = { timestamp: new Date().toISOString(), content: summaryHTML, preview: generateSummaryPreview() };
+            appData.summaries.unshift(summary);
+            if (appData.summaries.length > 50) { appData.summaries = appData.summaries.slice(0, 50); }
+            saveToLocalStorage(); loadSummaries();
+        }
+
+        // Generate Summary Preview
+        function generateSummaryPreview() {
+            const sdcValue = document.getElementById('sdcValue').value;
+            const activeWells = appData.wells.filter(w => w.status === 'Active').length;
+            const wellsDown = appData.wells.filter(w => w.status === 'Not Available' || w.status === 'IWR').length;
+            const defeats = appData.defeats.length;
+            return `SDC: ${sdcValue || 'N/A'} kl/d | Active: ${activeWells}, Down: ${wellsDown} | Defeats: ${defeats}`;
+        }
+
+        // Export Summary TXT
+        function exportSummaryTXT() {
+            const summaryDiv = document.getElementById('summaryContent');
+            if (!summaryDiv.innerHTML || summaryDiv.innerHTML.trim() === '') {
+                showNotification('Please generate summary first!', 'error');
+                return;
+            }
+            generateSummary(false);
+            let content = '='.repeat(80) + '\nOPERATION PAGE SUMMARY REPORT\n' + '='.repeat(80) + '\n\n' + `Generated: ${new Date().toLocaleString()}\n\n`;
+            content += 'SDC INFORMATION\n' + '-'.repeat(80) + '\n' + `SDC Value: ${document.getElementById('sdcValue').value || 'Not set'} kl/d\nEffective Date: ${document.getElementById('sdcDate').value || 'Not set'}\n\n`;
+            downloadFile(content, `Operation_Summary_${new Date().toISOString().split('T')[0]}.txt`, 'text/plain');
+            showNotification('Summary TXT exported!', 'success');
+        }
+
+        // Export Summary PDF
+        function exportSummaryPDF() {
+            if (!window.jsPDF) { showNotification('PDF library not loaded', 'error'); return; }
+            const summaryDiv = document.getElementById('summaryContent');
+            if (!summaryDiv.innerHTML || summaryDiv.innerHTML.trim() === '') { showNotification('Please generate summary first!', 'error'); return; }
+            generateSummary(false);
+            const doc = new window.jspdf.jsPDF();
+            let yPos = 20;
+            doc.setFontSize(18); doc.setFont('helvetica', 'bold'); doc.text('Operation Page Summary', 105, yPos, { align: 'center' });
+            yPos += 10; doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.text(`Generated: ${new Date().toLocaleString()}`, 105, yPos, { align: 'center' });
+            yPos += 15; doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.text('SDC Information', 20, yPos); yPos += 8;
+            doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.text(`SDC Value: ${document.getElementById('sdcValue').value || 'Not set'} kl/d`, 20, yPos);
+            doc.save(`Operation_Summary_${new Date().toISOString().split('T')[0]}.pdf`);
+            showNotification('Summary PDF exported!', 'success');
+        }
+
+        // Settings Functions
+        function openSettings() { document.getElementById('settingsModal').classList.add('active'); loadSettings(); }
+        function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
+        function loadSettings() {
+            document.getElementById('settingPiggingAlert').value = appData.settings.piggingAlertDays;
+            document.getElementById('settingDefeatAlert').value = appData.settings.defeatAlertDays;
+            document.getElementById('settingDateFormat').value = appData.settings.dateFormat;
+            document.getElementById('settingTheme').value = appData.settings.theme;
+            renderWellsList();
+        }
+
+        function saveSettings() {
+            appData.settings.piggingAlertDays = parseInt(document.getElementById('settingPiggingAlert').value);
+            appData.settings.defeatAlertDays = parseInt(document.getElementById('settingDefeatAlert').value);
+            appData.settings.dateFormat = document.getElementById('settingDateFormat').value;
+            appData.settings.theme = document.getElementById('settingTheme').value;
+            saveToLocalStorage(); applyTheme(); updateDashboard(); closeSettings();
+            showNotification('Settings saved!', 'success'); addHistory('Updated settings');
+        }
+
+        function toggleWellManagement() {
+            const content = document.getElementById('wellManagementContent');
+            const icon = document.getElementById('wellToggleIcon');
+            if (content.classList.contains('show')) { content.classList.remove('show'); icon.textContent = '▼'; }
+            else { content.classList.add('show'); icon.textContent = '▲'; }
+        }
+
+        function renderWellsList() {
+            const container = document.getElementById('wellsList');
+            container.innerHTML = '';
+            appData.settings.wellsList.sort().forEach(well => {
+                const div = document.createElement('div');
+                div.className = 'well-list-item';
+                div.innerHTML = `<span>${well}</span><button class="btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="removeWellFromList('${well}')">Remove</button>`;
+                container.appendChild(div);
+            });
+        }
+
+        function addWell() {
+            const platform = document.getElementById('newWellPlatform').value;
+            const number = document.getElementById('newWellNumber').value.trim();
+            if (!number) { showNotification('Please enter well number', 'error'); return; }
+            const wellName = `${platform}-${number}`;
+            if (appData.settings.wellsList.includes(wellName)) { showNotification('Well already exists!', 'error'); return; }
+            appData.settings.wellsList.push(wellName);
+            appData.wells.push({ name: wellName, type: '', status: '', oil: '', gas: '', water: '', wellTestDate: '', reason: '' });
+            document.getElementById('newWellNumber').value = '';
+            renderWellsList(); saveToLocalStorage();
+            showNotification(`Well ${wellName} added!`, 'success'); addHistory(`Added new well: ${wellName}`);
+            initializeWells(); updateStats(); updateDashboard();
+        }
+
+        function removeWellFromList(wellName) {
+            if (confirm(`Remove ${wellName} from the system?`)) {
+                appData.settings.wellsList = appData.settings.wellsList.filter(w => w !== wellName);
+                appData.wells = appData.wells.filter(w => w.name !== wellName);
+                renderWellsList(); saveToLocalStorage();
+                showNotification(`${wellName} removed!`, 'success'); addHistory(`Removed well: ${wellName}`);
+                initializeWells(); updateStats(); updateDashboard();
+            }
+        }
+
+        function toggleTheme() { const theme = document.getElementById('settingTheme').value; appData.settings.theme = theme; applyTheme(); }
+        function applyTheme() { if (appData.settings.theme === 'dark') { document.body.classList.add('dark-mode'); } else { document.body.classList.remove('dark-mode'); } }
+
+        // Check Reset Code
+        function checkResetCode() {
+            const code = document.getElementById('resetSecurityCode').value;
+            const btn = document.getElementById('resetAllDataBtn');
+            btn.disabled = code !== 'RESET2025';
+        }
+
+        // Reset All Data
+        function resetAllData() {
+            const confirmation1 = prompt("Type 'DELETE' to confirm reset all data:");
+            if (confirmation1 !== 'DELETE') { showNotification('Reset cancelled', 'error'); return; }
+            const confirmation2 = confirm('This will delete ALL data permanently. Are you absolutely sure?');
+            if (!confirmation2) { showNotification('Reset cancelled', 'error'); return; }
+            
+            appData.sdc = { value: '', date: '' };
+            appData.wells.forEach(w => { w.type = ''; w.status = ''; w.oil = ''; w.gas = ''; w.water = ''; w.wellTestDate = ''; w.reason = ''; });
+            appData.pigging.forEach(p => { p.lastDone = ''; p.nextSchedule = ''; p.remarks = ''; });
+            appData.defeats = []; appData.operationIssues = ''; appData.fieldChanges = ''; appData.history = []; appData.summaries = [];
+            
+            document.getElementById('sdcValue').value = ''; document.getElementById('sdcDate').value = '';
+            document.getElementById('operationIssues').value = ''; document.getElementById('fieldChanges').value = '';
+            document.getElementById('resetSecurityCode').value = '';
+            document.getElementById('IbA').innerHTML = ''; document.getElementById('IbB').innerHTML = ''; document.getElementById('IbC').innerHTML = '';
+            document.getElementById('defeatsContainer').innerHTML = ''; document.getElementById('piggingTableBody').innerHTML = '';
+            
+            defeatCounter = 0;
+            initializeWells(); initializePigging(); updateStats(); updateDashboard(); loadHistory(); loadSummaries();
+            saveToLocalStorage(); closeSettings();
+            showNotification('All data has been reset!', 'success'); addHistory('Reset all data');
+        }
+
+        // History Functions
+        function addHistory(action) {
+            const historyItem = { timestamp: new Date().toISOString(), action: action };
+            appData.history.unshift(historyItem);
+            if (appData.history.length > 100) { appData.history = appData.history.slice(0, 100); }
+            saveToLocalStorage();
+        }
+
+        function loadHistory() {
+            const container = document.getElementById('activityLog');
+            container.innerHTML = '';
+            if (appData.history.length === 0) { container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--secondary);">No activity yet</div>'; return; }
+            appData.history.forEach(item => {
+                const div = document.createElement('div'); div.className = 'history-item';
+                div.innerHTML = `<div class="history-time">${new Date(item.timestamp).toLocaleString()}</div><div class="history-action">${item.action}</div>`;
+                container.appendChild(div);
+            });
+        }
+
+        function loadSummaries() {
+            const container = document.getElementById('summaryLog');
+            container.innerHTML = '';
+            if (!appData.summaries || appData.summaries.length === 0) { container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--secondary);">No summaries generated yet</div>'; return; }
+            appData.summaries.forEach((summary, index) => {
+                const div = document.createElement('div'); div.className = 'summary-history-item';
+                div.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;"><div class="summary-timestamp">${new Date(summary.timestamp).toLocaleString()}</div><button class="btn btn-delete" onclick="deleteSummary(${index}); event.stopPropagation();">🗑️</button></div><div class="summary-preview" onclick="viewSummaryDetail(${index})">${summary.preview}</div>`;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteSummary(index) { if (confirm('Delete this summary?')) { appData.summaries.splice(index, 1); saveToLocalStorage(); loadSummaries(); showNotification('Summary deleted!', 'success'); } }
+        function viewSummaryDetail(index) {
+            const summary = appData.summaries[index]; currentSummaryForExport = summary;
+            document.getElementById('summaryDetailTitle').textContent = `Summary - ${new Date(summary.timestamp).toLocaleString()}`;
+            document.getElementById('summaryDetailContent').innerHTML = summary.content;
+            document.getElementById('summaryDetailModal').classList.add('active');
+        }
+        function closeSummaryDetail() { document.getElementById('summaryDetailModal').classList.remove('active'); currentSummaryForExport = null; }
+        function exportCurrentSummary() {
+            if (!currentSummaryForExport) return;
+            const content = currentSummaryForExport.content.replace(/<[^>]*>/g, '\n').replace(/\n\n+/g, '\n\n').trim();
+            const filename = `Summary_${new Date(currentSummaryForExport.timestamp).toISOString().split('T')[0]}.txt`;
+            downloadFile(content, filename, 'text/plain'); showNotification('Summary exported!', 'success');
+        }
+
+        function filterActivities() { const search = document.getElementById('activitySearch').value.toLowerCase(); const items = document.querySelectorAll('#activityLog .history-item'); items.forEach(item => { const text = item.textContent.toLowerCase(); item.style.display = text.includes(search) ? 'block' : 'none'; }); }
+        function filterSummaries() { const search = document.getElementById('summarySearch').value.toLowerCase(); const items = document.querySelectorAll('#summaryLog .summary-history-item'); items.forEach(item => { const text = item.textContent.toLowerCase(); item.style.display = text.includes(search) ? 'block' : 'none'; }); }
+        function exportHistory() {
+            let content = '='.repeat(80) + '\nOPERATION PAGE ACTIVITY HISTORY\n' + '='.repeat(80) + '\n\n' + `Exported: ${new Date().toLocaleString()}\n\n`;
+            appData.history.forEach(item => { content += `[${new Date(item.timestamp).toLocaleString()}] ${item.action}\n`; });
+            downloadFile(content, `Operation_History_${new Date().toISOString().split('T')[0]}.txt`, 'text/plain');
+            showNotification('History exported!', 'success');
+        }
+		// Clear Activity Log ONLY (Keep Generated Summaries)
+		function clearActivityLog() {
+			if (confirm('Clear all activity logs? (Generated Summaries will be kept)')) {
+				appData.history = [];
+				saveToLocalStorage();
+				loadHistory();
+				showNotification('Activity log cleared! Summaries preserved.', 'success');
+				console.log('✅ Activity log cleared, summaries maintained');
+			}
+		}		
+        function clearHistory() { if (confirm('⚠️ Clear ALL history? This will delete both Activity Log AND Generated Summaries!')) { appData.history = []; appData.summaries = []; saveToLocalStorage(); loadHistory(); loadSummaries(); showNotification('History cleared!', 'success'); } }
+
+        // Update Last Updated
+        function updateLastUpdated(section) { const elem = document.getElementById(`${section}-updated`); if (elem) { elem.textContent = `Last updated: ${new Date().toLocaleString()}`; } }
+
+        // Mark Unsaved Changes
+        function markUnsavedChanges() { hasUnsavedChanges = true; saveToLocalStorage(); }
+
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => { tab.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('active'); });
+            document.getElementById(tabId).classList.add('active'); event.target.classList.add('active');
+            if (tabId === 'history') { loadHistory(); loadSummaries(); }
+        }
+
+        // Storage Functions
+		// Manual Save Function (called by Save Progress button)
+		function manualSaveToStorage() {
+			console.log('🔄 Manual save triggered...');
+			showSaveIndicator('saving', '💾 Saving data...');
+			
+			try {
+				const success = saveToLocalStorage();
+				if (success) {
+					showSaveIndicator('saved', '✅ Data saved successfully!');
+					showNotification('✅ All data saved successfully!', 'success');
+					console.log('✅ Manual save completed');
+				}
+			} catch (error) {
+				console.error('❌ Manual save failed:', error);
+				showSaveIndicator('error', '❌ Save failed!');
+				showNotification('❌ Failed to save: ' + error.message, 'error');
+			}
+		}
+		function saveToLocalStorage() {
+			try {
+				console.log('💾 Attempting to save data...');
+				
+				appData.sdc.value = document.getElementById('sdcValue').value;
+				appData.sdc.date = document.getElementById('sdcDate').value;
+				appData.operationIssues = document.getElementById('operationIssues').value;
+				appData.fieldChanges = document.getElementById('fieldChanges').value;
+				
+				const jsonString = JSON.stringify(appData);
+				console.log(`📦 Data size: ${(jsonString.length / 1024).toFixed(2)} KB`);
+				
+				localStorage.setItem('operationPageData', jsonString);
+				hasUnsavedChanges = false;
+				
+				console.log('✅ Data saved successfully!');
+				return true;
+			} catch (error) {
+				console.error('❌ Error saving to localStorage:', error);
+				
+				if (error.name === 'QuotaExceededError') {
+					showNotification('❌ Storage full! Please clear old data.', 'error');
+				} else {
+					showNotification('❌ Save failed: ' + error.message, 'error');
+				}
+				return false;
+			}
+		}
+
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('operationPageData');
+                if (saved) {
+                    const data = JSON.parse(saved); appData = { ...appData, ...data };
+                    document.getElementById('sdcValue').value = appData.sdc.value || '';
+                    document.getElementById('sdcDate').value = appData.sdc.date || '';
+                    document.getElementById('operationIssues').value = appData.operationIssues || '';
+                    document.getElementById('fieldChanges').value = appData.fieldChanges || '';
+                    appData.defeats.forEach(defeat => { defeatCounter = Math.max(defeatCounter, defeat.id); renderDefeat(defeat); });
+                    if (!appData.summaries) appData.summaries = [];
+                }
+            } catch (error) { console.error('Error loading from localStorage:', error); }
+        }
+
+        // Export/Import JSON
+        function exportJSON() {
+            try {
+                appData.sdc.value = document.getElementById('sdcValue').value;
+                appData.sdc.date = document.getElementById('sdcDate').value;
+                appData.operationIssues = document.getElementById('operationIssues').value;
+                appData.fieldChanges = document.getElementById('fieldChanges').value;
+                const dataStr = JSON.stringify(appData, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob); const a = document.createElement('a');
+                a.href = url; a.download = `operation_data_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                showNotification('Data exported successfully!', 'success'); addHistory('Exported all data to JSON');
+            } catch (error) { showNotification('Error exporting data: ' + error.message, 'error'); }
+        }
+
+        function loadJSON() {
+            const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            if (!data.wells || !data.pigging || !data.settings) { throw new Error('Invalid data format'); }
+                            appData = data;
+                            document.getElementById('IbA').innerHTML = ''; document.getElementById('IbB').innerHTML = ''; document.getElementById('IbC').innerHTML = '';
+                            document.getElementById('defeatsContainer').innerHTML = ''; document.getElementById('piggingTableBody').innerHTML = '';
+                            defeatCounter = 0;
+                            document.getElementById('sdcValue').value = appData.sdc.value || '';
+                            document.getElementById('sdcDate').value = appData.sdc.date || '';
+                            document.getElementById('operationIssues').value = appData.operationIssues || '';
+                            document.getElementById('fieldChanges').value = appData.fieldChanges || '';
+                            initializeWells(); initializePigging();
+                            appData.defeats.forEach(defeat => { defeatCounter = Math.max(defeatCounter, defeat.id); renderDefeat(defeat); });
+                            applyTheme(); updateStats(); updateDashboard(); loadHistory(); loadSummaries();
+                            saveToLocalStorage(); showNotification('Data loaded successfully!', 'success'); addHistory('Loaded data from JSON file');
+                        } catch (error) { showNotification('Error loading data: ' + error.message, 'error'); }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        // Sync to Handover
+        function syncToHandover() {
+            try {
+                const handoverData = { timestamp: new Date().toISOString(), sdc: appData.sdc, wells: appData.wells, pigging: appData.pigging, defeats: appData.defeats, operationIssues: appData.operationIssues, fieldChanges: appData.fieldChanges };
+                localStorage.setItem('operationToHandoverData', JSON.stringify(handoverData));
+                showNotification('Data synced to handover! Open handover.html to import.', 'success'); addHistory('Synced data to handover system');
+            } catch (error) { showNotification('Error syncing to handover: ' + error.message, 'error'); }
+        }
+
+        // Clear All Data
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear ALL data? This cannot be undone!')) {
+                if (confirm('This will delete everything. Are you absolutely sure?')) {
+                    appData.sdc = { value: '', date: '' };
+                    appData.wells.forEach(w => { w.type = ''; w.status = ''; w.oil = ''; w.gas = ''; w.water = ''; w.wellTestDate = ''; w.reason = ''; });
+                    appData.pigging.forEach(p => { p.lastDone = ''; p.nextSchedule = ''; p.remarks = ''; });
+                    appData.defeats = []; appData.operationIssues = ''; appData.fieldChanges = '';
+                    document.getElementById('sdcValue').value = ''; document.getElementById('sdcDate').value = '';
+                    document.getElementById('operationIssues').value = ''; document.getElementById('fieldChanges').value = '';
+                    document.getElementById('IbA').innerHTML = ''; document.getElementById('IbB').innerHTML = ''; document.getElementById('IbC').innerHTML = '';
+                    document.getElementById('defeatsContainer').innerHTML = ''; document.getElementById('piggingTableBody').innerHTML = '';
+                    defeatCounter = 0;
+                    initializeWells(); initializePigging(); updateStats(); updateDashboard();
+                    saveToLocalStorage(); showNotification('All data cleared!', 'success'); addHistory('Cleared all data');
+                }
+            }
+        }
+
+        // Notification
+        function showNotification(message, type) {
+            const notif = document.getElementById('notification');
+            notif.textContent = message; notif.className = `notification ${type} show`;
+            setTimeout(() => { notif.classList.remove('show'); }, 3000);
+        }
+
+        // Helper: Download File
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type: type }); const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+        }
+
+        // Auto-save every 15 minutes
+        setInterval(() => { saveToLocalStorage(); console.log('Auto-saved at', new Date().toLocaleTimeString()); }, 900000);
+
+        // Save before page unload
+        window.addEventListener('beforeunload', (e) => { if (hasUnsavedChanges) { saveToLocalStorage(); } });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

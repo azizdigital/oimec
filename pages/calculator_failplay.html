@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏭 Offshore Engineering Suite - Irong Barat Platform</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#e3f2fd 0%,#f8f9fa 100%);color:#2c3e50;line-height:1.6;min-height:100vh}
+        .nav{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid #e1e8ed;padding:0;box-shadow:0 2px 10px rgba(59,130,246,0.1)}
+        .nav-container{max-width:1400px;margin:0 auto;display:flex;padding:0 16px;overflow-x:auto}
+        .nav-button{border:none;background:none;padding:12px 16px;font-size:13px;font-weight:500;cursor:pointer;color:#64748b;transition:all 0.3s ease;border-bottom:2px solid transparent;white-space:nowrap}
+        .nav-button:hover{color:#3b82f6;background:rgba(59,130,246,0.1)}
+        .nav-button.active{color:#3b82f6;border-bottom-color:#3b82f6;background:rgba(59,130,246,0.1)}
+        .container{max-width:1400px;margin:0 auto;padding:20px 16px}
+        .header{margin-bottom:24px;text-align:center}
+        .header h1{font-size:24px;font-weight:700;color:#1e40af;margin-bottom:8px;text-shadow:0 2px 4px rgba(59,130,246,0.2)}
+        .header p{color:#64748b;font-size:14px}
+        .card{background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid rgba(59,130,246,0.2);box-shadow:0 4px 16px rgba(59,130,246,0.1)}
+        .card h3{font-size:16px;font-weight:600;color:#1e40af;margin-bottom:12px}
+        .card h4{font-size:14px;font-weight:600;color:#374151;margin-bottom:8px}
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px;align-items:start}
+        .calc-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+        .form-group{display:flex;flex-direction:column}
+        .form-group label{font-size:12px;font-weight:500;color:#374151;margin-bottom:4px}
+        .form-control{padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;transition:all 0.3s ease;background:rgba(255,255,255,0.9);width:100%}
+        .form-control:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+        .btn{padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.3s ease;display:inline-flex;align-items:center;gap:6px}
+        .btn-primary{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 3px 10px rgba(59,130,246,0.3)}
+        .btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(59,130,246,0.4)}
+        .btn-success{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 3px 10px rgba(16,185,129,0.3)}
+        .btn-success:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(16,185,129,0.4)}
+        .btn-secondary{background:linear-gradient(135deg,#6b7280,#4b5563);color:#fff;box-shadow:0 3px 10px rgba(107,114,128,0.3)}
+        .btn-secondary:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(107,114,128,0.4)}
+        .btn-warning{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 3px 10px rgba(245,158,11,0.3)}
+        .btn-warning:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(245,158,11,0.4)}
+        .btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 3px 10px rgba(239,68,68,0.3)}
+        .btn-danger:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(239,68,68,0.4)}
+        .hidden{display:none}
+        
+        .alert{padding:12px 16px;border-radius:6px;margin:12px 0;border-left:4px solid;font-size:12px;backdrop-filter:blur(5px)}
+        .alert-success{background:rgba(236,253,245,0.9);border-color:#10b981;color:#065f46}
+        .alert-info{background:rgba(239,246,255,0.9);border-color:#3b82f6;color:#1e40af}
+        .alert-warning{background:rgba(255,251,235,0.9);border-color:#f59e0b;color:#92400e}
+        .alert-danger{background:rgba(254,242,242,0.9);border-color:#ef4444;color:#991b1b}
+        
+        .calc-result{background:linear-gradient(135deg,#ecfdf5,#d1fae5);padding:12px;border-radius:6px;margin-top:8px;font-size:12px;color:#065f46;border:1px solid #a7f3d0;box-shadow:0 2px 6px rgba(16,185,129,0.1)}
+        .threshold-result{background:rgba(239,246,255,0.9);padding:10px;border-radius:6px;margin-top:6px;border:1px solid #3b82f6}
+        
+        .menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+        .menu-card{background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:20px;border-radius:10px;border:1px solid rgba(59,130,246,0.2);cursor:pointer;transition:all 0.3s ease;text-align:center}
+        .menu-card:hover{border-color:#3b82f6;transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,0.2)}
+
+        /* Fair Play Styles */
+        .question-card{background:rgba(255,255,255,0.95);backdrop-filter:blur(15px);border-left:5px solid #3b82f6;padding:25px;margin:20px 0;border-radius:12px;box-shadow:0 8px 25px rgba(59,130,246,0.15)}
+        .question-text{font-size:18px;font-weight:bold;margin-bottom:10px;color:#1e40af}
+        .malay-text{font-style:italic;color:#6c757d;font-size:14px;margin-bottom:15px;opacity:0.8}
+        .btn-group{display:flex;gap:15px;margin:15px 0;justify-content:center}
+        .btn-yes{background:linear-gradient(135deg,#10b981,#059669);color:white;padding:12px 30px;font-size:16px;font-weight:bold;border:none;border-radius:6px;cursor:pointer;transition:all 0.3s ease}
+        .btn-yes:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(16,185,129,0.4)}
+        .btn-no{background:linear-gradient(135deg,#ef4444,#dc2626);color:white;padding:12px 30px;font-size:16px;font-weight:bold;border:none;border-radius:6px;cursor:pointer;transition:all 0.3s ease}
+        .btn-no:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(239,68,68,0.4)}
+        .consequence{background:linear-gradient(135deg,#fef3c7,#fbbf24);padding:20px;border-radius:8px;margin:15px 0;border-left:5px solid #f59e0b;box-shadow:0 4px 12px rgba(245,158,11,0.2)}
+        .result-panel{background:linear-gradient(135deg,#dbeafe,#3b82f6);color:white;padding:30px;border-radius:15px;margin:20px 0;text-align:center;box-shadow:0 8px 25px rgba(59,130,246,0.3)}
+        .progress-bar{background-color:#e5e7eb;border-radius:10px;height:12px;margin:20px 0;overflow:hidden}
+        .progress-fill{background:linear-gradient(90deg,#10b981,#3b82f6);height:100%;border-radius:10px;transition:width 0.5s ease}
+        .guide-section{background:linear-gradient(135deg,#f0f9ff,#e0e7ff);padding:25px;border-radius:12px;margin:20px 0;border-left:5px solid #3b82f6;box-shadow:0 4px 16px rgba(59,130,246,0.1)}
+        .behavior-chart{display:flex;justify-content:space-between;margin:20px 0;flex-wrap:wrap;gap:10px}
+        .behavior-item{text-align:center;padding:15px;border-radius:8px;flex:1;min-width:120px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+        .reward{background:linear-gradient(135deg,#d1fae5,#10b981);color:#065f46}
+        .coaching{background:linear-gradient(135deg,#fef3c7,#f59e0b);color:#92400e}
+        .discipline{background:linear-gradient(135deg,#fecaca,#ef4444);color:#991b1b}
+        .sample-scenarios{background:rgba(248,250,252,0.95);backdrop-filter:blur(10px);padding:25px;border-radius:12px;margin:20px 0;border:1px solid rgba(59,130,246,0.2)}
+        .certificate-container{background:linear-gradient(135deg,#f8fafc,#e2e8f0);border:2px solid #1e3a8a;border-radius:15px;padding:20px;margin:20px 0;text-align:center;box-shadow:0 8px 25px rgba(30,58,138,0.15)}
+
+        /* Enhanced History Styles */
+        .history-item{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:16px;margin-bottom:12px;transition:all 0.3s ease;border-left:4px solid #3b82f6}
+        .history-item:hover{transform:translateY(-1px);border-color:rgba(59,130,246,0.4);box-shadow:0 4px 15px rgba(59,130,246,0.2)}
+        .history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+        .history-type{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:white;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase}
+        .history-date{color:#6b7280;font-size:11px}
+        .history-content{color:#374151;font-size:13px;line-height:1.4}
+        .certificate-badge{background:linear-gradient(135deg,#f59e0b,#d97706);color:white;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:600;margin-left:6px}
+        
+        @media (max-width:768px){
+            .container{padding:12px 8px}
+            .nav-container{padding:0 8px}
+            .nav-button{padding:10px 12px;font-size:12px}
+            .form-grid,.calc-container,.menu-grid{grid-template-columns:1fr}
+            .header h1{font-size:20px}
+            .card{padding:16px}
+            .btn-group{flex-direction:column}
+            .behavior-chart{flex-direction:column}
+            .history-header{flex-direction:column;align-items:flex-start}
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <button class="nav-button active" onclick="showView('home')" id="nav-home">🏠 Home</button>
+            <button class="nav-button" onclick="showView('calculator')" id="nav-calculator">🧮 Calculators</button>
+            <button class="nav-button" onclick="showView('fairplay')" id="nav-fairplay">⚖️ Fair Play</button>
+            <button class="nav-button" onclick="showView('notes')" id="nav-notes">📝 Notes</button>
+            <button class="nav-button" onclick="showView('history')" id="nav-history">📚 History</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Home View -->
+        <div id="view-home">
+            <div class="header">
+                <h1>🏭 Offshore Engineering Suite</h1>
+                <p>Irong Barat Platform - Complete offshore operations platform</p>
+            </div>
+            <div class="menu-grid" style="grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:24px;max-width:1200px;margin:0 auto">
+                <div class="menu-card" onclick="showView('calculator')" style="padding:40px;min-height:200px;display:flex;flex-direction:column;justify-content:center">
+                    <div style="font-size:48px;margin-bottom:16px">🧮</div>
+                    <h2 style="font-size:24px;font-weight:700;color:#1e40af;margin-bottom:12px">Engineering Calculators</h2>
+                    <p style="font-size:16px;color:#64748b;line-height:1.5">Complete collection of 12 offshore engineering calculators including volume conversion, gas flow, leak analysis, and more</p>
+                </div>
+                
+                <div class="menu-card" onclick="showView('fairplay')" style="padding:40px;min-height:200px;display:flex;flex-direction:column;justify-content:center">
+                    <div style="font-size:48px;margin-bottom:16px">⚖️</div>
+                    <h2 style="font-size:24px;font-weight:700;color:#1e40af;margin-bottom:12px">Fair Play Assessment</h2>
+                    <p style="font-size:16px;color:#64748b;line-height:1.5">Workplace behavior evaluation system with certificate generation and comprehensive reporting</p>
+                </div>
+                
+                <div class="menu-card" onclick="showView('notes')" style="padding:40px;min-height:200px;display:flex;flex-direction:column;justify-content:center">
+                    <div style="font-size:48px;margin-bottom:16px">📝</div>
+                    <h2 style="font-size:24px;font-weight:700;color:#1e40af;margin-bottom:12px">Platform Notes</h2>
+                    <p style="font-size:16px;color:#64748b;line-height:1.5">Create, manage and organize important notes, observations and documentation for platform operations</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator View -->
+        <div id="view-calculator" class="hidden">
+            <div class="header">
+                <h1>🧮 Offshore Engineering Calculators</h1>
+                <p>Irong Barat Platform - Complete collection of 12 engineering calculators</p>
+            </div>
+
+            <div class="calc-container">
+                <!-- Volume Conversion -->
+                <div class="card">
+                    <h3>📊 Volume Conversion</h3>
+                    <div class="form-group">
+                        <label>Input Value</label>
+                        <input type="number" id="volumeInput" class="form-control" placeholder="Value" step="0.001">
+                    </div>
+                    <div class="form-group">
+                        <label>Conversion Type</label>
+                        <select id="volumeType" class="form-control">
+                            <option value="kld_kbd">KLD to KBD</option>
+                            <option value="kbd_kld">KBD to KLD</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Shrinkage Factor</label>
+                        <input type="number" id="shrinkageFactor" class="form-control" placeholder="0.881" step="0.001" value="0.881">
+                    </div>
+                    <button class="btn btn-primary" onclick="convertVolume()">🔄 Convert</button>
+                    <div id="volumeResult" class="calc-result" style="display:none"></div>
+                </div>
+
+                <!-- Universal Unit Converter -->
+                <div class="card">
+                    <h3>📏 Universal Unit Converter</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>From</label>
+                            <select id="fromUnit" class="form-control">
+                                <optgroup label="Pressure">
+                                    <option value="kpa">KpA</option>
+                                    <option value="psi">PSI</option>
+                                    <option value="bar">Bar</option>
+                                </optgroup>
+                                <optgroup label="Temperature">
+                                    <option value="celsius">°C</option>
+                                    <option value="fahrenheit">°F</option>
+                                </optgroup>
+                                <optgroup label="Length">
+                                    <option value="inches">Inches</option>
+                                    <option value="cm">cm</option>
+                                    <option value="feet">Feet</option>
+                                    <option value="meters">Meters</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>To</label>
+                            <select id="toUnit" class="form-control">
+                                <optgroup label="Pressure">
+                                    <option value="kpa">KpA</option>
+                                    <option value="psi">PSI</option>
+                                    <option value="bar">Bar</option>
+                                </optgroup>
+                                <optgroup label="Temperature">
+                                    <option value="celsius">°C</option>
+                                    <option value="fahrenheit">°F</option>
+                                </optgroup>
+                                <optgroup label="Length">
+                                    <option value="inches">Inches</option>
+                                    <option value="cm">cm</option>
+                                    <option value="feet">Feet</option>
+                                    <option value="meters">Meters</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Input Value</label>
+                        <input type="number" id="universalValue" class="form-control" placeholder="Enter value">
+                    </div>
+                    <button class="btn btn-primary" onclick="convertUniversal()">↔</button>
+                    <div id="universalResult" class="calc-result" style="display:none"></div>
+                </div>
+
+                <!-- Gas Conversion -->
+                <div class="card">
+                    <h3>⛽ Gas Flow Conversion</h3>
+                    <div class="form-group">
+                        <label>Input Value</label>
+                        <input type="number" id="gasInput" class="form-control" placeholder="Value" step="0.001">
+                    </div>
+                    <div class="form-group">
+                        <label>Conversion Type</label>
+                        <select id="gasType" class="form-control">
+                            <option value="km3_mmscf">km³/d to mmscf/d</option>
+                            <option value="mmscf_km3">mmscf/d to km³/d</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="convertGas()">🔄 Convert</button>
+                    <div id="gasResult" class="calc-result" style="display:none"></div>
+                </div>
+
+                <!-- Crude Oil Drop Rate -->
+                <div class="card">
+                    <h3>💧 Crude Oil Leak (Drop Rate)</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Drops per Minute</label>
+                            <input type="number" id="dropRate" class="form-control" placeholder="60" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (minutes)</label>
+                            <input type="number" id="dropDuration" class="form-control" placeholder="120" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Drop Size</label>
+                            <select id="dropSize" class="form-control">
+                                <option value="0.05">Small (~0.05ml)</option>
+                                <option value="0.1">Medium (~0.1ml)</option>
+                                <option value="0.2">Large (~0.2ml)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateDropLeak()">📊 Calculate</button>
+                    <div id="dropLeakResult" class="calc-result" style="display:none"></div>
+                </div>
+
+                <!-- Natural Gas Leak -->
+                <div class="card">
+                    <h3>⛽ Natural Gas Leak</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Diameter (mm)</label>
+                            <input type="number" id="gasHoleDiameter" class="form-control" placeholder="5" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Pressure (bar)</label>
+                            <input type="number" id="gasPressure" class="form-control" placeholder="50" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (minutes)</label>
+                            <input type="number" id="gasDuration" class="form-control" placeholder="10" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Temperature (°C)</label>
+                            <input type="number" id="gasTemperature" class="form-control" placeholder="35" step="1">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateGasLeak()">📊 Calculate</button>
+                    <div id="gasLeakResult" class="calc-result" style="display:none"></div>
+                </div>
+
+                <!-- Crude Oil Pin Hole Leak -->
+                <div class="card">
+                    <h3>🛢️ Crude Oil Leak (Pin Hole)</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Diameter (mm)</label>
+                            <input type="number" id="oilHoleDiameter" class="form-control" placeholder="2" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Pressure (bar)</label>
+                            <input type="number" id="oilPressure" class="form-control" placeholder="56" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (minutes)</label>
+                            <input type="number" id="oilDuration" class="form-control" placeholder="25" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Density (kg/m³)</label>
+                            <input type="number" id="oilDensity" class="form-control" placeholder="700" step="1">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateOilLeak()">📊 Calculate</button>
+                    <div id="oilLeakResult" class="calc-result" style="display:none"></div>
+                    <div id="thresholdResult" class="threshold-result" style="display:none"></div>
+                </div>
+
+                <!-- Production Volume Loss -->
+                <div class="card">
+                    <h3>📉 Production Volume Loss</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Shutdown Hours</label>
+                            <input type="number" id="shutdownHours" class="form-control" placeholder="2" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Shutdown Minutes</label>
+                            <input type="number" id="shutdownMinutes" class="form-control" placeholder="30" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Normal Production (KBD)</label>
+                            <input type="number" id="normalProduction" class="form-control" placeholder="750" step="0.1">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateProductionLoss()">📊 Calculate</button>
+                    <div id="productionLossResult" class="calc-result" style="display:none"></div>
+                </div>
+
+                <!-- Chemical Injection Rate -->
+                <div class="card">
+                    <h3>🧪 Chemical Injection Rate</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Injection Rate (L/hr)</label>
+                            <input type="number" id="injectionRate" class="form-control" placeholder="2.5" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Concentration (PPM)</label>
+                            <input type="number" id="chemPPM" class="form-control" placeholder="100" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Drum Size</label>
+                            <select id="drumSize" class="form-control">
+                                <option value="159">159L Drum</option>
+                                <option value="210">210L Drum</option>
+                                <option value="259">259L Drum</option>
+                                <option value="custom">Custom Size</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="customDrumGroup" style="display:none">
+                            <label>Custom Size (L)</label>
+                            <input type="number" id="customDrumSize" class="form-control" placeholder="200">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateChemical()">📊 Calculate</button>
+                    <div id="chemicalResult" class="calc-result" style="display:none"></div>
+                </div>
+
+                <!-- Drop Object Calculator -->
+                <div class="card">
+                    <h3>⬇️ Drop Object Calculator</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Object Weight (kg)</label>
+                            <input type="number" id="objectWeight" class="form-control" placeholder="5" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Drop Height (m)</label>
+                            <input type="number" id="dropHeight" class="form-control" placeholder="10" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>PPE Level</label>
+                            <select id="ppeLevel" class="form-control">
+                                <option value="1">Basic (Hard Hat)</option>
+                                <option value="0.7">Enhanced (+ Safety Vest)</option>
+                                <option value="0.5">Full PPE</option>
+                                <option value="custom">Custom Factor</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="customPPEGroup" style="display:none">
+                            <label>Custom PPE Factor</label>
+                            <input type="number" id="customPPEFactor" class="form-control" placeholder="0.3" step="0.1">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateDropObject()">📊 Calculate</button>
+                    <div id="dropObjectResult" class="calc-result" style="display:none"></div>
+                </div>
+
+                <!-- Crane Lifting Calculator -->
+                <div class="card">
+                    <h3>🏗️ Crane Lifting Calculator</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Load Weight (tonnes)</label>
+                            <input type="number" id="loadWeight" class="form-control" placeholder="15" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Boom Length (m)</label>
+                            <input type="number" id="boomLength" class="form-control" placeholder="25" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Crane Type</label>
+                            <select id="craneType" class="form-control">
+                                <option value="40">40T (IbA - ME 450)</option>
+                                <option value="9">9T (IbA - ME 400)</option>
+                                <option value="13">13T (IbB - ME 290)</option>
+                                <option value="13c">13T (IbC - ME 290)</option>
+                                <option value="custom">Custom Capacity</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="customCraneGroup" style="display:none">
+                            <label>Custom Capacity (T)</label>
+                            <input type="number" id="customCraneCapacity" class="form-control" placeholder="50">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateCrane()">📊 Calculate</button>
+                    <div id="craneResult" class="calc-result" style="display:none"></div>
+                </div>
+
+                <!-- Fuel Consumption -->
+                <div class="card">
+                    <h3>⛽ Fuel Consumption</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Turbine Type</label>
+                            <select id="turbineType" class="form-control">
+                                <option value="saturn20">Saturn 20 (1.2MW)</option>
+                                <option value="centaur40">Centaur 40 (4.0MW)</option>
+                                <option value="centaur50">Centaur 50 (5.0MW)</option>
+                                <option value="taurus60">Taurus 60 (4.8MW)</option>
+                                <option value="taurus70">Taurus 70 (7.7MW)</option>
+                                <option value="mars90">Mars 90 (9.8MW)</option>
+                                <option value="mars100">Mars 100 (12MW)</option>
+                                <option value="titan130">Titan 130 (13.5MW)</option>
+                                <option value="rb211">RB211 (Rolls-Royce)</option>
+                                <option value="kongsberg">Kongsberg Engine</option>
+                                <option value="custom">Custom Turbine</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="customTurbineGroup" style="display:none">
+                            <label>Custom Fuel Rate (L/hr)</label>
+                            <input type="number" id="customTurbineRate" class="form-control" placeholder="2000" step="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Load Percentage (%)</label>
+                            <input type="number" id="turbineLoad" class="form-control" placeholder="75" step="1" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Operating Hours</label>
+                            <input type="number" id="operatingHours" class="form-control" placeholder="24" step="0.1">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateFuel()">📊 Calculate</button>
+                    <div id="fuelResult" class="calc-result" style="display:none"></div>
+                </div>
+
+                <!-- Weather Impact -->
+                <div class="card">
+                    <h3>🌊 Weather Impact</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Wind Speed (knots)</label>
+                            <input type="number" id="windSpeed" class="form-control" placeholder="25" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Wave Height (m)</label>
+                            <input type="number" id="waveHeight" class="form-control" placeholder="2.5" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Operation Type</label>
+                            <select id="operationType" class="form-control">
+                                <option value="heli">Helicopter Ops</option>
+                                <option value="boat">Boat Transfer</option>
+                                <option value="crane">Crane Operations</option>
+                                <option value="diving">Diving Operations</option>
+                                <option value="custom">Custom Operation</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="customWeatherGroup" style="display:none">
+                            <label>Custom Wind Limit (knots)</label>
+                            <input type="number" id="customWindLimit" class="form-control" placeholder="30" step="1">
+                        </div>
+                        <div class="form-group" id="customWeatherGroup2" style="display:none">
+                            <label>Custom Wave Limit (m)</label>
+                            <input type="number" id="customWaveLimit" class="form-control" placeholder="2.0" step="0.1">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateWeather()">📊 Calculate</button>
+                    <div id="weatherResult" class="calc-result" style="display:none"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fair Play Assessment View -->
+        <div id="view-fairplay" class="hidden">
+            <!-- Guide Section -->
+            <div id="guide-section" class="guide-section">
+                <div class="header">
+                    <h1>⚖️ Offshore Fair Play Assessment</h1>
+                    <p><em style="opacity: 0.8;">Irong Barat Platform - Professional workplace behavior evaluation system</em></p>
+                </div>
+                
+                <h3>📋 Assessment Guide</h3>
+                <p><strong>Purpose:</strong> This tool helps determine appropriate consequences for workplace behaviors based on Fair Play principles in offshore operations.</p>
+                
+                <div class="behavior-chart">
+                    <div class="behavior-item reward">
+                        <strong>REWARD</strong><br>
+                        <small>Exceptional Behavior</small>
+                    </div>
+                    <div class="behavior-item coaching">
+                        <strong>COACHING</strong><br>
+                        <small>Error/Routine/Erosion</small>
+                    </div>
+                    <div class="behavior-item discipline">
+                        <strong>DISCIPLINE</strong><br>
+                        <small>Reckless Violation</small>
+                    </div>
+                </div>
+
+                <div style="text-align:center;margin-top:20px">
+                    <button class="btn btn-primary" onclick="showSamples()">📖 View Sample Scenarios</button>
+                    <button class="btn btn-success" onclick="startAssessment()">🚀 Start Assessment</button>
+                </div>
+            </div>
+
+            <!-- Sample Scenarios -->
+            <div id="samples-section" class="sample-scenarios hidden">
+                <h3>📚 Sample Scenarios</h3>
+                
+                <div style="margin: 15px 0; padding: 20px; background: linear-gradient(135deg,#d1fae5,#a7f3d0); border-radius: 8px;">
+                    <strong>🌟 Exceptional Behavior Example:</strong><br>
+                    Offshore worker notices unsafe condition during shift change and immediately takes action to prevent potential incident, going beyond normal duties to secure the area.
+                </div>
+
+                <div style="margin: 15px 0; padding: 20px; background: linear-gradient(135deg,#fef3c7,#fde68a); border-radius: 8px;">
+                    <strong>🔧 Error/Coaching Example:</strong><br>
+                    Worker makes honest mistake with equipment isolation due to lack of experience with new procedure, but intended to follow safety protocols.
+                </div>
+
+                <div style="margin: 15px 0; padding: 20px; background: linear-gradient(135deg,#fecaca,#fca5a5); border-radius: 8px;">
+                    <strong>⚠️ Reckless Violation Example:</strong><br>
+                    Worker deliberately bypasses safety lockout procedures for convenience during maintenance, knowing the risks to themselves and crew.
+                </div>
+
+                <div style="text-align:center;margin-top:20px">
+                    <button class="btn btn-success" onclick="startAssessment()">▶️ Start Assessment Now</button>
+                </div>
+            </div>
+
+            <!-- Assessment Section -->
+            <div id="assessment-section" class="hidden">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+                <p><strong>Progress:</strong> <span id="progress-text">0/16 questions</span></p>
+
+                <div id="question-container"></div>
+            </div>
+
+            <!-- Result Section -->
+            <div id="result-section" class="hidden">
+                <div class="result-panel">
+                    <h2 id="result-title">Assessment Complete!</h2>
+                    <p id="result-description"></p>
+                    <div id="result-consequence"></div>
+                </div>
+
+                <h3>📝 Complete Fair Play Record</h3>
+                
+                <div class="form-grid">
+                    <div class="card">
+                        <h4>Employee Information</h4>
+                        <div class="form-group">
+                            <label>Type:</label>
+                            <select id="type-select" class="form-control">
+                                <option value="POSITIVE">POSITIVE</option>
+                                <option value="NEGATIVE">NEGATIVE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Employee Name:</label>
+                            <input type="text" id="employee-name" class="form-control" placeholder="Enter full name">
+                        </div>
+                        <div class="form-group">
+                            <label>Employee No / IC No:</label>
+                            <input type="text" id="employee-id" class="form-control" placeholder="Enter employee number or IC">
+                        </div>
+                        <div class="form-group">
+                            <label>Position:</label>
+                            <input type="text" id="position" class="form-control" placeholder="Enter job position">
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>Workplace Details</h4>
+                        <div class="form-group">
+                            <label>Company:</label>
+                            <input type="text" id="company" class="form-control" placeholder="Enter company name">
+                        </div>
+                        <div class="form-group">
+                            <label>Location:</label>
+                            <input type="text" id="location" class="form-control" placeholder="Irong Barat Platform" value="Irong Barat Platform">
+                        </div>
+                        <div class="form-group">
+                            <label>Category:</label>
+                            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+                                <label><input type="checkbox" id="cat-discipline"> Discipline</label>
+                                <label><input type="checkbox" id="cat-safety"> Safety</label>
+                                <label><input type="checkbox" id="cat-oims"> OIMS Compliance</label>
+                                <label><input type="checkbox" id="cat-control"> Control</label>
+                                <label><input type="checkbox" id="cat-others"> Others</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Supervisor Name:</label>
+                            <input type="text" id="supervisor-name" class="form-control" placeholder="Enter supervisor name">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Description:</label>
+                    <textarea id="description" class="form-control" style="height:120px" placeholder="Describe the incident/behavior in detail..."></textarea>
+                </div>
+
+                <div style="text-align:center;margin-top:25px">
+                    <button class="btn btn-warning" onclick="generateCertificate()">🏆 Generate Certificate</button>
+                    <button class="btn btn-success" onclick="downloadCertificate()" id="download-cert-btn" style="display:none">📜 Download Certificate</button>
+                    <button class="btn btn-primary" onclick="printCertificateA5()" id="print-cert-btn" style="display:none">🖨️ Print A5</button>
+                    <button class="btn btn-primary" onclick="downloadReport()">📥 Download Report</button>
+                    <button class="btn btn-secondary" onclick="resetAssessment()">🔄 New Assessment</button>
+                </div>
+
+                <!-- Certificate Display -->
+                <div id="certificate-display" class="certificate-container hidden">
+                    <div id="certificate-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes View -->
+        <div id="view-notes" class="hidden">
+            <div class="header">
+                <h1>📝 Platform Notes</h1>
+                <p>Irong Barat Platform - Create and manage important operational notes</p>
+            </div>
+            
+            <div class="card">
+                <h3>✏️ Create New Note</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Note Title</label>
+                        <input type="text" id="noteTitle" class="form-control" placeholder="Enter note title">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="noteCategory" class="form-control">
+                            <option value="general">General</option>
+                            <option value="safety">Safety</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="operations">Operations</option>
+                            <option value="emergency">Emergency</option>
+                            <option value="inspection">Inspection</option>
+                            <option value="training">Training</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="notePriority" class="form-control">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Author</label>
+                        <input type="text" id="noteAuthor" class="form-control" placeholder="Your name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Note Content</label>
+                    <textarea id="noteContent" class="form-control" style="height:120px" placeholder="Enter your note content here..."></textarea>
+                </div>
+                <div style="text-align:center;margin-top:16px">
+                    <button class="btn btn-primary" onclick="saveNote()">💾 Save Note</button>
+                    <button class="btn btn-secondary" onclick="clearNoteForm()">🗑️ Clear Form</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+                    <h3>📋 Saved Notes</h3>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <button class="btn btn-primary" onclick="filterNotes('all')" id="filter-all">All</button>
+                        <button class="btn btn-warning" onclick="filterNotes('safety')" id="filter-safety">Safety</button>
+                        <button class="btn btn-success" onclick="filterNotes('maintenance')" id="filter-maintenance">Maintenance</button>
+                        <button class="btn btn-secondary" onclick="filterNotes('operations')" id="filter-operations">Operations</button>
+                        <button class="btn btn-danger" onclick="exportNotes()">📤 Export</button>
+                    </div>
+                </div>
+                <div id="notesContainer">
+                    <div style="text-align:center;padding:40px;color:#64748b">
+                        <h4>📝 No Notes Yet</h4>
+                        <p>Create your first note using the form above</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced History View -->
+        <div id="view-history" class="hidden">
+            <div class="header">
+                <h1>📚 Records & History</h1>
+                <p>Irong Barat Platform - Review previous calculations and assessments</p>
+            </div>
+            <div style="text-align:center;margin-bottom:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+                <button class="btn btn-primary" onclick="filterHistory('all')">📋 All Records</button>
+                <button class="btn btn-success" onclick="filterHistory('certificate')">🏆 Certificates</button>
+                <button class="btn btn-warning" onclick="filterHistory('calculation')">🧮 Calculations</button>
+                <button class="btn btn-secondary" onclick="exportAllData()">💾 Save All Data</button>
+                <button class="btn btn-primary" onclick="importAllData()">📁 Load Data</button>
+                <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+            </div>
+            <div id="historyContent">
+                <div class="card" style="text-align:center;padding:40px">
+                    <h3 style="color:#64748b">📝 No Records Yet</h3>
+                    <p style="color:#94a3b8">Use calculators and assessments to build your history</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentView = 'home';
+        let history = [];
+        let currentSection = 'worker';
+        let currentQuestionIndex = 0;
+        let assessmentResults = { worker: null, supervisor: null };
+        let historyFilter = 'all';
+        let notes = [];
+        let notesFilter = 'all';
+
+        // Core Navigation Function
+        function showView(view) {
+            document.querySelectorAll('[id^="view-"]').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
+            document.getElementById('view-' + view).classList.remove('hidden');
+            document.getElementById('nav-' + view)?.classList.add('active');
+            currentView = view;
+            if (view === 'history') renderHistory();
+            if (view === 'notes') renderNotes();
+        }
+
+        function showCalculator(type) {
+            showView('calculator');
+        }
+
+        // Fair Play Questions Data
+        const workerQuestions = [
+            {
+                text: "Did the team member go above and beyond the call of duty?",
+                consequence: "🌟 EXCEPTIONAL BEHAVIOR - Consider recognition/reward as appropriate",
+                resultType: "reward"
+            },
+            {
+                text: "Were all procedures or expected practices and instructions followed?",
+                consequence: "✅ EXPECTED BEHAVIOR - Continue monitoring and encouragement"
+            },
+            {
+                text: "Did the team member think they were doing things the right way?",
+                consequence: "📚 ERROR - Coaching in the use of correct procedures needed"
+            },
+            {
+                text: "If completing the same task, would others have acted in the same manner?",
+                consequence: "📝 ROUTINE - Coach team members on importance of understanding procedures"
+            },
+            {
+                text: "If the procedure or expected practice was a barrier to getting the job done, did the team member do it differently without reassessing the job?",
+                consequence: "📉 EROSION - Coach about speaking up when procedures/practices need reviewing"
+            },
+            {
+                text: "Did the team member think there was some benefit for the company by doing the job a different way?",
+                consequence: "🎯 OPTIMIZING - Coach on balancing work and following expected practices"
+            },
+            {
+                text: "Did the team member vary from the procedure or expected practice to make it easier for themselves?",
+                consequence: "⚠️ PERSONAL OPTIMIZING VIOLATION - Consider formal disciplinary action"
+            },
+            {
+                text: "Did the team member intentionally not follow the procedure or expected practice without thinking or caring about the consequences?",
+                consequence: "🚨 RECKLESS VIOLATION - Formal disciplinary action required"
+            }
+        ];
+
+        const supervisorQuestions = [
+            {
+                text: "Did the supervisor/manager also exhibit exceptional behaviour?",
+                consequence: "🌟 SUPERVISOR EXCEPTIONAL - Recognition appropriate for both parties"
+            },
+            {
+                text: "Does the supervisor/manager lead by example by complying with procedures and instructions?",
+                consequence: "✅ SUPERVISOR EXPECTED BEHAVIOR - Continue encouragement"
+            },
+            {
+                text: "Did the supervisor/manager fail to supervise work to ensure the task is completed in the required manner?",
+                consequence: "📚 SUPERVISOR ERROR - Counselling on supervisory accountability needed"
+            },
+            {
+                text: "Did the supervisor/manager allow non-compliant (poor) work practices to develop without correction?",
+                consequence: "📝 SUPERVISOR ROUTINE - Coach on monitoring and enforcing procedures"
+            },
+            {
+                text: "Did the supervisor/manager know the procedure or expected practice was a barrier to getting the job done and do nothing?",
+                consequence: "📉 SUPERVISOR EROSION - Coach on importance of procedure review"
+            },
+            {
+                text: "Did the supervisor/manager permit shortcuts, for the sake of getting an outcome?",
+                consequence: "🎯 SUPERVISOR OPTIMIZING - Coach on balancing values with expected practices"
+            },
+            {
+                text: "Did the supervisor/manager overlook this behaviour on this or previous occasions?",
+                consequence: "⚠️ SUPERVISOR PERSONAL OPTIMIZING - Consider formal disciplinary action"
+            },
+            {
+                text: "Did the supervisor/manager condone the actions of the team member?",
+                consequence: "🚨 SUPERVISOR RECKLESS - Formal disciplinary action for supervisor required"
+            }
+        ];
+
+        // Enhanced Data Management Functions
+        function exportAllData() {
+            const today = new Date();
+            const dateStr = today.getFullYear() + '-' + 
+                          String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                          String(today.getDate()).padStart(2, '0');
+            
+            const allData = {
+                metadata: {
+                    version: "1.0",
+                    platform: "Irong Barat Platform",
+                    exportDate: today.toISOString(),
+                    totalHistory: history.length,
+                    totalNotes: notes.length,
+                    totalCertificates: history.filter(h => h.type.includes('Certificate') || h.certificateId).length,
+                    application: "Offshore Engineering Suite"
+                },
+                history: history,
+                notes: notes,
+                settings: {
+                    lastExport: today.toISOString(),
+                    platform: "Irong Barat Platform"
+                }
+            };
+
+            const jsonString = JSON.stringify(allData, null, 2);
+            const filename = 'fairplay-' + dateStr + '.json';
+            
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showAlert('💾 Complete backup saved as ' + filename + '! File size: ' + (jsonString.length/1024).toFixed(1) + 'KB', 'success');
+        }
+
+        function importAllData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (!file.name.includes('fairplay-') && !file.name.endsWith('.json')) {
+                    showAlert('⚠️ Please select a valid fairplay backup file (fairplay-YYYY-MM-DD.json)', 'warning');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        
+                        if (!importedData.metadata || !importedData.history || !importedData.notes) {
+                            throw new Error('Invalid backup file format');
+                        }
+
+                        const confirmMsg = '📁 Import Data Preview:\n\n' +
+                                         'Platform: ' + importedData.metadata.platform + '\n' +
+                                         'Export Date: ' + new Date(importedData.metadata.exportDate).toLocaleDateString() + '\n' +
+                                         'History Records: ' + importedData.metadata.totalHistory + '\n' +
+                                         'Notes: ' + importedData.metadata.totalNotes + '\n' +
+                                         'Certificates: ' + (importedData.metadata.totalCertificates || 0) + '\n\n' +
+                                         '⚠️ This will REPLACE all current data!\n\n' +
+                                         'Continue with import?';
+
+                        if (confirm(confirmMsg)) {
+                            history = importedData.history || [];
+                            notes = importedData.notes || [];
+                            
+                            saveHistory();
+                            saveNotes();
+                            
+                            if (currentView === 'history') renderHistory();
+                            if (currentView === 'notes') renderNotes();
+                            
+                            showAlert('✅ Data imported successfully!\n' + history.length + ' history records & ' + notes.length + ' notes restored', 'success');
+                            
+                            saveToHistory('Data Import', 
+                                'Imported backup from ' + new Date(importedData.metadata.exportDate).toLocaleDateString(), 
+                                { 
+                                    importedRecords: history.length,
+                                    importedNotes: notes.length,
+                                    sourceFile: file.name
+                                }
+                            );
+                        }
+                    } catch (error) {
+                        showAlert('❌ Import failed: ' + error.message + '\nPlease check file format', 'danger');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function clearAllData() {
+            const confirmMsg = '🗑️ CLEAR ALL DATA WARNING!\n\n' +
+                             'This will permanently delete:\n' +
+                             '• ' + history.length + ' history records\n' +
+                             '• ' + notes.length + ' platform notes\n' +
+                             '• All certificates and assessments\n\n' +
+                             '⚠️ This action CANNOT be undone!\n\n' +
+                             'Type "DELETE ALL" below to confirm:';
+
+            const userInput = prompt(confirmMsg);
+            
+            if (userInput === "DELETE ALL") {
+                history = [];
+                notes = [];
+                
+                try {
+                    localStorage.removeItem('offshoreHistory');
+                    localStorage.removeItem('offshorePlatformNotes');
+                } catch (e) {
+                    console.warn('Cannot clear localStorage');
+                }
+                
+                if (currentView === 'history') renderHistory();
+                if (currentView === 'notes') renderNotes();
+                
+                showAlert('🗑️ All data cleared successfully! Starting fresh.', 'success');
+            } else if (userInput !== null) {
+                showAlert('❌ Incorrect confirmation text. Data NOT cleared.', 'warning');
+            }
+        }
+
+        // Initialization
+        function init() {
+            loadHistory();
+            loadNotes();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('drumSize').addEventListener('change', function(){
+                document.getElementById('customDrumGroup').style.display = this.value === 'custom' ? 'block' : 'none';
+            });
+            document.getElementById('craneType').addEventListener('change', function(){
+                document.getElementById('customCraneGroup').style.display = this.value === 'custom' ? 'block' : 'none';
+            });
+            document.getElementById('turbineType').addEventListener('change', function(){
+                document.getElementById('customTurbineGroup').style.display = this.value === 'custom' ? 'block' : 'none';
+            });
+            document.getElementById('operationType').addEventListener('change', function(){
+                const isCustom = this.value === 'custom';
+                document.getElementById('customWeatherGroup').style.display = isCustom ? 'block' : 'none';
+                document.getElementById('customWeatherGroup2').style.display = isCustom ? 'block' : 'none';
+            });
+            document.getElementById('ppeLevel').addEventListener('change', function(){
+                document.getElementById('customPPEGroup').style.display = this.value === 'custom' ? 'block' : 'none';
+            });
+        }
+
+        // Notes Functions
+        function loadNotes() {
+            try {
+                const saved = localStorage.getItem('offshorePlatformNotes');
+                if (saved) notes = JSON.parse(saved);
+            } catch (e) {
+                console.warn('Cannot load notes from localStorage');
+            }
+        }
+
+        function saveNotes() {
+            try {
+                localStorage.setItem('offshorePlatformNotes', JSON.stringify(notes));
+            } catch (e) {
+                console.warn('Cannot save notes to localStorage');
+            }
+        }
+
+        function saveNote() {
+            const title = document.getElementById('noteTitle').value.trim();
+            const content = document.getElementById('noteContent').value.trim();
+            const category = document.getElementById('noteCategory').value;
+            const priority = document.getElementById('notePriority').value;
+            const author = document.getElementById('noteAuthor').value.trim() || 'Anonymous';
+
+            if (!title || !content) {
+                return showAlert('Please enter both title and content', 'warning');
+            }
+
+            const note = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                category: category,
+                priority: priority,
+                author: author,
+                timestamp: new Date().toISOString(),
+                location: 'Irong Barat Platform'
+            };
+
+            notes.unshift(note);
+            saveNotes();
+            clearNoteForm();
+            renderNotes();
+            showAlert('📝 Note saved successfully!', 'success');
+        }
+
+        function clearNoteForm() {
+            document.getElementById('noteTitle').value = '';
+            document.getElementById('noteContent').value = '';
+            document.getElementById('noteCategory').value = 'general';
+            document.getElementById('notePriority').value = 'medium';
+            document.getElementById('noteAuthor').value = '';
+        }
+
+        function filterNotes(filter) {
+            notesFilter = filter;
+            renderNotes();
+            
+            document.querySelectorAll('[id^="filter-"]').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('filter-' + filter)?.classList.add('active');
+        }
+
+        function renderNotes() {
+            const container = document.getElementById('notesContainer');
+            
+            let filteredNotes = notes;
+            if (notesFilter !== 'all') {
+                filteredNotes = notes.filter(note => note.category === notesFilter);
+            }
+
+            if (filteredNotes.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:#64748b"><h4>📝 No ' + (notesFilter === 'all' ? '' : notesFilter.charAt(0).toUpperCase() + notesFilter.slice(1) + ' ') + 'Notes Yet</h4><p>Create your first ' + (notesFilter === 'all' ? '' : notesFilter + ' ') + 'note using the form above</p></div>';
+                return;
+            }
+
+            const priorityColors = {
+                low: '#10b981',
+                medium: '#f59e0b', 
+                high: '#ef4444',
+                urgent: '#dc2626'
+            };
+            const categoryIcons = {
+                general: '📄',
+                safety: '⚠️',
+                maintenance: '🔧',
+                operations: '⚙️',
+                emergency: '🚨',
+                inspection: '🔍',
+                training: '📚'
+            };
+
+            container.innerHTML = filteredNotes.map(note => {
+                const date = new Date(note.timestamp);
+                return '<div class="history-item" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:18px">' + (categoryIcons[note.category] || '📄') + '</span><strong style="color:#1e40af;font-size:14px">' + note.title + '</strong><span style="background:' + priorityColors[note.priority] + ';color:white;padding:2px 6px;border-radius:8px;font-size:10px;font-weight:600;text-transform:uppercase">' + note.priority + '</span><span style="background:#3b82f6;color:white;padding:2px 6px;border-radius:8px;font-size:10px;font-weight:600;text-transform:uppercase">' + note.category + '</span></div><div style="display:flex;align-items:center;gap:8px"><span style="color:#6b7280;font-size:11px">' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '</span><button class="btn btn-danger" style="padding:2px 6px;font-size:10px" onclick="deleteNote(' + note.id + ')">🗑️</button></div></div><div style="color:#374151;font-size:13px;line-height:1.5;margin-bottom:6px">' + note.content + '</div><div style="color:#6b7280;font-size:11px"><strong>Author:</strong> ' + note.author + ' | <strong>Location:</strong> ' + note.location + '</div></div>';
+            }).join('');
+        }
+
+        function deleteNote(noteId) {
+            if (confirm('Are you sure you want to delete this note?')) {
+                notes = notes.filter(note => note.id !== noteId);
+                saveNotes();
+                renderNotes();
+                showAlert('🗑️ Note deleted successfully', 'success');
+            }
+        }
+
+        function exportNotes() {
+            if (notes.length === 0) {
+                return showAlert('No notes to export', 'warning');
+            }
+
+            const notesData = notes.map(note => {
+                const date = new Date(note.timestamp);
+                return '# ' + note.title + '\n\n**Category:** ' + note.category.charAt(0).toUpperCase() + note.category.slice(1) + '  \n**Priority:** ' + note.priority.toUpperCase() + '  \n**Author:** ' + note.author + '  \n**Location:** ' + note.location + '  \n**Date:** ' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '\n\n---\n\n' + note.content + '\n\n---';
+            }).join('\n\n');
+
+            const exportContent = '# 📝 Irong Barat Platform Notes Export\n\n**Generated:** ' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() + '  \n**Total Notes:** ' + notes.length + '  \n**Platform:** Irong Barat Offshore Platform\n\n---\n\n' + notesData + '\n\n---\n\n*Exported from Irong Barat Platform Offshore Engineering Suite*';
+
+            const filename = 'IB_Platform_Notes_' + new Date().toISOString().split('T')[0] + '.md';
+            const blob = new Blob([exportContent], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showAlert('📤 Notes exported successfully!', 'success');
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-' + (type || 'info');
+            alertDiv.textContent = message;
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.style.maxWidth = '300px';
+            document.body.appendChild(alertDiv);
+            setTimeout(() => alertDiv.remove(), 3000);
+        }
+
+        function saveToHistory(type, content, additionalData) {
+            const record = {
+                id: Date.now(),
+                type: type,
+                content: content,
+                timestamp: new Date().toISOString(),
+                ...additionalData
+            };
+            history.unshift(record);
+            if (history.length > 100) history = history.slice(0, 100);
+            saveHistory();
+        }
+
+        function saveHistory() {
+            try {
+                localStorage.setItem('offshoreHistory', JSON.stringify(history));
+            } catch (e) {
+                console.warn('Cannot save to localStorage');
+            }
+        }
+
+        function loadHistory() {
+            try {
+                const saved = localStorage.getItem('offshoreHistory');
+                if (saved) history = JSON.parse(saved);
+            } catch (e) {
+                console.warn('Cannot load from localStorage');
+            }
+        }
+
+        function filterHistory(filter) {
+            historyFilter = filter;
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyContent');
+            
+            let filteredHistory = history;
+            if (historyFilter === 'certificate') {
+                filteredHistory = history.filter(record => 
+                    record.type.includes('Certificate') || record.certificateId
+                );
+            } else if (historyFilter === 'calculation') {
+                filteredHistory = history.filter(record => 
+                    !record.type.includes('Certificate') && !record.certificateId
+                );
+            }
+            
+            if (filteredHistory.length === 0) {
+                const filterText = historyFilter === 'all' ? 'records' : 
+                                 historyFilter === 'certificate' ? 'certificates' : 'calculations';
+                container.innerHTML = '<div class="card" style="text-align:center;padding:40px"><h3 style="color:#64748b">📝 No ' + filterText.charAt(0).toUpperCase() + filterText.slice(1) + ' Yet</h3><p style="color:#94a3b8">Use ' + (historyFilter === 'certificate' ? 'Fair Play Assessment' : 'calculators') + ' to build your history</p></div>';
+                return;
+            }
+
+            container.innerHTML = filteredHistory.map(record => {
+                const date = new Date(record.timestamp);
+                const isCertificate = record.type.includes('Certificate') || record.certificateId;
+                
+                return '<div class="history-item"><div class="history-header"><div><span class="history-type">' + record.type + '</span>' + (isCertificate ? '<span class="certificate-badge">🏆 CERT</span>' : '') + (record.certificateId ? '<span style="color:#6b7280;font-size:10px;margin-left:6px">ID: ' + record.certificateId + '</span>' : '') + '</div><span class="history-date">' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '</span></div><div class="history-content">' + record.content + (record.employeeName ? '<br><strong>Employee:</strong> ' + record.employeeName : '') + (record.assessmentResult ? '<br><strong>Result:</strong> ' + record.assessmentResult : '') + (record.location ? '<br><strong>Location:</strong> ' + record.location : '') + '</div></div>';
+            }).join('');
+        }
+
+        // Calculator Functions
+        function convertVolume() {
+            const val = parseFloat(document.getElementById('volumeInput').value);
+            const type = document.getElementById('volumeType').value;
+            const shrinkage = parseFloat(document.getElementById('shrinkageFactor').value) || 0.881;
+            if (isNaN(val)) return showAlert('Invalid value', 'warning');
+            
+            let resultWithout, resultWith;
+            if (type === 'kld_kbd') {
+                resultWithout = (val * 6.293 / 1000);
+                resultWith = resultWithout * shrinkage;
+                document.getElementById('volumeResult').innerHTML = '<strong>Results:</strong><br>Without Shrinkage: ' + resultWithout.toFixed(4) + ' KBD<br>With Shrinkage: ' + resultWith.toFixed(4) + ' KBD';
+            } else {
+                resultWithout = (val / (6.293 / 1000));
+                resultWith = resultWithout / shrinkage;
+                document.getElementById('volumeResult').innerHTML = '<strong>Results:</strong><br>Without Shrinkage: ' + resultWithout.toFixed(4) + ' KLD<br>With Shrinkage: ' + resultWith.toFixed(4) + ' KLD';
+            }
+            document.getElementById('volumeResult').style.display = 'block';
+            saveToHistory('Volume Conversion', val + ' ' + type.split('_')[0].toUpperCase() + ' converted with shrinkage factor ' + shrinkage);
+        }
+
+        function convertUniversal() {
+            const val = parseFloat(document.getElementById('universalValue').value);
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            if (isNaN(val)) return showAlert('Invalid value', 'warning');
+            if (fromUnit === toUnit) return showAlert('Same units selected', 'warning');
+            
+            const conversions = {
+                kpa: {psi: 0.145038, bar: 0.01},
+                psi: {kpa: 6.89476, bar: 0.0689476},
+                bar: {kpa: 100, psi: 14.5038},
+                celsius: {fahrenheit: val => val * 9/5 + 32},
+                fahrenheit: {celsius: val => (val - 32) * 5/9},
+                inches: {cm: 2.54, feet: 0.0833333, meters: 0.0254},
+                cm: {inches: 0.393701, feet: 0.0328084, meters: 0.01},
+                feet: {inches: 12, cm: 30.48, meters: 0.3048},
+                meters: {inches: 39.3701, cm: 100, feet: 3.28084}
+            };
+            
+            const conv = conversions[fromUnit];
+            if (!conv || !conv[toUnit]) return showAlert('Conversion not available', 'warning');
+            
+            const result = typeof conv[toUnit] === 'function' ? conv[toUnit](val) : val * conv[toUnit];
+            const resultText = '<strong>Result:</strong><br>' + val + ' ' + fromUnit + ' = ' + result.toFixed(4) + ' ' + toUnit;
+            document.getElementById('universalResult').innerHTML = resultText;
+            document.getElementById('universalResult').style.display = 'block';
+            saveToHistory('Unit Conversion', val + ' ' + fromUnit + ' → ' + result.toFixed(4) + ' ' + toUnit);
+        }
+
+        function convertGas() {
+            const val = parseFloat(document.getElementById('gasInput').value);
+            const type = document.getElementById('gasType').value;
+            if (isNaN(val)) return showAlert('Invalid value', 'warning');
+            
+            const result = type === 'km3_mmscf' ? val * 0.035373 : val / 0.035373;
+            const unit = type === 'km3_mmscf' ? 'mmscf/d' : 'km³/d';
+            const resultText = '<strong>Gas Conversion:</strong><br>' + val + ' = ' + result.toFixed(4) + ' ' + unit;
+            document.getElementById('gasResult').innerHTML = resultText;
+            document.getElementById('gasResult').style.display = 'block';
+            saveToHistory('Gas Conversion', val + ' converted to ' + result.toFixed(4) + ' ' + unit);
+        }
+
+        function calculateDropLeak() {
+            const dropRate = parseFloat(document.getElementById('dropRate').value);
+            const duration = parseFloat(document.getElementById('dropDuration').value);
+            const dropSize = parseFloat(document.getElementById('dropSize').value);
+            
+            if (isNaN(dropRate) || isNaN(duration)) return showAlert('Invalid values', 'warning');
+            
+            const totalDrops = dropRate * duration;
+            const totalVolumeL = totalDrops * dropSize / 1000;
+            const ratePerHour = dropRate * 60 * dropSize / 1000;
+            
+            const resultText = '<strong>Drop Leak Analysis:</strong><br>Rate: ' + ratePerHour.toFixed(3) + ' L/hr<br>Total Volume: ' + totalVolumeL.toFixed(3) + ' L<br>Total Drops: ' + totalDrops.toFixed(0);
+            document.getElementById('dropLeakResult').innerHTML = resultText;
+            document.getElementById('dropLeakResult').style.display = 'block';
+            saveToHistory('Drop Leak Analysis', dropRate + ' drops/min for ' + duration + ' min = ' + totalVolumeL.toFixed(3) + ' L total');
+        }
+
+        function calculateGasLeak() {
+            const diameter = parseFloat(document.getElementById('gasHoleDiameter').value);
+            const pressure = parseFloat(document.getElementById('gasPressure').value);
+            const duration = parseFloat(document.getElementById('gasDuration').value);
+            const temperature = parseFloat(document.getElementById('gasTemperature').value) || 35;
+            
+            if (isNaN(diameter) || isNaN(pressure) || isNaN(duration)) return showAlert('Invalid values', 'warning');
+            
+            const area = Math.PI * Math.pow(diameter / 2000, 2);
+            const MW = 20; const R = 8.314; const Z = 0.9; const T = temperature + 273.15;
+            const leakRate = 0.3 * area * pressure * 100000 * Math.sqrt(MW / (Z * R * T));
+            const totalKg = leakRate * duration * 60;
+            
+            const resultText = '<strong>Gas Leak Analysis:</strong><br>Leak Rate: ' + leakRate.toFixed(4) + ' kg/s<br>Total Amount: ' + totalKg.toFixed(2) + ' kg<br>Duration: ' + duration + ' minutes';
+            document.getElementById('gasLeakResult').innerHTML = resultText;
+            document.getElementById('gasLeakResult').style.display = 'block';
+            saveToHistory('Gas Leak Analysis', diameter + 'mm hole at ' + pressure + ' bar = ' + totalKg.toFixed(2) + ' kg gas leaked');
+        }
+
+        function calculateOilLeak() {
+            const diameter = parseFloat(document.getElementById('oilHoleDiameter').value);
+            const pressure = parseFloat(document.getElementById('oilPressure').value);
+            const duration = parseFloat(document.getElementById('oilDuration').value);
+            const density = parseFloat(document.getElementById('oilDensity').value) || 700;
+            
+            if (isNaN(diameter) || isNaN(pressure) || isNaN(duration)) return showAlert('Invalid values', 'warning');
+            
+            const radius = diameter / 2;
+            const areaCm2 = Math.PI * Math.pow(radius / 10, 2);
+            const deltaP = pressure - 1.01325;
+            const leakRate = 0.044721 * 0.62 * areaCm2 * Math.sqrt(density * deltaP);
+            const totalKg = leakRate * duration * 60;
+            
+            const resultText = '<strong>Oil Leak Analysis:</strong><br>Leak Rate: ' + leakRate.toFixed(4) + ' kg/s<br>Total Amount: ' + totalKg.toFixed(2) + ' kg<br>Duration: ' + duration + ' minutes';
+            document.getElementById('oilLeakResult').innerHTML = resultText;
+            document.getElementById('oilLeakResult').style.display = 'block';
+            
+            let classification = 'Below Threshold', color = '#10b981';
+            if (totalKg >= 2000) {classification = 'Tier 1 - Major'; color = '#dc2626';}
+            else if (totalKg >= 200) {classification = 'Tier 2 - Reportable'; color = '#f59e0b';}
+            else if (totalKg >= 100) {classification = 'Minor Reportable'; color = '#3b82f6';}
+            
+            document.getElementById('thresholdResult').innerHTML = '<strong style="color:' + color + '">Classification:</strong> ' + classification;
+            document.getElementById('thresholdResult').style.display = 'block';
+            saveToHistory('Oil Leak Analysis', diameter + 'mm hole at ' + pressure + ' bar = ' + totalKg.toFixed(2) + ' kg oil leaked (' + classification + ')');
+        }
+
+        function calculateProductionLoss() {
+            const hours = parseFloat(document.getElementById('shutdownHours').value) || 0;
+            const minutes = parseFloat(document.getElementById('shutdownMinutes').value) || 0;
+            const production = parseFloat(document.getElementById('normalProduction').value);
+            
+            if (isNaN(production)) return showAlert('Invalid production rate', 'warning');
+            
+            const totalHours = hours + minutes / 60;
+            const lostBarrels = production * totalHours / 24;
+            
+            const resultText = '<strong>Production Loss:</strong><br>Duration: ' + hours + 'h ' + minutes + 'm<br>Volume Lost: ' + lostBarrels.toFixed(2) + ' barrels';
+            document.getElementById('productionLossResult').innerHTML = resultText;
+            document.getElementById('productionLossResult').style.display = 'block';
+            saveToHistory('Production Loss', totalHours.toFixed(1) + ' hr shutdown = ' + lostBarrels.toFixed(2) + ' barrels lost');
+        }
+
+        function calculateChemical() {
+            const rate = parseFloat(document.getElementById('injectionRate').value);
+            const ppm = parseFloat(document.getElementById('chemPPM').value);
+            const drumType = document.getElementById('drumSize').value;
+            
+            if (isNaN(rate) || isNaN(ppm)) return showAlert('Invalid values', 'warning');
+            
+            const drumSize = drumType === 'custom' ? parseFloat(document.getElementById('customDrumSize').value) : parseFloat(drumType);
+            if (isNaN(drumSize)) return showAlert('Invalid drum size', 'warning');
+            
+            const dailyVolume = rate * 24;
+            const weeklyVolume = dailyVolume * 7;
+            const drumsNeeded = Math.ceil(weeklyVolume / drumSize);
+            
+            const resultText = '<strong>Chemical Injection:</strong><br>Daily: ' + dailyVolume.toFixed(1) + ' L/day<br>Weekly: ' + weeklyVolume.toFixed(1) + ' L/week<br>Drums Needed: ' + drumsNeeded + ' x ' + drumSize + 'L';
+            document.getElementById('chemicalResult').innerHTML = resultText;
+            document.getElementById('chemicalResult').style.display = 'block';
+            saveToHistory('Chemical Injection', rate + ' L/hr at ' + ppm + ' PPM = ' + drumsNeeded + ' drums/week');
+        }
+
+        function calculateDropObject() {
+            const weight = parseFloat(document.getElementById('objectWeight').value);
+            const height = parseFloat(document.getElementById('dropHeight').value);
+            const ppeSelection = document.getElementById('ppeLevel').value;
+            
+            if (isNaN(weight) || isNaN(height)) return showAlert('Invalid values', 'warning');
+            
+            let ppe;
+            if (ppeSelection === 'custom') {
+                ppe = parseFloat(document.getElementById('customPPEFactor').value);
+                if (isNaN(ppe)) return showAlert('Enter custom PPE factor', 'warning');
+            } else {
+                ppe = parseFloat(ppeSelection);
+            }
+            
+            const energy = weight * 9.81 * height;
+            const adjustedEnergy = energy * ppe;
+            
+            let riskLevel, color;
+            if (adjustedEnergy < 50) {riskLevel = 'Low Risk'; color = '#10b981';}
+            else if (adjustedEnergy < 200) {riskLevel = 'Medium Risk'; color = '#f59e0b';}
+            else if (adjustedEnergy < 500) {riskLevel = 'High Risk'; color = '#ef4444';}
+            else {riskLevel = 'Fatal Risk'; color = '#dc2626';}
+            
+            const resultText = '<strong>Drop Object:</strong><br>Impact Energy: ' + energy.toFixed(0) + ' J<br>With PPE: ' + adjustedEnergy.toFixed(0) + ' J<br><span style="color:' + color + '">Risk: ' + riskLevel + '</span>';
+            document.getElementById('dropObjectResult').innerHTML = resultText;
+            document.getElementById('dropObjectResult').style.display = 'block';
+            saveToHistory('Drop Object Analysis', weight + 'kg from ' + height + 'm = ' + riskLevel + ' (' + adjustedEnergy.toFixed(0) + 'J with PPE)');
+        }
+
+        function calculateCrane() {
+            const load = parseFloat(document.getElementById('loadWeight').value);
+            const boom = parseFloat(document.getElementById('boomLength').value);
+            const craneType = document.getElementById('craneType').value;
+            
+            if (isNaN(load) || isNaN(boom)) return showAlert('Invalid values', 'warning');
+            
+            let capacity;
+            if (craneType === 'custom') {
+                capacity = parseFloat(document.getElementById('customCraneCapacity').value);
+                if (isNaN(capacity)) return showAlert('Invalid crane capacity', 'warning');
+            } else {
+                capacity = parseFloat(craneType);
+            }
+            
+            const capacityAtBoom = capacity * (20 / boom);
+            const safeLoad = capacityAtBoom * 0.8;
+            const status = load <= safeLoad ? '✅ SAFE' : '❌ UNSAFE';
+            
+            const resultText = '<strong>Crane Analysis:</strong><br>Capacity at ' + boom + 'm: ' + capacityAtBoom.toFixed(1) + 'T<br>Safe Load: ' + safeLoad.toFixed(1) + 'T<br>Status: ' + status;
+            document.getElementById('craneResult').innerHTML = resultText;
+            document.getElementById('craneResult').style.display = 'block';
+            saveToHistory('Crane Analysis', load + 'T load at ' + boom + 'm boom = ' + status + ' (Safe limit: ' + safeLoad.toFixed(1) + 'T)');
+        }
+
+        function calculateFuel() {
+            const type = document.getElementById('turbineType').value;
+            const load = parseFloat(document.getElementById('turbineLoad').value);
+            const hours = parseFloat(document.getElementById('operatingHours').value);
+            
+            if (isNaN(load) || isNaN(hours)) return showAlert('Invalid values', 'warning');
+            
+            let baseRate;
+            if (type === 'custom') {
+                baseRate = parseFloat(document.getElementById('customTurbineRate').value);
+                if (isNaN(baseRate)) return showAlert('Enter fuel rate', 'warning');
+            } else {
+                const baseConsumption = {
+                    saturn20: 320, centaur40: 1100, centaur50: 1380, taurus60: 1320,
+                    taurus70: 2100, mars90: 2700, mars100: 3300, titan130: 3700,
+                    rb211: 2500, kongsberg: 2200
+                };
+                baseRate = baseConsumption[type];
+            }
+            
+            const consumption = baseRate * load / 100 * hours / 24;
+            
+            const resultText = '<strong>Fuel Consumption:</strong><br>Base Rate: ' + baseRate + ' L/hr<br>Load: ' + load + '% for ' + hours + 'hrs<br>Required: ' + consumption.toFixed(1) + ' L/day';
+            document.getElementById('fuelResult').innerHTML = resultText;
+            document.getElementById('fuelResult').style.display = 'block';
+            saveToHistory('Fuel Consumption', type + ' at ' + load + '% load for ' + hours + 'hrs = ' + consumption.toFixed(1) + ' L/day');
+        }
+
+        function calculateWeather() {
+            const wind = parseFloat(document.getElementById('windSpeed').value);
+            const wave = parseFloat(document.getElementById('waveHeight').value);
+            const operation = document.getElementById('operationType').value;
+            
+            if (isNaN(wind) || isNaN(wave)) return showAlert('Invalid values', 'warning');
+            
+            let limit;
+            if (operation === 'custom') {
+                const customWind = parseFloat(document.getElementById('customWindLimit').value);
+                const customWave = parseFloat(document.getElementById('customWaveLimit').value);
+                if (isNaN(customWind) || isNaN(customWave)) return showAlert('Enter limits', 'warning');
+                limit = {wind: customWind, wave: customWave};
+            } else {
+                const limits = {heli: {wind: 35, wave: 3}, boat: {wind: 25, wave: 2.5}, 
+                              crane: {wind: 20, wave: 2}, diving: {wind: 15, wave: 1.5}};
+                limit = limits[operation];
+            }
+            
+            const windStatus = wind <= limit.wind ? '✅ OK' : '❌ EXCEED';
+            const waveStatus = wave <= limit.wave ? '✅ OK' : '❌ EXCEED';
+            
+            const resultText = '<strong>Weather Impact:</strong><br>Wind: ' + wind + ' kts (' + limit.wind + ') ' + windStatus + '<br>Wave: ' + wave + ' m (' + limit.wave + ') ' + waveStatus;
+            document.getElementById('weatherResult').innerHTML = resultText;
+            document.getElementById('weatherResult').style.display = 'block';
+            saveToHistory('Weather Analysis', operation + ' operation: Wind ' + windStatus + ', Wave ' + waveStatus);
+        }
+
+        // Fair Play Functions
+        function showSamples() {
+            document.getElementById('guide-section').classList.add('hidden');
+            document.getElementById('samples-section').classList.remove('hidden');
+        }
+
+        function startAssessment() {
+            document.getElementById('guide-section').classList.add('hidden');
+            document.getElementById('samples-section').classList.add('hidden');
+            document.getElementById('assessment-section').classList.remove('hidden');
+            currentSection = 'worker';
+            currentQuestionIndex = 0;
+            showCurrentQuestion();
+        }
+
+        function showCurrentQuestion() {
+            const questions = currentSection === 'worker' ? workerQuestions : supervisorQuestions;
+            const question = questions[currentQuestionIndex];
+            const totalQuestions = workerQuestions.length + supervisorQuestions.length;
+            const currentTotal = currentSection === 'worker' ? currentQuestionIndex : workerQuestions.length + currentQuestionIndex;
+            
+            const progress = (currentTotal / totalQuestions) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = currentTotal + '/' + totalQuestions + ' questions';
+
+            document.getElementById('question-container').innerHTML = '<div class="question-card"><div class="question-text">' + (currentSection === 'worker' ? '👤 Worker Question' : '👔 Supervisor Question') + ' ' + (currentQuestionIndex + 1) + ':</div><div class="question-text">' + question.text + '</div><div class="btn-group"><button class="btn-yes" onclick="answerQuestion(true)">✅ YES</button><button class="btn-no" onclick="answerQuestion(false)">❌ NO</button></div></div>';
+        }
+
+        function answerQuestion(answer) {
+            const questions = currentSection === 'worker' ? workerQuestions : supervisorQuestions;
+            const question = questions[currentQuestionIndex];
+
+            if (answer === true) {
+                assessmentResults[currentSection] = {
+                    questionIndex: currentQuestionIndex,
+                    question: question.text,
+                    consequence: question.consequence,
+                    resultType: question.resultType || 'consequence'
+                };
+                
+                document.getElementById('question-container').innerHTML += '<div class="consequence"><strong>📋 Result:</strong> ' + question.consequence + '</div><button class="btn btn-primary" onclick="nextSection()" style="margin-top: 15px;">' + (currentSection === 'worker' ? '👔 Continue to Supervisor Questions' : '📊 View Final Results') + '</button>';
+            } else {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    showCurrentQuestion();
+                } else {
+                    assessmentResults[currentSection] = {
+                        questionIndex: -1,
+                        question: 'All questions answered NO',
+                        consequence: 'No specific consequence identified',
+                        resultType: 'none'
+                    };
+                    nextSection();
+                }
+            }
+        }
+
+        function nextSection() {
+            if (currentSection === 'worker') {
+                currentSection = 'supervisor';
+                currentQuestionIndex = 0;
+                showCurrentQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('assessment-section').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
+
+            const workerResult = assessmentResults.worker;
+            const supervisorResult = assessmentResults.supervisor;
+
+            let resultTitle = "Assessment Complete!";
+            let resultDescription = "";
+            let overallType = "POSITIVE";
+
+            if (workerResult.resultType === 'reward' || supervisorResult.resultType === 'reward') {
+                resultTitle = "🌟 Exceptional Performance Identified!";
+                resultDescription = "Recognition and positive reinforcement recommended.";
+                overallType = "POSITIVE";
+            } else if (workerResult.consequence.includes('RECKLESS') || supervisorResult.consequence.includes('RECKLESS')) {
+                resultTitle = "🚨 Serious Violation Detected!";
+                resultDescription = "Formal disciplinary action required.";
+                overallType = "NEGATIVE";
+            } else if (workerResult.consequence.includes('VIOLATION') || supervisorResult.consequence.includes('VIOLATION')) {
+                resultTitle = "⚠️ Policy Violation Found";
+                resultDescription = "Disciplinary action may be required.";
+                overallType = "NEGATIVE";
+            } else {
+                resultTitle = "📚 Coaching Opportunity Identified";
+                resultDescription = "Focus on learning and improvement.";
+                overallType = "POSITIVE";
+            }
+
+            document.getElementById('result-title').textContent = resultTitle;
+            document.getElementById('result-description').textContent = resultDescription;
+            document.getElementById('result-consequence').innerHTML = '<div style="text-align: left; margin-top: 20px;"><strong>👤 Worker Assessment:</strong><br>' + workerResult.consequence + '<br><br><strong>👔 Supervisor Assessment:</strong><br>' + supervisorResult.consequence + '</div>';
+
+            document.getElementById('type-select').value = overallType;
+        }
+
+        function generateCertificate() {
+            const employeeName = document.getElementById('employee-name').value || 'Employee';
+            const employeeId = document.getElementById('employee-id').value || 'N/A';
+            const position = document.getElementById('position').value || 'Position';
+            const company = document.getElementById('company').value || 'Company';
+            const location = document.getElementById('location').value || 'Irong Barat Platform';
+            const supervisor = document.getElementById('supervisor-name').value || 'Supervisor';
+            const description = document.getElementById('description').value || 'Assessment completed successfully';
+            const today = new Date().toLocaleDateString();
+            const certId = 'IB-' + Date.now();
+            
+            const overallType = document.getElementById('type-select').value;
+            const assessmentResult = overallType === 'POSITIVE' ? 'COMMENDABLE PERFORMANCE' : 'IMPROVEMENT REQUIRED';
+            const resultColor = overallType === 'POSITIVE' ? '#059669' : '#dc2626';
+            const statusIcon = overallType === 'POSITIVE' ? '✅' : '⚠️';
+            const bgColor = overallType === 'POSITIVE' ? '#ecfdf5' : '#fef2f2';
+
+            const workerResult = assessmentResults.worker;
+            const supervisorResult = assessmentResults.supervisor;
+            
+            const categories = [];
+            if (document.getElementById('cat-discipline').checked) categories.push('Discipline');
+            if (document.getElementById('cat-safety').checked) categories.push('Safety');
+            if (document.getElementById('cat-oims').checked) categories.push('OIMS Compliance');
+            if (document.getElementById('cat-control').checked) categories.push('Control');
+            if (document.getElementById('cat-others').checked) categories.push('Others');
+
+            const certificateContent = '<div id="certificate-printable" style="width: 580px; margin: 0 auto; background: #ffffff; padding: 30px 25px; border: 2px solid #1e3a8a;box-shadow: 0 0 20px rgba(30, 58, 138, 0.2);font-family: \'Times New Roman\', serif;color: #1f2937;position: relative;font-size: 12px;"><div style="position: absolute;top: 8px;left: 8px;right: 8px;height: 2px;background: linear-gradient(90deg, #1e3a8a, #3b82f6, #10b981, #3b82f6, #1e3a8a);"></div><div style="position: absolute;bottom: 8px;left: 8px;right: 8px;height: 2px;background: linear-gradient(90deg, #1e3a8a, #3b82f6, #10b981, #3b82f6, #1e3a8a);"></div><div style="text-align: center; margin-bottom: 20px;"><div style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);color: white;padding: 8px 20px;border-radius: 20px;display: inline-block;font-size: 10px;font-weight: bold;letter-spacing: 1px;margin-bottom: 12px;box-shadow: 0 2px 8px rgba(30, 58, 138, 0.3);">🏭 IRONG BARAT PLATFORM</div><h1 style="font-size: 20px;color: #1e40af;margin: 0;font-weight: bold;letter-spacing: 1px;">FAIR PLAY ASSESSMENT</h1><h2 style="font-size: 14px;color: #374151;margin: 4px 0 0 0;font-weight: normal;letter-spacing: 0.5px;">CERTIFICATE OF COMPLETION</h2></div><div style="text-align: center; margin: 20px 0;"><p style="font-size: 11px; color: #6b7280; margin-bottom: 15px;">This is to certify that</p><div style="background: linear-gradient(135deg, #f8fafc, #e2e8f0);border: 2px solid #1e3a8a;border-radius: 8px;margin: 0 auto 20px auto;width: fit-content;padding: 12px 25px;"><h2 style="font-size: 22px;color: #1e3a8a;margin: 0;font-weight: bold;text-transform: uppercase;letter-spacing: 2px;">' + employeeName + '</h2><p style="margin: 4px 0 0 0; font-size: 10px; color: #6b7280;">Employee ID: ' + employeeId + '</p></div><div style="background: #f8fafc;padding: 15px;border-radius: 6px;margin: 15px 0;border-left: 3px solid #3b82f6;border-right: 3px solid #10b981;"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left;"><div><p style="margin: 4px 0; font-size: 10px;"><strong>Position:</strong> ' + position + '</p><p style="margin: 4px 0; font-size: 10px;"><strong>Company:</strong> ' + company + '</p><p style="margin: 4px 0; font-size: 10px;"><strong>Platform:</strong> ' + location + '</p></div><div><p style="margin: 4px 0; font-size: 10px;"><strong>Assessment Date:</strong> ' + today + '</p><p style="margin: 4px 0; font-size: 10px;"><strong>Certificate ID:</strong> ' + certId + '</p><p style="margin: 4px 0; font-size: 10px;"><strong>Categories:</strong> ' + (categories.join(', ') || 'General') + '</p></div></div></div><div style="background: ' + bgColor + ';border: 2px solid ' + resultColor + ';padding: 15px;border-radius: 8px;margin: 15px 0;box-shadow: 0 2px 8px rgba(0,0,0,0.1);"><h3 style="color: ' + resultColor + ';margin: 0 0 8px 0;font-size: 14px;display: flex;align-items: center;justify-content: center;gap: 6px;font-weight: bold;"><span style="font-size: 16px;">' + statusIcon + '</span>ASSESSMENT RESULT: ' + assessmentResult + '</h3><p style="font-size: 10px;color: #374151;margin: 0 0 8px 0;line-height: 1.4;font-weight: 500;">Has successfully completed the Offshore Fair Play Assessment process and demonstrates ' + (overallType === 'POSITIVE' ? 'exemplary adherence to safety and operational protocols' : 'commitment to improvement and professional development') + '</p><div style="background: rgba(255,255,255,0.7);padding: 8px;border-radius: 4px;margin-top: 8px;text-align: left;border-left: 2px solid ' + resultColor + ';"><p style="margin: 0 0 4px 0; font-size: 9px; font-weight: bold; color: #374151;">Assessment Summary:</p><p style="margin: 2px 0; font-size: 8px; color: #4b5563;"><strong>Worker:</strong> ' + workerResult.consequence + '</p><p style="margin: 2px 0; font-size: 8px; color: #4b5563;"><strong>Supervisor:</strong> ' + supervisorResult.consequence + '</p>' + (description ? '<p style="margin: 4px 0 0 0; font-size: 8px; color: #4b5563;"><strong>Details:</strong> ' + description + '</p>' : '') + '</div></div></div></div>';
+
+            document.getElementById('certificate-content').innerHTML = certificateContent;
+            document.getElementById('certificate-display').classList.remove('hidden');
+            document.getElementById('download-cert-btn').style.display = 'inline-flex';
+            document.getElementById('print-cert-btn').style.display = 'inline-flex';
+            
+            const certificateRecord = {
+                id: Date.now(),
+                type: 'Fair Play Certificate',
+                content: 'Certificate issued for ' + employeeName + ' - ' + assessmentResult,
+                fullContent: certificateContent,
+                timestamp: new Date().toISOString(),
+                certificateId: certId,
+                employeeName: employeeName,
+                employeeId: employeeId,
+                position: position,
+                company: company,
+                location: location,
+                supervisor: supervisor,
+                assessmentResult: assessmentResult,
+                resultType: overallType
+            };
+            
+            history.unshift(certificateRecord);
+            saveHistory();
+            
+            showAlert('🏆 Professional certificate generated successfully!', 'success');
+        }
+
+        function downloadCertificate() {
+            const employeeName = document.getElementById('employee-name').value || 'Employee';
+            const today = new Date().toISOString().split('T')[0];
+            const filename = 'IB_FairPlay_Certificate_' + employeeName.replace(/\s+/g, '_') + '_' + today + '.html';
+
+            const certificateElement = document.getElementById('certificate-printable');
+            if (!certificateElement) {
+                showAlert('Please generate certificate first', 'warning');
+                return;
+            }
+
+            const htmlContent = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Irong Barat Platform - Fair Play Assessment Certificate</title><style>body {margin: 0;padding: 20px;background: linear-gradient(135deg, #f8fafc, #e2e8f0);font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', system-ui, sans-serif;min-height: 100vh;display: flex;align-items: center;justify-content: center;}.print-container {background: white;box-shadow: 0 25px 80px rgba(0,0,0,0.15);border-radius: 20px;padding: 25px;max-width: 100%;}@media print {body { background: white; padding: 0; }.print-container { box-shadow: none; border-radius: 0; padding: 0; }.print-btn { display: none; }}.print-btn {text-align: center;margin-top: 25px;padding: 25px;}.print-btn button {background: linear-gradient(135deg, #3b82f6, #1d4ed8);color: white;border: none;padding: 15px 30px;border-radius: 10px;font-size: 18px;font-weight: 600;cursor: pointer;box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);transition: all 0.3s ease;text-transform: uppercase;letter-spacing: 1px;}.print-btn button:hover {transform: translateY(-3px);box-shadow: 0 8px 30px rgba(59, 130, 246, 0.6);}</style></head><body><div class="print-container">' + certificateElement.outerHTML + '<div class="print-btn"><button onclick="window.print()">🖨️ Print Certificate</button></div></div></body></html>';
+
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showAlert('📜 Certificate downloaded successfully!', 'success');
+        }
+
+        function printCertificateA5() {
+            const certificateElement = document.getElementById('certificate-printable');
+            if (!certificateElement) {
+                showAlert('Please generate certificate first', 'warning');
+                return;
+            }
+
+            const printWindow = window.open('', '_blank');
+            const employeeName = document.getElementById('employee-name').value || 'Employee';
+
+            printWindow.document.write('<!DOCTYPE html><html><head><title>Fair Play Certificate - ' + employeeName + '</title><style>@page {size: A5;margin: 10mm;}body {margin: 0;padding: 0;background: white;font-family: \'Times New Roman\', serif;font-size: 12px;line-height: 1.3;}@media print {body { -webkit-print-color-adjust: exact; color-adjust: exact;print-color-adjust: exact;}.no-print { display: none; }}.print-info {text-align: center;padding: 10px;background: #f8fafc;border: 1px solid #e2e8f0;margin-bottom: 10px;border-radius: 5px;}.print-button {background: #3b82f6;color: white;border: none;padding: 10px 20px;border-radius: 5px;cursor: pointer;font-size: 14px;margin: 5px;}.print-button:hover {background: #2563eb;}</style></head><body><div class="print-info no-print"><h3>🖨️ A5 Certificate Print Preview</h3><p>This certificate is optimized for A5 paper size (148mm x 210mm)</p><button class="print-button" onclick="window.print()">🖨️ Print Certificate</button><button class="print-button" onclick="window.close()">❌ Close</button></div>' + certificateElement.outerHTML + '</body></html>');
+            
+            printWindow.document.close();
+            showAlert('🖨️ A5 print window opened! Certificate optimized for A5 size', 'success');
+        }
+
+        function downloadReport() {
+            const employeeName = document.getElementById('employee-name').value || 'Employee';
+            const employeeId = document.getElementById('employee-id').value || 'N/A';
+            const position = document.getElementById('position').value || 'Position';
+            const company = document.getElementById('company').value || 'Company';
+            const location = document.getElementById('location').value || 'Irong Barat Platform';
+            const supervisor = document.getElementById('supervisor-name').value || 'Supervisor';
+            const description = document.getElementById('description').value || 'No description provided';
+            const today = new Date().toLocaleDateString();
+            const overallType = document.getElementById('type-select').value;
+            
+            const categories = [];
+            if (document.getElementById('cat-discipline').checked) categories.push('Discipline');
+            if (document.getElementById('cat-safety').checked) categories.push('Safety');
+            if (document.getElementById('cat-oims').checked) categories.push('OIMS Compliance');
+            if (document.getElementById('cat-control').checked) categories.push('Control');
+            if (document.getElementById('cat-others').checked) categories.push('Others');
+
+            const workerResult = assessmentResults.worker;
+            const supervisorResult = assessmentResults.supervisor;
+
+            const reportContent = '# 🏭 Irong Barat Platform - Fair Play Assessment Report\n\n**Generated:** ' + today + '  \n**Assessment ID:** IB-' + Date.now() + '  \n**Platform:** Irong Barat Offshore Platform\n\n---\n\n## 📋 Employee Information\n\n| Field | Value |\n|-------|-------|\n| **Name** | ' + employeeName + ' |\n| **Employee/IC No** | ' + employeeId + ' |\n| **Position** | ' + position + ' |\n| **Company** | ' + company + ' |\n| **Location** | ' + location + ' |\n| **Supervisor** | ' + supervisor + ' |\n| **Assessment Type** | ' + overallType + ' |\n| **Categories** | ' + (categories.join(', ') || 'None selected') + ' |\n\n---\n\n## 🎯 Assessment Results\n\n### 👤 Worker Assessment\n- **Question Index:** ' + (workerResult.questionIndex + 1) + '\n- **Question:** ' + workerResult.question + '\n- **Result:** ' + workerResult.consequence + '\n\n### 👔 Supervisor Assessment\n- **Question Index:** ' + (supervisorResult.questionIndex + 1) + '\n- **Question:** ' + supervisorResult.question + '\n- **Result:** ' + supervisorResult.consequence + '\n\n---\n\n## 📝 Incident Description\n\n' + description + '\n\n---\n\n## 📊 Executive Summary\n\nThis Fair Play Assessment was conducted following offshore industry best practices for workplace behavior evaluation at Irong Barat Platform. The assessment covers both employee and supervisory factors to ensure comprehensive evaluation and appropriate consequence determination.\n\n**Overall Assessment:** ' + (overallType === 'POSITIVE' ? 'Positive outcome requiring recognition/coaching' : 'Negative outcome requiring disciplinary action/improvement plan') + '\n\n**Assessment Tool:** Irong Barat Platform Offshore Engineering Suite Fair Play Module  \n**Standard:** Offshore Industry Fair Play Principles  \n**Completion Date:** ' + today + '  \n**Assessor:** ' + supervisor + '\n\n---\n\n*This report was generated automatically by the Irong Barat Platform Offshore Engineering Suite. For questions or clarifications, contact the platform administration or supervising authority.*';
+
+            const filename = 'IB_FairPlay_Report_' + employeeName.replace(/\s+/g, '_') + '_' + new Date().toISOString().split('T')[0] + '.md';
+            const blob = new Blob([reportContent], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            saveToHistory('Fair Play Report', 'Assessment report for ' + employeeName + ' - ' + overallType, {
+                employeeName: employeeName,
+                assessmentResult: overallType,
+                location: location,
+                reportType: 'Fair Play Assessment'
+            });
+            
+            showAlert('📥 Assessment report downloaded successfully!', 'success');
+        }
+
+        function resetAssessment() {
+            if (confirm('Are you sure you want to start a new assessment? Current progress will be lost.')) {
+                document.getElementById('result-section').classList.add('hidden');
+                document.getElementById('assessment-section').classList.add('hidden');
+                document.getElementById('samples-section').classList.add('hidden');
+                document.getElementById('guide-section').classList.remove('hidden');
+                
+                document.getElementById('certificate-display').classList.add('hidden');
+                document.getElementById('download-cert-btn').style.display = 'none';
+                document.getElementById('print-cert-btn').style.display = 'none';
+                
+                document.getElementById('employee-name').value = '';
+                document.getElementById('employee-id').value = '';
+                document.getElementById('position').value = '';
+                document.getElementById('company').value = '';
+                document.getElementById('location').value = 'Irong Barat Platform';
+                document.getElementById('supervisor-name').value = '';
+                document.getElementById('description').value = '';
+                document.getElementById('type-select').value = 'POSITIVE';
+                
+                document.querySelectorAll('[id^="cat-"]').forEach(cb => cb.checked = false);
+                
+                currentSection = 'worker';
+                currentQuestionIndex = 0;
+                assessmentResults = { worker: null, supervisor: null };
+                
+                showAlert('🔄 Assessment reset successfully!', 'info');
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            document.getElementById('location').value = 'Irong Barat Platform';
+        });
+
+    </script>
+</body>
+</html>
