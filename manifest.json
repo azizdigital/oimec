@@ -1,6 +1,6 @@
 {
   "name": "OIM Executive Suite - Offshore Operations Management",
-  "short_name": "OIM Suite",
+  "short_name": "OIM Executive Suite",
   "description": "Complete Operations & Information Management System for Offshore Installation Manager. Works fully offline with data export, field operations tracking, safety management, and analytics.",
   "start_url": "./index.html",
   "scope": "./",
