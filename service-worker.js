@@ -1,8 +1,8 @@
 // OIM Executive Suite - Service Worker for Offline PWA
-// Version: 2.0.0 - Lightweight (No heavy CDNs)
+// Version: 2.1.0 - iOS Reopen Fix
 // Optimized for all devices: iPad, iPhone, Android, PC
 
-const CACHE_VERSION = 'oim-suite-v2.0.0';
+const CACHE_VERSION = 'oim-suite-v2.1.0';
 const CACHE_NAME = `oim-executive-${CACHE_VERSION}`;
 
 // Files to cache for offline use
@@ -98,6 +98,38 @@ self.addEventListener('fetch', (event) => {
   
   // Skip non-GET requests
   if (event.request.method !== 'GET') {
+    return;
+  }
+  
+  // CRITICAL FIX: Handle navigation requests (for iOS PWA reopen)
+  // When user reopens PWA from home screen, iOS makes navigation request
+  // Must serve index.html from cache IMMEDIATELY
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      caches.match('./index.html')
+        .then((cachedResponse) => {
+          if (cachedResponse) {
+            console.log('[SW] 📱 Serving index.html from cache (iOS reopen)');
+            return cachedResponse;
+          }
+          
+          // Fallback: Try to fetch from network
+          return fetch(event.request)
+            .catch(() => {
+              // If offline and no cache, show error
+              return new Response(
+                '<h1>Offline</h1><p>App is not cached yet. Connect to internet and visit all pages first.</p>',
+                {
+                  status: 503,
+                  statusText: 'Service Unavailable',
+                  headers: new Headers({
+                    'Content-Type': 'text/html'
+                  })
+                }
+              );
+            });
+        })
+    );
     return;
   }
   
