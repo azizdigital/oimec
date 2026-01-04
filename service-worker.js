@@ -1,8 +1,8 @@
 // OIM Executive Suite - Service Worker for Offline PWA
-// Version: 2.1.0 - iOS Reopen Fix
+// Version: 2.2.0 - Added Daily Reporting System (hazserve.html)
 // Optimized for all devices: iPad, iPhone, Android, PC
 
-const CACHE_VERSION = 'oim-suite-v2.1.0';
+const CACHE_VERSION = 'oim-suite-v2.2.0';
 const CACHE_NAME = `oim-executive-${CACHE_VERSION}`;
 
 // Files to cache for offline use
@@ -20,6 +20,7 @@ const STATIC_ASSETS = [
   './pages/meme.html',
   './pages/share.html',
   './pages/safety.html',
+  './pages/hazserve.html',
   './pages/calculator_failplay.html',
   './pages/turnaroundapp.html',
   './pages/analytics.html',
