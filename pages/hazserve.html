@@ -978,7 +978,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Date: <span style="color: red;">*</span></label>
-                        <input type="date" id="uaucDate" required>
+                        <input type="date" id="uaucDate" required onchange="clearUAUCForm()">
                     </div>
                     <div class="form-group">
                         <label>Total UAUC (Auto):</label>
@@ -988,7 +988,10 @@
                         <label>Stop Work (SW):</label>
                         <input type="number" id="uaucSW" value="0" min="0" oninput="calculateUAUCTotal()">
                     </div>
-                    <div class="form-group"></div>
+                    <div class="form-group">
+                        <label>Safety Observation (SO):</label>
+                        <input type="number" id="uaucSO" value="0" min="0" oninput="calculateUAUCTotal()">
+                    </div>
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
@@ -1033,7 +1036,7 @@
                 </div>
                 <div class="presentation-body">
                     <div class="stats-column">
-                        <div class="stats-highlight">Total: <span id="uaucPressTotal">0</span> | SW: <span id="uaucPressSW">0</span></div>
+                        <div class="stats-highlight">Total: <span id="uaucPressTotal">0</span> | SW: <span id="uaucPressSW">0</span> | SO: <span id="uaucPressSO">0</span></div>
                         <h3 style="margin-top: 10px; margin-bottom: 10px; color: #2D3E66;">BREAKDOWN</h3>
                         <table class="stats-table">
                             <tr>
@@ -1119,7 +1122,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Date: <span style="color: red;">*</span></label>
-                        <input type="date" id="stockDate" required>
+                        <input type="date" id="stockDate" required onchange="clearStockForm()">
                     </div>
                     <div class="form-group"></div>
                     <div class="form-group">
@@ -1233,12 +1236,7 @@
                 <button class="btn btn-warning" onclick="addEquipmentIssue()">➕ Add Equipment Issue</button>
             </div>
 
-            <div class="action-buttons">
-                <button class="btn btn-success" onclick="saveFoodStock()">💾 Save Stock Report</button>
-                <button class="btn btn-secondary" onclick="switchModuleTab('catering', 'history')">📁 View History</button>
-                <button class="btn btn-primary" onclick="switchModuleTab('catering', 'presentation')">👁️ Preview</button>
-                <button class="btn btn-success" onclick="generateCateringPDF()">📄 Generate PDF</button>
-            </div>
+            <!-- Save buttons removed - see combined button at bottom -->
         </div>
 
         <!-- Daily Menu Tab -->
@@ -1255,8 +1253,12 @@
                 <h3>🍽️ Menu Information</h3>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Date: <span style="color: red;">*</span></label>
-                        <input type="date" id="menuDate" required onchange="updateContractDay()">
+                        <label>Presentation Date: <span style="color: red;">*</span></label>
+                        <input type="date" id="menuPresentationDate" required onchange="updateMenuDateForTomorrow()">
+                    </div>
+                    <div class="form-group">
+                        <label>Menu Date (Tomorrow): <span style="color: red;">*</span></label>
+                        <input type="date" id="menuDate" required onchange="clearMenuForm(); updateContractDay()">
                     </div>
                     <div class="form-group">
                         <label>Chef:</label>
@@ -1285,46 +1287,62 @@
 
             <!-- Menu Sections -->
             <div class="menu-section">
-                <h4>BREAKFAST - EASTERN - 11 items (varies daily)</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">BREAKFAST - EASTERN - 11 items (varies daily)</h4>
+                    <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;" onclick="pasteMenuSection('menuBreakfast')">📋 Paste All</button>
+                </div>
                 <div class="menu-items" id="menuBreakfast"></div>
             </div>
 
             <div class="menu-section">
-                <h4>MORNING TEA BREAK (9AM) - 4 items</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">MORNING TEA BREAK (9AM) - 4 items</h4>
+                    <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;" onclick="pasteMenuSection('menuTeaBreak')">📋 Paste All</button>
+                </div>
                 <div class="menu-items" id="menuTeaBreak"></div>
             </div>
 
             <div class="menu-section">
-                <h4>LUNCH - EASTERN - 11 items</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">LUNCH - EASTERN - 11 items</h4>
+                    <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;" onclick="pasteMenuSection('menuLunch')">📋 Paste All</button>
+                </div>
                 <div class="menu-items" id="menuLunch"></div>
             </div>
 
             <div class="menu-section">
-                <h4>LUNCH - WESTERN - 4 items</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">LUNCH - WESTERN - 4 items</h4>
+                    <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;" onclick="pasteMenuSection('menuLunchWestern')">📋 Paste All</button>
+                </div>
                 <div class="menu-items" id="menuLunchWestern"></div>
             </div>
 
             <div class="menu-section">
-                <h4>DINNER - EASTERN - 11 items</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">DINNER - EASTERN - 11 items</h4>
+                    <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;" onclick="pasteMenuSection('menuDinner')">📋 Paste All</button>
+                </div>
                 <div class="menu-items" id="menuDinner"></div>
             </div>
 
             <div class="menu-section">
-                <h4>DINNER - WESTERN - 4 items</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">DINNER - WESTERN - 4 items</h4>
+                    <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;" onclick="pasteMenuSection('menuDinnerWestern')">📋 Paste All</button>
+                </div>
                 <div class="menu-items" id="menuDinnerWestern"></div>
             </div>
 
             <div class="menu-section">
-                <h4>SUPPER (9PM) - 3 items</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">SUPPER (9PM) - 3 items</h4>
+                    <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;" onclick="pasteMenuSection('menuSupper')">📋 Paste All</button>
+                </div>
                 <div class="menu-items" id="menuSupper"></div>
             </div>
 
-            <div class="action-buttons">
-                <button class="btn btn-success" onclick="saveDailyMenu()">💾 Save Menu</button>
-                <button class="btn btn-secondary" onclick="switchModuleTab('catering', 'history')">📁 View History</button>
-                <button class="btn btn-primary" onclick="switchModuleTab('catering', 'presentation')">👁️ Preview</button>
-                <button class="btn btn-success" onclick="generateCateringPDF()">📄 Generate PDF</button>
-            </div>
+            <!-- Save buttons removed - see combined button at bottom -->
         </div>
 
         <!-- Catering Presentation Tab -->
@@ -1379,6 +1397,18 @@
                 </div>
             </div>
         </div>
+
+        <!-- COMBINED SAVE BUTTON (Sticky Footer) -->
+        <div style="position: sticky; bottom: 0; background: white; padding: 20px; border-top: 2px solid #E3ECFF; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 100;">
+            <div class="action-buttons" style="margin: 0;">
+                <button class="btn btn-success" onclick="saveCombinedCateringReport()" style="flex: 1; font-size: 16px; padding: 12px;">
+                    💾 Save Catering Report (Stock + Menu)
+                </button>
+                <button class="btn btn-secondary" onclick="switchModuleTab('catering', 'history')">📁 View History</button>
+                <button class="btn btn-primary" onclick="switchModuleTab('catering', 'presentation')">👁️ Preview</button>
+                <button class="btn btn-success" onclick="generateCateringPDF()">📄 Generate PDF</button>
+            </div>
+        </div>
     </div>
 
     <!-- Comparison Modal -->
@@ -1389,6 +1419,39 @@
                 <button class="modal-close" onclick="closeComparisonModal()">✕ Close</button>
             </div>
             <div id="comparisonContent"></div>
+        </div>
+    </div>
+
+    <!-- Paste Menu Modal -->
+    <div class="modal-overlay" id="pasteMenuModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="pasteMenuTitle">📋 Paste Menu Items</h2>
+                <button class="modal-close" onclick="closePasteMenuModal()">✕ Close</button>
+            </div>
+            <div style="padding: 20px;">
+                <div class="info-box" style="margin-bottom: 15px;">
+                    <strong>📝 Format Options:</strong><br>
+                    <strong>1. One item per line:</strong><br>
+                    <span style="font-family: monospace; font-size: 12px; display: block; margin: 5px 0 10px 20px;">
+                        Nasi lemak<br>
+                        Rendang ayam<br>
+                        Sambal ikan bilis
+                    </span>
+                    <strong>2. Comma separated:</strong><br>
+                    <span style="font-family: monospace; font-size: 12px; display: block; margin: 5px 0 0 20px;">
+                        Nasi lemak, Rendang ayam, Sambal ikan bilis
+                    </span>
+                </div>
+                <div class="form-group">
+                    <label><strong>Paste your menu items below:</strong></label>
+                    <textarea id="pasteMenuTextarea" placeholder="Paste menu items here..." style="width: 100%; min-height: 200px; padding: 10px; border: 2px solid #6B8DD6; border-radius: 4px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px;"></textarea>
+                </div>
+                <div class="action-buttons" style="margin-top: 15px;">
+                    <button class="btn btn-secondary" onclick="closePasteMenuModal()">✕ Cancel</button>
+                    <button class="btn btn-success" onclick="processPastedMenu()">✅ Apply Menu Items</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1412,6 +1475,7 @@
         let uaucCaseCount = 0;
         let uaucCaseImages = {};
         let equipmentCount = 0;
+        let currentPasteSection = null; // Track which section is being pasted
         
         const MAX_UAUC_CASES = 3;
         const STOCK_ALERT_THRESHOLD = 9;
@@ -1503,7 +1567,7 @@
                     },
                     "Day 2 - Thursday": {
                     breakfast: [
-                        "Nasi tomato",
+                        "Nasi Hujan Panas",
                         "Ayam masak merah",
                         "Daging gulai",
                         "Acar rampai",
@@ -1521,7 +1585,7 @@
                         "nasi putih",
                         "Nas basmathi",
                         "Daging kicap",
-                        "Ayam bakar madu",
+                        "Ayam masak bali",
                         "ikan tenggiri asam pedas",
                         "Vege",
                         "Side Dish"
@@ -1560,7 +1624,7 @@
                         "Gulai ikan aya",
                         "Kurma telur rebus",
                         "Cakoi",
-                        "Ayam varuval",
+                        "Kari Ayam",
                         "Sambal telur"
                     ],
                     teaBreak: [
@@ -1608,13 +1672,13 @@
                     },
                     "Day 4 - Saturday": {
                     breakfast: [
-                        "Nasi minyak basmathi",
-                        "Ayam masak rose",
-                        "Daging kicap berempah",
-                        "Jelatah mentah",
-                        "Roti chapati",
-                        "Kambing kuzi",
-                        "Kentang masala"
+                        "Pulut Gaul Nyior",
+                        "Mee Goreng Basah",
+                        "Keropok Ikan",
+                        "Telur Mata",
+                        "Ayam Goreng Singgit",
+                        "Ikan Kukus Goreng",
+                        "Ikan Masin Goreng"
                     ],
                     teaBreak: [
                         "Nasi air",
@@ -1624,7 +1688,7 @@
                         "Sup fucuk",
                         "nasi putih",
                         "Nasi basmathi",
-                        "hati lembu kerutuk",
+                        "Daging dendeng",
                         "Ayam goreng kunyit",
                         "Singgang ika aya",
                         "Vege",
@@ -1641,7 +1705,7 @@
                         "Nasi putih",
                         "Nasi arab",
                         "Kambing gulai",
-                        "Ayam bakar madu",
+                        "Ayam mandy",
                         "Ikan bawal tomato",
                         "Vege",
                         "Side Dish"
@@ -1661,7 +1725,7 @@
                     "Day 5 - Sunday": {
                     breakfast: [
                         "Nasi kuning",
-                        "Itik kerutup",
+                        "Ayam goreng",
                         "Ikan tenggiri gulai kuning",
                         "Acar nanas / Sambal belacan",
                         "Roti jala",
@@ -1677,7 +1741,7 @@
                         "egg drop soup",
                         "nasi putih",
                         "Mee goreng",
-                        "Paru berlada",
+                        "Kari daging",
                         "Ayam Kicap berempah",
                         "cencaru bakar air asam",
                         "Vege",
@@ -1772,7 +1836,7 @@
                         "Telur dadar hiris",
                         "Lempeng kelapa",
                         "Sambal sardin",
-                        "Sambal sotong kering"
+                        "Sambal bilis"
                     ],
                     teaBreak: [
                         "Mee goreng",
@@ -1930,13 +1994,13 @@
                         "Pulut kelapa",
                         "Mee goreng",
                         "Ayam panggang",
-                        "Ikan kacang goreng",
+                        "Ikan kembung goreng",
                         "Roti Bom",
                         "Kerutup daging",
                         "Dhaal kentang"
                     ],
                     teaBreak: [
-                        "Bihun goreng tomyam",
+                        "Nasi Goreng",
                         "Telur mata",
                         "roti bakar sekaya"
                     ],
@@ -2033,11 +2097,11 @@
                     },
                     "Day 12 - Sunday": {
                     breakfast: [
-                        "Nasi berlauk w/ condiment",
-                        "Ayam goreng kunyit",
-                        "Gulai ikan tongkol",
-                        "Ikan masin goreng",
-                        "Sambal lada",
+                        "Nasi dagang",
+                        "Mee goreng mamak",
+                        "Gulai ikan aya",
+                        "Acar sayur",
+                        "Sambal sardin",
                         "Roti arab",
                         "Dhaal"
                     ],
@@ -2284,12 +2348,13 @@
         // ==================== UAUC MODULE ====================
         function calculateUAUCTotal() {
             const sw = parseInt(document.getElementById('uaucSW').value) || 0;
+            const so = parseInt(document.getElementById('uaucSO').value) || 0;
             const uaPCSB = parseInt(document.getElementById('uaucUAPCSB').value) || 0;
             const uaPartner = parseInt(document.getElementById('uaucUAPartner').value) || 0;
             const ucPCSB = parseInt(document.getElementById('uaucUCPCSB').value) || 0;
             const ucPartner = parseInt(document.getElementById('uaucUCPartner').value) || 0;
             
-            const total = sw + uaPCSB + uaPartner + ucPCSB + ucPartner;
+            const total = sw + so + uaPCSB + uaPartner + ucPCSB + ucPartner;
             document.getElementById('uaucTotal').value = total;
         }
 
@@ -2429,6 +2494,7 @@
                 statistics: {
                     total: document.getElementById('uaucTotal').value,
                     sw: document.getElementById('uaucSW').value,
+                    so: document.getElementById('uaucSO').value,
                     uaPCSB: document.getElementById('uaucUAPCSB').value,
                     uaPartner: document.getElementById('uaucUAPartner').value,
                     ucPCSB: document.getElementById('uaucUCPCSB').value,
@@ -2494,6 +2560,7 @@
             document.getElementById('uaucPressDate').textContent = `IRONG BARAT A | ${dateStr}`;
             document.getElementById('uaucPressTotal').textContent = document.getElementById('uaucTotal').value;
             document.getElementById('uaucPressSW').textContent = document.getElementById('uaucSW').value;
+            document.getElementById('uaucPressSO').textContent = document.getElementById('uaucSO').value;
             document.getElementById('uaucPressUAPCSB').textContent = document.getElementById('uaucUAPCSB').value;
             document.getElementById('uaucPressUAPartner').textContent = document.getElementById('uaucUAPartner').value;
             document.getElementById('uaucPressUCPCSB').textContent = document.getElementById('uaucUCPCSB').value;
@@ -2560,7 +2627,7 @@
                 historyItem.innerHTML = `
                     <div class="history-info">
                         <div class="history-date">📅 ${dateStr}</div>
-                        <div class="history-stats">Total: ${item.statistics.total} | SW: ${item.statistics.sw} | Cases: ${item.cases.length}</div>
+                        <div class="history-stats">Total: ${item.statistics.total} | SW: ${item.statistics.sw} | SO: ${item.statistics.so || 0} | Cases: ${item.cases.length}</div>
                         <div class="history-timestamp">Saved: ${savedStr}</div>
                     </div>
                     <div class="history-actions">
@@ -2581,6 +2648,7 @@
             // Load data
             document.getElementById('uaucDate').value = data.date;
             document.getElementById('uaucSW').value = data.statistics.sw;
+            document.getElementById('uaucSO').value = data.statistics.so || 0;
             document.getElementById('uaucUAPCSB').value = data.statistics.uaPCSB;
             document.getElementById('uaucUAPartner').value = data.statistics.uaPartner;
             document.getElementById('uaucUCPCSB').value = data.statistics.ucPCSB;
@@ -2660,8 +2728,181 @@
         }
 
         function generateUAUCPDF() {
-            // Simplified - boss can enhance
-            alert('📄 UAUC PDF generation - jsPDF implementation similar to previous version');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const uaucDate = document.getElementById('uaucDate').value;
+            if (!uaucDate) {
+                alert('Please select date first');
+                return;
+            }
+            
+            const dateObj = new Date(uaucDate);
+            const dateStr = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase();
+            
+            // Header
+            doc.setFillColor(107, 141, 214);
+            doc.rect(0, 0, 210, 35, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.text('UAUC ANALYSIS REPORT', 105, 12, { align: 'center' });
+            doc.setFontSize(11);
+            doc.text(`IRONG BARAT A | ${dateStr}`, 105, 25, { align: 'center' });
+            
+            doc.setTextColor(0, 0, 0);
+            let y = 50;
+            
+            // Statistics Summary
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('STATISTICS SUMMARY', 20, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            
+            const totalUAUC = parseInt(document.getElementById('uaucTotal').textContent || 0);
+            const sw = parseInt(document.getElementById('uaucSW').value || 0);
+            const so = parseInt(document.getElementById('uaucSO').value || 0);
+            
+            doc.text(`Total UAUC: ${totalUAUC}`, 25, y);
+            y += 6;
+            doc.text(`Stop Work: ${sw}`, 25, y);
+            y += 6;
+            doc.text(`Safety Observations: ${so}`, 25, y);
+            y += 10;
+            
+            // Breakdown Table
+            doc.setFont(undefined, 'bold');
+            doc.text('BREAKDOWN', 20, y);
+            y += 8;
+            
+            doc.setFont(undefined, 'normal');
+            const uaPCSB = document.getElementById('uaucUAPCSB').value || 0;
+            const uaPartner = document.getElementById('uaucUAPartner').value || 0;
+            const ucPCSB = document.getElementById('uaucUCPCSB').value || 0;
+            const ucPartner = document.getElementById('uaucUCPartner').value || 0;
+            
+            // Simple table
+            doc.text('Unsafe Act (UA):', 25, y);
+            doc.text(`PCSB: ${uaPCSB} | Partner: ${uaPartner}`, 70, y);
+            y += 6;
+            doc.text('Unsafe Condition (UC):', 25, y);
+            doc.text(`PCSB: ${ucPCSB} | Partner: ${ucPartner}`, 70, y);
+            y += 12;
+            
+            // Cases
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(14);
+            doc.text('CASES', 20, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            
+            const casesContainer = document.getElementById('uaucCasesContainer');
+            const cases = casesContainer.querySelectorAll('.case-card');
+            
+            if (cases.length === 0) {
+                doc.text('No cases reported', 25, y);
+            } else {
+                cases.forEach((caseEl, idx) => {
+                    // Check if need new page
+                    if (y > 240) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    
+                    const caseNum = idx + 1;
+                    const type = caseEl.querySelector('select[id*="Type"]').value;
+                    const desc = caseEl.querySelector('textarea[id*="Desc"]').value;
+                    const action = caseEl.querySelector('textarea[id*="Action"]').value;
+                    
+                    // Case header
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`Case ${caseNum}: ${type}`, 25, y);
+                    y += 6;
+                    
+                    doc.setFont(undefined, 'normal');
+                    
+                    // Description
+                    if (desc) {
+                        doc.text('Description:', 25, y);
+                        y += 5;
+                        const descLines = doc.splitTextToSize(desc, 160);
+                        descLines.forEach(line => {
+                            if (y > 270) {
+                                doc.addPage();
+                                y = 20;
+                            }
+                            doc.text(line, 30, y);
+                            y += 5;
+                        });
+                        y += 2;
+                    }
+                    
+                    // Action
+                    if (action) {
+                        doc.text('Action Taken:', 25, y);
+                        y += 5;
+                        const actionLines = doc.splitTextToSize(action, 160);
+                        actionLines.forEach(line => {
+                            if (y > 270) {
+                                doc.addPage();
+                                y = 20;
+                            }
+                            doc.text(line, 30, y);
+                            y += 5;
+                        });
+                        y += 2;
+                    }
+                    
+                    // Images
+                    const imageInputs = caseEl.querySelectorAll('input[type="file"]');
+                    let hasImages = false;
+                    
+                    imageInputs.forEach(input => {
+                        if (input.files && input.files[0]) {
+                            hasImages = true;
+                        }
+                    });
+                    
+                    // Check if we have images in storage
+                    const caseImages = uaucCaseImages[caseNum] || [];
+                    if (caseImages.length > 0) {
+                        doc.text('Images:', 25, y);
+                        y += 5;
+                        
+                        caseImages.forEach((imgData, imgIdx) => {
+                            if (y > 230) {
+                                doc.addPage();
+                                y = 20;
+                            }
+                            
+                            try {
+                                // Add image to PDF (max width 80mm)
+                                doc.addImage(imgData, 'JPEG', 30, y, 80, 60);
+                                y += 65;
+                            } catch (e) {
+                                console.log('Error adding image:', e);
+                            }
+                        });
+                    }
+                    
+                    y += 5; // Space between cases
+                });
+            }
+            
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.text(`Page ${i} of ${pageCount} | Generated on ${new Date().toLocaleString('en-GB')}`, 105, 285, { align: 'center' });
+            }
+            
+            doc.save(`UAUC_IBA_${uaucDate}.pdf`);
         }
 
         function generateUAUCPDFFromHistory(index) {
@@ -3009,6 +3250,123 @@
             }
         }
 
+        // ==================== PASTE MENU SECTION ====================
+        function pasteMenuSection(sectionId) {
+            const sectionNames = {
+                'menuBreakfast': 'BREAKFAST - EASTERN',
+                'menuTeaBreak': 'MORNING TEA BREAK',
+                'menuLunch': 'LUNCH - EASTERN',
+                'menuLunchWestern': 'LUNCH - WESTERN',
+                'menuDinner': 'DINNER - EASTERN',
+                'menuDinnerWestern': 'DINNER - WESTERN',
+                'menuSupper': 'SUPPER'
+            };
+            
+            const sectionName = sectionNames[sectionId] || 'Menu';
+            
+            // Store current section being pasted
+            currentPasteSection = sectionId;
+            
+            // Update modal title
+            document.getElementById('pasteMenuTitle').textContent = `📋 Paste ${sectionName} Items`;
+            
+            // Clear textarea
+            document.getElementById('pasteMenuTextarea').value = '';
+            
+            // Open modal
+            document.getElementById('pasteMenuModal').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+            
+            // Focus on textarea
+            setTimeout(() => {
+                document.getElementById('pasteMenuTextarea').focus();
+            }, 100);
+        }
+        
+        function closePasteMenuModal() {
+            document.getElementById('pasteMenuModal').classList.remove('active');
+            document.body.style.overflow = ''; // Restore scroll
+            currentPasteSection = null;
+        }
+        
+        function processPastedMenu() {
+            const pasteText = document.getElementById('pasteMenuTextarea').value;
+            
+            if (!pasteText || !pasteText.trim()) {
+                alert('❌ Please paste menu items first!');
+                return;
+            }
+            
+            if (!currentPasteSection) {
+                alert('❌ Error: No section selected!');
+                closePasteMenuModal();
+                return;
+            }
+            
+            // Parse items - try to detect format
+            let items = [];
+            if (pasteText.includes('\n')) {
+                // Line-separated
+                items = pasteText.split('\n')
+                    .map(item => item.trim())
+                    .filter(item => item.length > 0);
+            } else if (pasteText.includes(',')) {
+                // Comma-separated
+                items = pasteText.split(',')
+                    .map(item => item.trim())
+                    .filter(item => item.length > 0);
+            } else {
+                // Single item
+                items = [pasteText.trim()];
+            }
+            
+            if (items.length === 0) {
+                alert('❌ No valid items found!');
+                return;
+            }
+            
+            // Get all input fields in this section
+            const container = document.getElementById(currentPasteSection);
+            if (!container) {
+                alert('❌ Section not found!');
+                closePasteMenuModal();
+                return;
+            }
+            
+            const inputs = container.querySelectorAll('input[type="text"]');
+            
+            if (items.length > inputs.length) {
+                alert(`⚠️ Warning: You pasted ${items.length} items but this section only has ${inputs.length} fields.\n\nOnly the first ${inputs.length} items will be filled.`);
+            }
+            
+            // Fill the inputs
+            items.forEach((item, index) => {
+                if (index < inputs.length) {
+                    inputs[index].value = item;
+                    
+                    // Trigger the validation checks
+                    const inputId = inputs[index].id;
+                    const match = inputId.match(/(\d+)$/);
+                    if (match) {
+                        const itemNum = match[1];
+                        checkMenuMatch(currentPasteSection, itemNum);
+                        checkNotServed(currentPasteSection, itemNum);
+                    }
+                }
+            });
+            
+            // Close modal and show success
+            closePasteMenuModal();
+            alert(`✅ Successfully filled ${Math.min(items.length, inputs.length)} menu items!`);
+        }
+        
+        // ESC key to close paste modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('pasteMenuModal').classList.contains('active')) {
+                closePasteMenuModal();
+            }
+        });
+
         function populateContractDayOverride() {
             const select = document.getElementById('menuContractDayOverride');
             select.innerHTML = '<option value="">Override...</option>';
@@ -3309,8 +3667,12 @@
             historyList.innerHTML = '';
             
             history.forEach((item, index) => {
-                const date = new Date(item.date);
-                const dateStr = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                const stockDate = item.stockDate || item.date;
+                const menuDate = item.menuDate || item.date;
+                
+                const stockDateStr = new Date(stockDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                const menuDateStr = new Date(menuDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                
                 const savedDate = new Date(item.savedAt);
                 const savedStr = savedDate.toLocaleString('en-GB');
                 
@@ -3321,7 +3683,7 @@
                 historyItem.className = 'history-item';
                 historyItem.innerHTML = `
                     <div class="history-info">
-                        <div class="history-date">📅 ${dateStr}</div>
+                        <div class="history-date">📅 Stock: ${stockDateStr} | Menu: ${menuDateStr}</div>
                         <div class="history-stats">${hasStock} ${hasMenu}</div>
                         <div class="history-timestamp">Saved: ${savedStr}</div>
                     </div>
@@ -3342,7 +3704,7 @@
             
             // Load stock data if exists
             if (data.stock) {
-                document.getElementById('stockDate').value = data.date;
+                document.getElementById('stockDate').value = data.stockDate || data.date;
                 document.getElementById('stockChiller').value = data.stock.chiller || 0;
                 document.getElementById('stockFreezer').value = data.stock.freezer || 0;
                 document.getElementById('stockDryFood').value = data.stock.dryFood || 0;
@@ -3371,10 +3733,11 @@
             
             // Load menu data if exists
             if (data.menu) {
-                document.getElementById('menuDate').value = data.date;
-                document.getElementById('menuChef').value = data.chef || 'Chef Cook';
-                document.getElementById('menuContract').value = data.contract || 'Contract 01 - 2026';
-                document.getElementById('menuContractDay').value = data.contractDay || '';
+                document.getElementById('menuPresentationDate').value = data.menuPresentationDate || data.date;
+                document.getElementById('menuDate').value = data.menuDate || data.date;
+                document.getElementById('menuChef').value = data.menu.chef || 'Chef Cook';
+                document.getElementById('menuContract').value = data.menu.contract || 'Contract 01 - 2026';
+                document.getElementById('menuContractDay').value = data.menu.contractDay || '';
                 
                 // Load placeholders first
                 updateMenuPlaceholders();
@@ -3383,17 +3746,18 @@
                 sections.forEach(section => {
                     const menuSection = data.menu[section] || [];
                     const sectionId = `menu${section.charAt(0).toUpperCase() + section.slice(1)}`;
+                    const container = document.getElementById(sectionId);
                     
-                    menuSection.forEach((item, i) => {
-                        const el = document.getElementById(`${sectionId}${i + 1}`);
-                        if (el) {
-                            el.value = item;
-                            // Trigger match check
-                            checkMenuMatch(sectionId, i + 1);
-                            // Trigger not-served check
-                            checkNotServed(sectionId, i + 1);
-                        }
-                    });
+                    if (container) {
+                        const inputs = container.querySelectorAll('input');
+                        menuSection.forEach((item, i) => {
+                            if (inputs[i]) {
+                                inputs[i].value = item;
+                                checkMenuMatch(sectionId, i + 1);
+                                checkNotServed(sectionId, i + 1);
+                            }
+                        });
+                    }
                 });
             }
             
@@ -3445,8 +3809,110 @@
         }
 
         function generateCateringPDF() {
-            // Simplified - boss can enhance with jsPDF
-            alert('📄 Catering PDF generation - jsPDF implementation');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const stockDate = document.getElementById('stockDate').value;
+            const menuDate = document.getElementById('menuDate').value;
+            
+            if (!stockDate || !menuDate) {
+                alert('Please select dates first');
+                return;
+            }
+            
+            const stockDateStr = new Date(stockDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase();
+            const menuDateStr = new Date(menuDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase();
+            
+            // Header
+            doc.setFillColor(107, 141, 214);
+            doc.rect(0, 0, 210, 35, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.text('CATERING SERVICES REPORT', 105, 12, { align: 'center' });
+            doc.setFontSize(11);
+            doc.text(`IRONG BARAT A | Stock: ${stockDateStr} | Menu: ${menuDateStr}`, 105, 25, { align: 'center' });
+            
+            doc.setTextColor(0, 0, 0);
+            let y = 50;
+            
+            // Stock Status
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('STOCK STATUS', 20, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            
+            const stockItems = [
+                { label: 'Chiller', value: document.getElementById('stockChiller').value + ' days' },
+                { label: 'Freezer', value: document.getElementById('stockFreezer').value + ' days' },
+                { label: 'Dry Food', value: document.getElementById('stockDryFood').value + ' days' },
+                { label: 'Non Food', value: document.getElementById('stockNonFood').value + ' days' },
+                { label: 'RO Water', value: document.getElementById('stockROQty').value + ' qty (' + document.getElementById('stockRODays').value + ' days)' },
+                { label: 'Mineral Water', value: document.getElementById('stockMineralQty').value + ' qty (' + document.getElementById('stockMineralDays').value + ' days)' }
+            ];
+            
+            stockItems.forEach(item => {
+                doc.text(`${item.label}: ${item.value}`, 25, y);
+                y += 6;
+            });
+            
+            y += 5;
+            
+            // Menu
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('DAILY MENU', 20, y);
+            y += 8;
+            
+            const menuSections = [
+                { title: 'BREAKFAST (0630-0800)', id: 'menuBreakfast' },
+                { title: 'TEA BREAK (0930-1030)', id: 'menuTeaBreak' },
+                { title: 'LUNCH - ASIAN (1200-1300)', id: 'menuLunch' },
+                { title: 'LUNCH - WESTERN (1200-1300)', id: 'menuLunchWestern' },
+                { title: 'DINNER - ASIAN (1800-1900)', id: 'menuDinner' },
+                { title: 'DINNER - WESTERN (1800-1900)', id: 'menuDinnerWestern' },
+                { title: 'SUPPER (2100-2200)', id: 'menuSupper' }
+            ];
+            
+            doc.setFontSize(10);
+            menuSections.forEach(section => {
+                if (y > 260) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                doc.setFont(undefined, 'bold');
+                doc.text(section.title, 25, y);
+                y += 6;
+                
+                doc.setFont(undefined, 'normal');
+                const container = document.getElementById(section.id);
+                if (container) {
+                    const inputs = container.querySelectorAll('input');
+                    let itemNum = 1;
+                    inputs.forEach(input => {
+                        if (input.value) {
+                            doc.text(`${itemNum}. ${input.value}`, 30, y);
+                            y += 5;
+                            itemNum++;
+                        }
+                    });
+                }
+                y += 3;
+            });
+            
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.text(`Page ${i} of ${pageCount} | Generated on ${new Date().toLocaleString('en-GB')}`, 105, 285, { align: 'center' });
+            }
+            
+            doc.save(`Catering_IBA_${stockDate}.pdf`);
         }
 
         function generateCateringPDFFromHistory(index) {
@@ -3454,12 +3920,177 @@
             setTimeout(() => generateCateringPDF(), 500);
         }
 
+        // ==================== AUTO-CLEAR FUNCTIONS ====================
+        function clearUAUCForm() {
+            document.getElementById('uaucSW').value = '0';
+            document.getElementById('uaucSO').value = '0';
+            document.getElementById('uaucUAPCSB').value = '0';
+            document.getElementById('uaucUAPartner').value = '0';
+            document.getElementById('uaucUCPCSB').value = '0';
+            document.getElementById('uaucUCPartner').value = '0';
+            calculateUAUCTotal();
+            document.getElementById('uaucCasesContainer').innerHTML = '';
+            uaucCaseCount = 0;
+            uaucCaseImages = {};
+        }
+
+        function clearStockForm() {
+            document.getElementById('stockChiller').value = '0';
+            document.getElementById('stockFreezer').value = '0';
+            document.getElementById('stockDryFood').value = '0';
+            document.getElementById('stockNonFood').value = '0';
+            document.getElementById('stockROQty').value = '0';
+            document.getElementById('stockRODays').value = '0';
+            document.getElementById('stockMineralQty').value = '0';
+            document.getElementById('stockMineralDays').value = '0';
+            document.getElementById('shipIncomingType').selectedIndex = 0;
+            document.getElementById('shipIncomingETD').value = '';
+            document.getElementById('shipIncomingETA').value = '';
+            document.getElementById('shipIncomingBoat').value = '';
+            document.getElementById('shipIncomingStatus').value = '';
+            document.getElementById('shipNextType').selectedIndex = 0;
+            document.getElementById('shipNextETD').value = '';
+            document.getElementById('shipNextETA').value = '';
+            document.getElementById('shipNextBoat').value = '';
+            document.getElementById('shipNextStatus').value = '';
+            document.getElementById('equipmentContainer').innerHTML = '';
+            equipmentCount = 0;
+            updateStockAlerts();
+        }
+
+        function clearMenuForm() {
+            const menuContainers = ['menuBreakfast', 'menuTeaBreak', 'menuLunch', 'menuLunchWestern', 'menuDinner', 'menuDinnerWestern', 'menuSupper'];
+            menuContainers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.querySelectorAll('input').forEach(input => {
+                        input.value = '';
+                        input.style.borderColor = '';
+                        input.style.backgroundColor = '';
+                    });
+                }
+            });
+        }
+
+        function updateMenuDateForTomorrow() {
+            const presDate = document.getElementById('menuPresentationDate').value;
+            if (presDate) {
+                const date = new Date(presDate);
+                date.setDate(date.getDate() + 1);
+                document.getElementById('menuDate').value = date.toISOString().split('T')[0];
+                clearMenuForm();
+                updateContractDay();
+            }
+        }
+
+        // ==================== COMBINED CATERING SAVE ====================
+        function saveCombinedCateringReport() {
+            const stockDate = document.getElementById('stockDate').value;
+            const menuPresentationDate = document.getElementById('menuPresentationDate').value;
+            const menuDate = document.getElementById('menuDate').value;
+            
+            if (!stockDate) {
+                alert('Please select stock date');
+                return;
+            }
+            if (!menuPresentationDate || !menuDate) {
+                alert('Please select menu dates');
+                return;
+            }
+            
+            const combinedData = {
+                type: 'catering',
+                platform: "IRONG BARAT A",
+                stockDate: stockDate,
+                menuPresentationDate: menuPresentationDate,
+                menuDate: menuDate,
+                stock: {
+                    chiller: document.getElementById('stockChiller').value,
+                    freezer: document.getElementById('stockFreezer').value,
+                    dryFood: document.getElementById('stockDryFood').value,
+                    nonFood: document.getElementById('stockNonFood').value,
+                    roQty: document.getElementById('stockROQty').value,
+                    roDays: document.getElementById('stockRODays').value,
+                    mineralQty: document.getElementById('stockMineralQty').value,
+                    mineralDays: document.getElementById('stockMineralDays').value
+                },
+                shipment: {
+                    incoming: {
+                        type: document.getElementById('shipIncomingType').value,
+                        etd: document.getElementById('shipIncomingETD').value,
+                        eta: document.getElementById('shipIncomingETA').value,
+                        boat: document.getElementById('shipIncomingBoat').value,
+                        status: document.getElementById('shipIncomingStatus').value
+                    },
+                    next: {
+                        type: document.getElementById('shipNextType').value,
+                        etd: document.getElementById('shipNextETD').value,
+                        eta: document.getElementById('shipNextETA').value,
+                        boat: document.getElementById('shipNextBoat').value,
+                        status: document.getElementById('shipNextStatus').value
+                    }
+                },
+                equipment: [],
+                menu: {
+                    chef: document.getElementById('menuChef').value,
+                    contract: document.getElementById('menuContract').value,
+                    contractDay: document.getElementById('menuContractDay').value,
+                    breakfast: [],
+                    teaBreak: [],
+                    lunch: [],
+                    lunchWestern: [],
+                    dinner: [],
+                    dinnerWestern: [],
+                    supper: []
+                },
+                savedAt: new Date().toISOString()
+            };
+            
+            for (let i = 1; i <= equipmentCount; i++) {
+                const el = document.getElementById(`equipmentDesc${i}`);
+                if (el && el.value) combinedData.equipment.push(el.value);
+            }
+            
+            const menuSections = ['menuBreakfast', 'menuTeaBreak', 'menuLunch', 'menuLunchWestern', 'menuDinner', 'menuDinnerWestern', 'menuSupper'];
+            const menuKeys = ['breakfast', 'teaBreak', 'lunch', 'lunchWestern', 'dinner', 'dinnerWestern', 'supper'];
+            
+            menuSections.forEach((sectionId, idx) => {
+                const container = document.getElementById(sectionId);
+                if (container) {
+                    container.querySelectorAll('input').forEach(input => {
+                        combinedData.menu[menuKeys[idx]].push(input.value || '');
+                    });
+                }
+            });
+            
+            let history = JSON.parse(localStorage.getItem('cateringHistory') || '[]');
+            const existingIndex = history.findIndex(item => item.stockDate === stockDate && item.menuDate === menuDate);
+            
+            if (existingIndex >= 0) {
+                history[existingIndex] = combinedData;
+            } else {
+                history.unshift(combinedData);
+            }
+            
+            if (history.length > 50) history = history.slice(0, 50);
+            localStorage.setItem('cateringHistory', JSON.stringify(history));
+            
+            const blob = new Blob([JSON.stringify(combinedData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Catering_IBA_Stock${stockDate}_Menu${menuDate}.json`;
+            a.click();
+            
+            alert('✅ Catering Report (Stock + Menu) saved!');
+        }
+
         // Initialize first case
         addUAUCCase();
         
         // ==================== ELECTRON INTEGRATION ====================
         if (window.electronAPI && window.electronAPI.isElectron) {
-            console.log('Running in Electron mode');
+            console.log('✅ Running in Electron mode');
             
             // Handle menu commands
             window.electronAPI.onExportJSON(() => {
@@ -3471,8 +4102,14 @@
                 if (result.success && result.data) {
                     try {
                         const data = JSON.parse(result.data);
-                        // Import logic here - you can customize this
-                        alert('✅ Import feature ready - customize as needed!');
+                        // You can customize import logic here
+                        if (confirm('Import this data? Current data will be replaced.')) {
+                            if (data.operations) localStorage.setItem('operationsHistory', JSON.stringify(data.operations));
+                            if (data.uauc) localStorage.setItem('uaucHistory', JSON.stringify(data.uauc));
+                            if (data.catering) localStorage.setItem('cateringHistory', JSON.stringify(data.catering));
+                            alert('✅ Data imported successfully!');
+                            location.reload();
+                        }
                     } catch (error) {
                         alert('❌ Error: ' + error.message);
                     }
@@ -3482,6 +4119,7 @@
             window.electronAPI.onClearAllData(() => {
                 if (confirm('⚠️ Clear ALL data? This cannot be undone!')) {
                     localStorage.clear();
+                    alert('✅ All data cleared!');
                     location.reload();
                 }
             });
@@ -3500,7 +4138,9 @@
                     operations: JSON.parse(localStorage.getItem('operationsHistory') || '[]'),
                     uauc: JSON.parse(localStorage.getItem('uaucHistory') || '[]'),
                     catering: JSON.parse(localStorage.getItem('cateringHistory') || '[]'),
-                    exportDate: new Date().toISOString()
+                    exportDate: new Date().toISOString(),
+                    platform: 'Irong Barat A, B, C',
+                    version: '1.0.0'
                 };
                 
                 const filename = `OIM_Backup_${new Date().toISOString().split('T')[0]}.json`;
@@ -3510,11 +4150,13 @@
                 );
                 
                 if (result.success) {
-                    alert('✅ Data exported successfully!');
+                    alert('✅ Data exported successfully!\n\nFile: ' + filename);
                 } else if (!result.cancelled) {
                     alert('❌ Export failed: ' + (result.error || 'Unknown error'));
                 }
             }
+        } else {
+            console.log('ℹ️ Running in browser mode');
         }
     </script>
 </body>
