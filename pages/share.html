@@ -929,29 +929,96 @@ if(typeof pdfjsLib !== 'undefined') {
 </script>
 
 <script>
+// ========== IndexedDB Helper Functions ==========
+const IDB_NAME = 'SafetyReviewsDB';
+const IDB_VERSION = 1;
+const IDB_STORE = 'data';
+
+function openIDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(IDB_NAME, IDB_VERSION);
+        
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains(IDB_STORE)) {
+                db.createObjectStore(IDB_STORE);
+            }
+        };
+    });
+}
+
+async function saveToIDB(key, data) {
+    const db = await openIDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction([IDB_STORE], 'readwrite');
+        const store = tx.objectStore(IDB_STORE);
+        const request = store.put(data, key);
+        
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function loadFromIDB(key) {
+    const db = await openIDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction([IDB_STORE], 'readonly');
+        const store = tx.objectStore(IDB_STORE);
+        const request = store.get(key);
+        
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function deleteFromIDB(key) {
+    const db = await openIDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction([IDB_STORE], 'readwrite');
+        const store = tx.objectStore(IDB_STORE);
+        const request = store.delete(key);
+        
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getIDBSize(key) {
+    const data = await loadFromIDB(key);
+    return data ? JSON.stringify(data).length : 0;
+}
+
+// ========== Modified DB Functions ==========
 const DB_KEY = 'sr_data_v2';
 const defaultDB = { presentations: [], reports: [], history: [] };
-let DB = loadDB();
+let DB = structuredClone(defaultDB);
 
-function loadDB(){
+async function loadDB(){
   try{ 
-    const raw = localStorage.getItem(DB_KEY); 
-    return raw ? JSON.parse(raw) : structuredClone(defaultDB);
+    const data = await loadFromIDB(DB_KEY);
+    if (data) {
+      console.log('✅ Loaded data from IndexedDB');
+      return data;
+    }
+    return structuredClone(defaultDB);
   }catch(e){
     console.error('DB parse error', e); 
     return structuredClone(defaultDB);
   }
 }
 
-function saveDB(){ 
-  localStorage.setItem(DB_KEY, JSON.stringify(DB)); 
-  refreshMetrics(); 
+async function saveDB(){ 
+  await saveToIDB(DB_KEY, DB);
+  await refreshMetrics(); 
 }
 
-function addHistory(action, detail){ 
+async function addHistory(action, detail){ 
   DB.history.unshift({ id:nid(), ts:Date.now(), action, detail }); 
   DB.history = DB.history.slice(0,200); 
-  saveDB(); 
+  await saveDB(); 
   renderRecent(); 
 }
 
@@ -997,8 +1064,8 @@ function bytesToSize(bytes){
   return (bytes/Math.pow(1024,i)).toFixed((i===0)?0:1)+' '+sizes[i]; 
 }
 
-function estimateStorage(){ 
-  let total=(localStorage.getItem(DB_KEY)||'').length; 
+async function estimateStorage(){ 
+  let total = await getIDBSize(DB_KEY);
   return total; 
 }
 
@@ -1029,11 +1096,11 @@ function fileTypeFromName(name){
   return ext; 
 }
 
-function refreshMetrics(){
+async function refreshMetrics(){
   document.getElementById('metricPres').textContent = DB.presentations.length;
   document.getElementById('metricReports').textContent = DB.reports.length;
   document.getElementById('metricActivity').textContent = DB.history.length;
-  const used=estimateStorage();
+  const used = await estimateStorage();
   document.getElementById('storageText').textContent = bytesToSize(used);
 }
 
@@ -1205,8 +1272,8 @@ async function addPresentation(){
   };
   
   DB.presentations.unshift(pres); 
-  addHistory('Uploaded', `${pres.title}`); 
-  saveDB(); 
+  await addHistory('Uploaded', `${pres.title}`); 
+  await saveDB(); 
   renderPresentations();
   clearPresentationForm();
 }
@@ -1368,7 +1435,7 @@ function preview(type){
   addHistory('Report Preview', type); 
 }
 
-function saveReport(){ 
+async function saveReport(){ 
   if(!rTitle.value){
     alert('Enter report title'); 
     return;
@@ -1387,9 +1454,9 @@ function saveReport(){
   }; 
   
   DB.reports.unshift(item); 
-  saveDB(); 
+  await saveDB(); 
   renderReports(); 
-  addHistory('Report Saved', item.title); 
+  await addHistory('Report Saved', item.title); 
 }
 
 document.getElementById('btnLoadPresData').addEventListener('click', loadPresentationData);
@@ -1463,7 +1530,7 @@ const followupActions = document.getElementById('followupActions');
 const timestampedNotes = document.getElementById('timestampedNotes');
 const noteInput = document.getElementById('noteInput');
 
-function autoSaveNotes() {
+async function autoSaveNotes() {
   if (!pm.currentPres) return;
   pm.currentPres.notes = pm.currentPres.notes || {};
   pm.currentPres.notes.discussionPoints = discussionPoints.value;
@@ -1471,7 +1538,7 @@ function autoSaveNotes() {
   pm.currentPres.notes.immediateActions = immediateActions.value;
   pm.currentPres.notes.discussionFeedback = discussionFeedback.value;
   pm.currentPres.notes.followupActions = followupActions.value;
-  saveDB();
+  await saveDB();
 }
 
 [discussionPoints, lessonsLearned, immediateActions, discussionFeedback, followupActions].forEach(elem => {
@@ -1732,15 +1799,15 @@ function navSlide(delta){
   renderSlide(); 
 }
 
-noteInput.addEventListener('keydown', e=>{ 
+noteInput.addEventListener('keydown', async (e) =>{ 
   if(e.key==='Enter' && noteInput.value.trim()){ 
     const txt=noteInput.value.trim(); 
     const rec={ id:nid(), ts:Date.now(), slide:pm.slideIndex+1, text:txt }; 
     pm.currentPres.notes = pm.currentPres.notes || {};
     pm.currentPres.notes.timestamped = pm.currentPres.notes.timestamped || [];
     pm.currentPres.notes.timestamped.unshift(rec); 
-    addHistory('Note Added', txt.slice(0,60)); 
-    saveDB(); 
+    await addHistory('Note Added', txt.slice(0,60)); 
+    await saveDB(); 
     renderTimestampedNotes(); 
     noteInput.value=''; 
   } 
@@ -1980,14 +2047,14 @@ function fitContain(sw,sh,cw,ch){
   return {w,h,ox:(cw-w)/2, oy:(ch-h)/2}; 
 }
 
-function clearAllData(){
+async function clearAllData(){
   if(confirm('DELETE ALL DATA? This cannot be undone!')) {
     if(confirm('Are you ABSOLUTELY sure?')) {
-      localStorage.removeItem(DB_KEY);
+      await deleteFromIDB(DB_KEY);
       DB = structuredClone(defaultDB);
-      saveDB();
+      await saveDB();
       renderAll();
-      addHistory('System Reset', 'All data cleared');
+      await addHistory('System Reset', 'All data cleared');
       alert('All data cleared successfully');
     }
   }
@@ -2015,9 +2082,9 @@ document.getElementById('importFile').addEventListener('change', async (e)=>{
     const json=JSON.parse(txt); 
     if(!json.presentations||!json.reports) throw new Error('Invalid backup'); 
     DB=json; 
-    saveDB(); 
+    await saveDB(); 
     renderAll(); 
-    addHistory('Import', f.name);
+    await addHistory('Import', f.name);
   }catch(err){ 
     alert('Import failed: '+err.message); 
   }
@@ -2034,9 +2101,13 @@ function renderAll(){
   refreshMetrics(); 
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize DB from IndexedDB on page load
+(async function initDB() {
+  DB = await loadDB();
   renderAll();
-});
+  await refreshMetrics();
+  console.log('✅ App initialized with IndexedDB');
+})();
 
 const btnEnterMode=document.getElementById('btnEnterMode');
 btnEnterMode.addEventListener('click', ()=>{ 
